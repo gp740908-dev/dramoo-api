@@ -1,488 +1,483 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="referrer" content="no-referrer">
   <title>Dramoo API — Interactive Documentation</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
     :root {
-      --bg-base: #06060c;
-      --bg-panel: #0d0d16;
-      --bg-glass: rgba(255, 255, 255, 0.03);
-      --bg-glass-hover: rgba(255, 255, 255, 0.06);
-      --border-color: rgba(255, 255, 255, 0.08);
-      --border-highlight: rgba(139, 92, 246, 0.3);
+      --bg-base: #150f23;
+      --bg-panel: #1f1633;
+      --bg-glass: rgba(255, 255, 255, 0.05);
+      --bg-glass-hover: rgba(255, 255, 255, 0.1);
       
-      --text-main: #f3f4f6;
-      --text-muted: #9ca3af;
-      --text-dark: #6b7280;
+      --border-color: #362d59;
+      --border-highlight: #c2ef4e;
       
-      --accent-purple: #8b5cf6;
-      --accent-blue: #3b82f6;
-      --accent-cyan: #06b6d4;
-      --accent-green: #10b981;
-      --accent-amber: #f59e0b;
-      --accent-red: #ef4444;
+      --text-main: #ffffff;
+      --text-muted: rgba(255,255,255,0.72);
+      --text-dark: rgba(255,255,255,0.5);
       
-      --gradient-glow: radial-gradient(circle at 50% -20%, rgba(139, 92, 246, 0.15), transparent 60%);
-      --gradient-primary: linear-gradient(135deg, #8b5cf6, #3b82f6);
+      --accent-primary: #c2ef4e;
+      --accent-secondary: #fa7faa;
       
-      --radius-lg: 16px;
-      --radius-md: 10px;
-      --radius-sm: 6px;
+      --method-get: #c2ef4e;
+      --method-post: #6a5fc1;
       
-      --sidebar-width: 300px;
+      --radius-xl: 16px;
+      --radius-lg: 12px;
+      --radius-md: 8px;
+      --radius-sm: 4px;
+      
+      --sidebar-width: 280px;
+      --navbar-height: 70px;
+      font-family: "Rubik", -apple-system, system-ui, sans-serif;
     }
 
-    body {
-      font-family: 'Inter', sans-serif;
-      background-color: var(--bg-base);
-      background-image: var(--gradient-glow);
-      background-attachment: fixed;
-      color: var(--text-main);
-      font-size: 14px;
-      line-height: 1.6;
-      height: 100vh;
-      display: flex;
-      overflow: hidden;
-    }
-
-    /* SCROLLBAR */
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Rubik", sans-serif; }
+    
+    /* MOBILE NATIVE SCROLL FIX */
+    body { background-color: var(--bg-base); color: var(--text-main); font-size: 15px; line-height: 1.6; -webkit-font-smoothing: antialiased; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; }
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
-    ::-webkit-scrollbar-thumb:hover { background: var(--accent-purple); }
+    ::-webkit-scrollbar-thumb { background: #362d59; border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: #c2ef4e; }
 
-    /* LAYOUT */
-    .sidebar {
-      width: var(--sidebar-width);
-      border-right: 1px solid var(--border-color);
-      display: flex;
-      flex-direction: column;
-      background: rgba(6, 6, 12, 0.6);
-      backdrop-filter: blur(20px);
-      z-index: 10;
-    }
+    /* GLOBAL NAVBAR */
+    .navbar { height: var(--navbar-height); width: 100%; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; background: var(--bg-panel); border-bottom: 1px solid var(--border-color); z-index: 100; position: sticky; top: 0; }
+    .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text-main); font-weight: 700; font-size: 24px; letter-spacing: -0.5px; }
+    .nav-links { display: flex; gap: 24px; list-style: none; margin: 0; padding: 0; align-items: center; }
+    .nav-links a { color: var(--text-muted); text-decoration: none; font-size: 15px; font-weight: 500; transition: color 0.2s; }
+    .nav-links a:hover, .nav-links a.active { color: var(--accent-primary); }
+    .nav-cta { padding: 8px 18px; background: var(--text-main); color: var(--bg-base); border-radius: 6px; font-weight: 700; font-size: 14px; text-decoration: none; text-transform: uppercase; letter-spacing: 0.2px; transition: background 0.2s; }
+    .nav-cta:hover { background: #e0e0e0; }
+
+    /* MOBILE NAVBAR TOGGLE */
+    .navbar-toggle { display: none; cursor: pointer; flex-direction: column; gap: 5px; padding: 5px; }
+    .navbar-toggle span { display: block; width: 24px; height: 2px; background: var(--text-main); transition: 0.3s; border-radius: 2px; }
     
-    .sidebar-header {
-      padding: 24px;
-      border-bottom: 1px solid var(--border-color);
-    }
-    
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      text-decoration: none;
-      color: var(--text-main);
-    }
-    .brand-logo {
-      width: 32px; height: 32px;
-      background: var(--gradient-primary);
-      border-radius: 8px;
-      display: flex; align-items: center; justify-content: center;
-      font-weight: 800; font-size: 16px;
-      box-shadow: 0 0 15px rgba(139, 92, 246, 0.4);
-    }
-    .brand-name { font-size: 1.1rem; font-weight: 700; letter-spacing: -0.5px; }
+    /* LAYOUT CONTAINER */
+    .layout-container { display: flex; flex: 1; position: relative; align-items: stretch; }
 
-    .nav-sections {
-      flex: 1;
-      overflow-y: auto;
-      padding: 16px 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
-
-    .nav-group-title {
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      color: var(--text-dark);
-      font-weight: 700;
-      margin-bottom: 8px;
-      padding-left: 12px;
-    }
-
-    .nav-item {
-      display: flex;
-      flex-direction: column;
-      padding: 8px 12px;
-      border-radius: var(--radius-sm);
-      cursor: pointer;
-      transition: all 0.2s;
-      border: 1px solid transparent;
-      margin-bottom: 2px;
-    }
+    /* SIDEBAR */
+    .sidebar { width: var(--sidebar-width); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; background: var(--bg-base); z-index: 50; flex-shrink: 0; position: sticky; top: var(--navbar-height); height: calc(100vh - var(--navbar-height)); overflow-y: auto; }
+    .nav-sections { padding: 24px 16px; display: flex; flex-direction: column; gap: 24px; }
+    .nav-group-title { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-dark); font-weight: 700; margin-bottom: 12px; padding-left: 12px; }
+    .nav-item { display: flex; flex-direction: column; padding: 12px 14px; border-radius: var(--radius-md); cursor: pointer; transition: all 0.2s ease; border: 1px solid transparent; margin-bottom: 4px; position: relative; }
     .nav-item:hover { background: var(--bg-glass-hover); }
-    .nav-item.active {
-      background: rgba(139, 92, 246, 0.1);
-      border-color: rgba(139, 92, 246, 0.2);
-    }
-    .nav-item-name { font-weight: 500; font-size: 0.85rem; color: var(--text-main); margin-bottom: 4px; }
-    .nav-item-path { 
-      font-family: 'JetBrains Mono', monospace; 
-      font-size: 0.7rem; 
-      color: var(--text-muted);
-      display: flex; align-items: center; gap: 6px;
-    }
+    .nav-item.active { background: var(--bg-panel); border-color: var(--border-color); }
+    .nav-item.active::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--accent-primary); border-radius: 3px 0 0 3px; }
+    .nav-item-name { font-weight: 600; font-size: 14px; color: var(--text-main); margin-bottom: 4px; display: flex; align-items: center; gap: 8px; }
+    .nav-item-path { font-family: Monaco, monospace; font-size: 11px; color: var(--text-muted); display: flex; align-items: center; gap: 8px; }
+    .nav-item-icon { width: 16px; height: 16px; object-fit: contain; border-radius: 2px; }
+
+    .method-badge { font-size: 10px; font-weight: 800; padding: 3px 6px; border-radius: 4px; font-family: "Rubik", sans-serif; letter-spacing: 0.5px; text-transform: uppercase; }
+    .method-GET { background: var(--accent-primary); color: var(--bg-panel); border: none; }
+
+    /* MAIN CONTENT */
+    .main-content { flex: 1; display: flex; flex-direction: column; background: var(--bg-base); min-width: 0; }
     
-    .method-badge {
-      font-size: 0.65rem; font-weight: 700; padding: 2px 6px; border-radius: 4px;
-    }
-    .method-GET { background: rgba(16, 185, 129, 0.15); color: var(--accent-green); }
-    .method-POST { background: rgba(59, 130, 246, 0.15); color: var(--accent-blue); }
-    .method-PATCH { background: rgba(245, 158, 11, 0.15); color: var(--accent-amber); }
-    .method-DELETE { background: rgba(239, 68, 68, 0.15); color: var(--accent-red); }
-
-    .main-content {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      height: 100%;
-      overflow-y: auto;
-      position: relative;
-    }
-
-    .top-bar {
-      height: 70px;
-      border-bottom: 1px solid var(--border-color);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 32px;
-      background: rgba(6, 6, 12, 0.8);
-      backdrop-filter: blur(20px);
-      position: sticky;
-      top: 0;
-      z-index: 20;
-    }
-
-    .api-key-setup {
-      display: flex; align-items: center; gap: 12px;
-      background: var(--bg-glass);
-      border: 1px solid var(--border-color);
-      padding: 6px 12px;
-      border-radius: 50px;
-      transition: all 0.3s;
-    }
-    .api-key-setup:focus-within {
-      border-color: var(--border-highlight);
-      box-shadow: 0 0 10px rgba(139, 92, 246, 0.1);
-    }
-    .api-key-setup input {
-      background: transparent; border: none; color: var(--text-main);
-      font-family: 'JetBrains Mono', monospace; font-size: 0.85rem;
-      outline: none; width: 250px;
-    }
-    .api-key-setup input::placeholder { color: var(--text-dark); }
+    .top-bar-docs { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; padding: 16px 40px; background: var(--bg-panel); border-bottom: 1px solid var(--border-color); z-index: 20; gap: 16px; }
+    .sidebar-toggle-btn { display: none; background: var(--bg-glass); border: 1px solid var(--border-color); color: var(--text-main); padding: 12px; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 600; width: 100%; text-align: center; }
     
-    .content-grid {
-      display: grid;
-      grid-template-columns: 1fr 450px;
-      gap: 32px;
-      padding: 40px 32px;
-      max-width: 1400px;
-      margin: 0 auto;
-      width: 100%;
-      align-items: start;
-    }
-
-    .doc-section { display: flex; flex-direction: column; gap: 24px; }
+    .api-key-container { display: flex; flex-direction: column; gap: 8px; flex: 1; max-width: 500px; width: 100%; }
+    .api-key-setup { display: flex; align-items: center; gap: 12px; background: var(--bg-base); border: 1px solid var(--border-color); padding: 10px 16px; border-radius: 8px; transition: border-color 0.2s; width: 100%; }
+    .api-key-setup.valid { border-color: var(--accent-primary); box-shadow: 0 0 0 1px var(--accent-primary); }
+    .api-key-setup.invalid { border-color: var(--accent-secondary); box-shadow: 0 0 0 1px var(--accent-secondary); }
+    .api-key-setup input { background: transparent; border: none; color: var(--text-main); font-family: Monaco, monospace; font-size: 14px; outline: none; width: 100%; }
     
-    .endpoint-header h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: 8px; letter-spacing: -0.5px; }
-    .endpoint-header p { color: var(--text-muted); font-size: 0.95rem; }
-    
-    .endpoint-url {
-      display: flex; align-items: center; gap: 12px;
-      background: var(--bg-panel);
-      border: 1px solid var(--border-color);
-      padding: 12px 16px;
-      border-radius: var(--radius-md);
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.9rem;
-      word-break: break-all;
-    }
+    .api-status-card { display: none; background: var(--bg-base); border: 1px solid var(--border-color); padding: 12px 16px; border-radius: 8px; font-size: 13px; animation: fadeIn 0.3s; }
+    .api-status-card.show { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .status-item { display: flex; flex-direction: column; gap: 4px; }
+    .status-label { color: var(--text-muted); font-size: 11px; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; }
+    .status-val { color: var(--text-main); font-weight: 600; font-size: 14px; }
+    .status-val.highlight { color: var(--accent-primary); }
 
-    .auth-badge {
-      display: inline-flex; align-items: center; gap: 6px;
-      padding: 4px 10px; border-radius: 50px; font-size: 0.75rem; font-weight: 600;
-      background: rgba(139, 92, 246, 0.1); border: 1px solid rgba(139, 92, 246, 0.2);
-      color: var(--accent-purple); width: fit-content;
-    }
+    .content-grid { display: grid; grid-template-columns: 1fr; gap: 40px; padding: 40px; width: 100%; align-items: start; max-width: 1200px; margin: 0 auto; }
 
-    .table-container { width: 100%; overflow-x: auto; margin-top: 8px; }
-    .params-table { width: 100%; border-collapse: collapse; min-width: 400px; }
-    .params-table th { text-align: left; padding: 10px 0; border-bottom: 1px solid var(--border-color); color: var(--text-dark); font-weight: 600; font-size: 0.75rem; text-transform: uppercase; }
-    .params-table td { padding: 14px 10px 14px 0; border-bottom: 1px solid var(--border-color); font-size: 0.9rem; }
-    .params-table td.param-name { font-family: 'JetBrains Mono', monospace; font-weight: 600; color: var(--text-main); }
-    .params-table td .param-req { font-size: 0.7rem; color: var(--accent-red); margin-left: 6px; }
-    .params-table td .param-desc { color: var(--text-muted); font-size: 0.85rem; margin-top: 4px; line-height: 1.4; }
+    .doc-section { display: flex; flex-direction: column; gap: 32px; min-width: 0; }
+    .endpoint-header h1 { font-size: 32px; font-weight: 600; margin-bottom: 12px; line-height: 1.2; color: #ffffff; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .endpoint-header h1 img { height: 32px; object-fit: contain; }
+    .endpoint-header p { color: var(--text-muted); font-size: 16px; line-height: 1.6; }
+    
+    .endpoint-url-box { display: flex; align-items: center; gap: 16px; background: var(--bg-panel); border: 1px solid var(--border-color); padding: 16px 20px; border-radius: var(--radius-lg); font-family: Monaco, monospace; font-size: 14px; word-break: break-all; }
+    .auth-badge { display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; border-radius: 4px; font-size: 14px; font-weight: 600; background: var(--bg-panel); border: 1px solid var(--border-color); color: #ffffff; }
 
-    /* TRY IT OUT PANEL */
-    .interactive-panel {
-      background: var(--bg-panel);
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-lg);
-      position: sticky;
-      top: 100px;
-      overflow: hidden;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-    }
-    
-    .panel-header {
-      padding: 16px 20px;
-      border-bottom: 1px solid var(--border-color);
-      display: flex; justify-content: space-between; align-items: center;
-      background: rgba(255,255,255,0.02);
-    }
-    .panel-header h3 { font-size: 0.9rem; font-weight: 600; display: flex; align-items: center; gap: 8px; }
-    
+    /* PARAMS TABLE */
+    .params-section { background: var(--bg-panel); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 24px; }
+    .params-section h3 { font-size: 16px; margin-bottom: 16px; color: #ffffff; font-weight: 600; border-bottom: 1px solid var(--border-color); padding-bottom: 12px; }
+    .params-list { display: flex; flex-direction: column; gap: 16px; }
+    .param-item { padding-bottom: 16px; border-bottom: 1px solid var(--border-color); display: flex; flex-direction: column; gap: 8px; }
+    .param-item:last-child { border-bottom: none; padding-bottom: 0; }
+    .param-name { font-family: Monaco, monospace; font-weight: 600; color: #ffffff; font-size: 14px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .param-req { font-size: 11px; color: var(--bg-panel); padding: 2px 6px; background: var(--accent-primary); border-radius: 4px; font-weight: 700; text-transform: uppercase; }
+    .param-desc { color: var(--text-muted); font-size: 14px; line-height: 1.5; }
+    .param-example { display: inline-block; font-family: Monaco, monospace; font-size: 12px; color: var(--text-main); background: var(--bg-base); padding: 6px 10px; border-radius: 6px; border: 1px solid var(--border-color); word-break: break-all; }
+
+    /* CODE INTEGRATION SNIPPETS */
+    .code-snippets { background: var(--bg-panel); border: 1px solid var(--border-color); border-radius: var(--radius-lg); overflow: hidden; margin-top: 16px; }
+    .code-tabs { display: flex; border-bottom: 1px solid var(--border-color); background: var(--bg-base); overflow-x: auto; }
+    .code-tab { padding: 12px 20px; color: var(--text-muted); font-size: 14px; font-weight: 600; cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.2s; white-space: nowrap; }
+    .code-tab:hover { background: var(--bg-glass); }
+    .code-tab.active { color: var(--accent-primary); border-bottom-color: var(--accent-primary); background: var(--bg-panel); }
+    .code-content { padding: 20px; font-family: Monaco, monospace; font-size: 13px; color: #e2e8f0; overflow-x: auto; line-height: 1.5; margin: 0; }
+    .code-content-wrapper { display: none; }
+    .code-content-wrapper.active { display: block; animation: fadeIn 0.3s; }
+
+    /* PROVIDERS GRID */
+    .providers-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 16px; margin-top: 16px; }
+    .provider-card { background: var(--bg-base); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 16px; display: flex; flex-direction: column; align-items: center; gap: 12px; transition: 0.2s; text-align: center; }
+    .provider-card:hover { border-color: var(--accent-primary); transform: translateY(-2px); }
+    .provider-card img { height: 32px; object-fit: contain; }
+    .provider-card span { font-size: 13px; font-weight: 600; color: var(--text-main); }
+
+    /* INTERACTIVE PANEL */
+    .interactive-panel { background: var(--bg-panel); border: 1px solid var(--border-color); border-radius: var(--radius-lg); position: sticky; top: calc(var(--navbar-height) + 20px); display: flex; flex-direction: column; }
+    .panel-header { padding: 16px 20px; border-bottom: 1px solid var(--border-color); background: var(--bg-base); border-radius: var(--radius-lg) var(--radius-lg) 0 0; }
+    .panel-header h3 { font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 8px; }
     .panel-body { padding: 20px; display: flex; flex-direction: column; gap: 16px; }
-
     .input-group { display: flex; flex-direction: column; gap: 6px; }
-    .input-group label { font-size: 0.8rem; font-family: 'JetBrains Mono', monospace; color: var(--text-muted); }
-    .input-group input {
-      background: rgba(0,0,0,0.3); border: 1px solid var(--border-color);
-      border-radius: var(--radius-sm); padding: 10px 14px;
-      color: var(--text-main); font-family: 'JetBrains Mono', monospace;
-      font-size: 0.85rem; transition: all 0.2s;
-    }
-    .input-group input:focus { border-color: var(--accent-purple); outline: none; }
+    .input-group label { font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; }
+    .input-group input { background: var(--bg-base); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 12px 14px; color: var(--text-main); font-family: Monaco, monospace; font-size: 14px; width: 100%; }
+    .input-group input:focus { border-color: var(--accent-primary); outline: none; }
+    
+    .btn-send { background: var(--text-main); color: var(--bg-base); border: none; border-radius: var(--radius-sm); padding: 16px; font-weight: 700; font-size: 14px; cursor: pointer; text-transform: uppercase; width: 100%; margin-top: 8px; transition: 0.2s; }
+    .btn-send:hover { background: #e0e0e0; }
+    .btn-send:disabled { opacity: 0.7; cursor: not-allowed; }
+    
+    .response-area { border-top: 1px solid var(--border-color); background: var(--bg-base); display: flex; flex-direction: column; border-radius: 0 0 var(--radius-lg) var(--radius-lg); }
+    .res-header { padding: 12px 20px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; font-size: 12px; color: var(--text-muted); background: var(--bg-panel); }
+    .status-code { font-weight: 700; font-family: Monaco, monospace; padding: 2px 6px; border-radius: 4px; background: var(--bg-base); }
+    .status-200 { color: var(--accent-primary); }
+    .status-4xx { color: #f59e0b; }
+    .status-5xx { color: var(--accent-secondary); }
+    .res-body { padding: 16px; margin: 0; font-family: Monaco, monospace; font-size: 12px; color: #ffffff; overflow-x: auto; max-height: 400px; overflow-y: auto; }
+    
+    /* JSON Highlighting */
+    .json-key { color: var(--accent-secondary); font-weight: 600; }
+    .json-string { color: var(--accent-primary); }
+    .json-number { color: #60a5fa; }
+    .json-boolean { color: #a78bfa; }
+    .json-null { color: var(--text-dark); font-style: italic; }
 
-    .btn-send {
-      background: var(--gradient-primary);
-      color: #fff; border: none; border-radius: var(--radius-sm);
-      padding: 12px; font-weight: 600; font-family: inherit;
-      cursor: pointer; transition: all 0.3s;
-      display: flex; align-items: center; justify-content: center; gap: 8px;
-    }
-    .btn-send:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(139, 92, 246, 0.3); }
-    .btn-send:active { transform: translateY(0); }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-    .response-area {
-      border-top: 1px solid var(--border-color);
-      background: #09090e;
-    }
-    .res-header {
-      padding: 10px 20px; border-bottom: 1px solid rgba(255,255,255,0.05);
-      display: flex; justify-content: space-between; align-items: center;
-      font-size: 0.8rem; color: var(--text-muted);
-    }
-    .status-code { font-weight: 700; font-family: 'JetBrains Mono', monospace; }
-    .status-200 { color: var(--accent-green); }
-    .status-4xx { color: var(--accent-amber); }
-    .status-5xx { color: var(--accent-red); }
-
-    .res-body {
-      padding: 16px 20px;
-      margin: 0;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.8rem;
-      color: #a5d6ff;
-      overflow-x: auto;
-      max-height: 400px;
-      overflow-y: auto;
-    }
-
-    /* SYNTAX HIGHLIGHTING (JSON) */
-    .json-key { color: #7ee787; }
-    .json-string { color: #a5d6ff; }
-    .json-number { color: #79c0ff; }
-    .json-boolean { color: #ff7b72; }
-    .json-null { color: #8b949e; }
-
-    /* TOAST */
-    .toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 9999; display: flex; flex-direction: column; gap: 8px; }
-    .toast { padding: 12px 20px; border-radius: 8px; font-size: 0.85rem; font-weight: 500; backdrop-filter: blur(10px); background: rgba(139,92,246,0.2); border: 1px solid rgba(139,92,246,0.3); color: #fff; animation: slideIn 0.3s ease; }
-    @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-
-    /* SPINNER */
-    .spinner {
-      width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3);
-      border-top-color: #fff; border-radius: 50%; animation: spin 0.8s linear infinite;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    /* MOBILE OVERLAY */
-    .mobile-overlay {
-      position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(2px);
-      z-index: 40; opacity: 0; pointer-events: none; transition: opacity 0.3s;
-    }
-    .mobile-overlay.open { opacity: 1; pointer-events: all; }
-
+    /* MOBILE RESPONSIVE ENHANCEMENTS */
     @media (max-width: 1024px) {
-      .content-grid { grid-template-columns: 1fr; }
-      .interactive-panel { position: static; }
+      .content-grid { grid-template-columns: 1fr; gap: 32px; padding: 24px; }
+      .interactive-panel { position: static; max-height: none; }
     }
+    
     @media (max-width: 768px) {
-      .sidebar { 
-        position: fixed; 
-        left: -100%; top: 0; bottom: 0; 
-        transition: left 0.3s ease; 
-        width: 280px; 
-        background: rgba(6, 6, 12, 0.95); 
-        box-shadow: 0 0 20px rgba(0,0,0,0.5);
-        z-index: 50;
-      }
+      /* Navbar */
+      .navbar { padding: 0 16px; position: sticky; top: 0; z-index: 100; }
+      .navbar-toggle { display: flex; z-index: 101; position: relative; }
+      .nav-links { display: none; position: absolute; top: var(--navbar-height); left: 0; right: 0; background: var(--bg-panel); flex-direction: column; padding: 20px; border-bottom: 1px solid var(--border-color); gap: 16px; box-shadow: 0 10px 20px rgba(0,0,0,0.5); z-index: 99; align-items: flex-start; }
+      .nav-links.active { display: flex; }
+      .nav-cta { display: none; }
+      .nav-links.active + .nav-cta, .nav-cta.active { display: block; width: calc(100% - 40px); text-align: center; margin: 16px 20px 20px; position: absolute; top: calc(var(--navbar-height) + 160px); z-index: 100; }
+      
+      /* Sidebar */
+      .sidebar { position: fixed; left: -100%; top: var(--navbar-height); bottom: 0; height: calc(100vh - var(--navbar-height)); z-index: 90; transition: left 0.3s; box-shadow: 4px 0 24px rgba(0,0,0,0.5); width: 280px; }
       .sidebar.open { left: 0; }
-      .content-grid { padding: 20px 16px; }
-      .top-bar { padding: 0 16px; gap: 8px; }
-      .api-key-setup input { width: 130px; font-size: 0.8rem; }
-      .api-key-setup { padding: 4px 10px; }
-      .doc-section { padding-top: 10px; }
-      .hamburger { display: flex; }
-      .brand-title { display: none; }
+      
+      /* Top Bar */
+      .top-bar-docs { padding: 16px; flex-direction: column; align-items: stretch; position: relative; top: 0; }
+      .sidebar-toggle-btn { display: block; }
+      
+      /* Content Grid */
+      .content-grid { padding: 16px; }
+      .endpoint-header h1 { font-size: 24px; }
+      .endpoint-header h1 img { height: 24px; }
+      .endpoint-url-box { flex-direction: column; align-items: flex-start; padding: 12px; }
+      
+      .api-status-card.show { grid-template-columns: 1fr; }
+      .params-section { padding: 16px; }
+      .provider-card { padding: 12px; }
+      
+      /* Res Body */
+      .res-body { font-size: 11px; padding: 12px; }
     }
-    @media (max-width: 480px) {
-      .api-key-setup input { width: 100px; }
-      .endpoint-url { flex-direction: column; align-items: flex-start; gap: 8px; font-size: 0.8rem; }
-      .endpoint-header h1 { font-size: 1.4rem; }
-    }
-
-    .hamburger {
-      display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 5px; z-index: 100;
-    }
-    .hamburger span { display: block; width: 24px; height: 2px; background: #fff; transition: 0.3s; }
+    
+    .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 80; }
+    .overlay.active { display: block; }
   </style>
 </head>
 <body>
 
-  <!-- SIDEBAR -->
-  <aside class="sidebar">
-    <div class="sidebar-header">
-      <a href="/" class="brand">
-        <div class="brand-logo">D</div>
-        <div class="brand-name">Dramoo Docs</div>
-      </a>
+  <!-- GLOBAL NAVBAR -->
+  <nav class="navbar">
+    <a href="/" class="nav-brand">Dramoo</a>
+    <div class="navbar-toggle" onclick="toggleGlobalNavbar()">
+      <span></span><span></span><span></span>
     </div>
-    <div class="nav-sections" id="navSections">
-      <!-- Populated by JS -->
-    </div>
-  </aside>
+    <ul class="nav-links" id="globalNavLinks">
+      <li><a href="/#pricing">Pricing</a></li>
+      <li><a href="/docs/" class="active">Docs</a></li>
+      <li><a href="/admin/">Admin</a></li>
+    </ul>
+    <a href="https://t.me/dramoobot" class="nav-cta" id="globalNavCta">Get Started</a>
+  </nav>
 
-  <div class="mobile-overlay" onclick="toggleMobileMenu()"></div>
-
-  <!-- MAIN CONTENT -->
-  <main class="main-content">
-    <div class="top-bar">
-      <div style="font-weight: 600; display:flex; align-items:center; gap:12px;">
-        <div class="hamburger" onclick="toggleMobileMenu()">
-          <span></span><span></span><span></span>
-        </div>
-        <div class="brand-title"><span style="color:var(--accent-purple)">●</span> API Playground</div>
-      </div>
-      <div class="api-key-setup">
-        <span style="font-size:1.2rem">🔑</span>
-        <input type="text" id="globalApiKey" placeholder="Paste X-Api-Key here..." oninput="saveApiKey()">
-      </div>
-    </div>
-
-    <div class="content-grid">
-      <!-- DOCUMENTATION SECTION -->
-      <div class="doc-section" id="docSection">
+  <div class="layout-container">
+    <div class="overlay" id="mobileOverlay" onclick="closeSidebar()"></div>
+    
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="appSidebar">
+      <div class="nav-sections" id="navSections">
         <!-- Populated by JS -->
       </div>
+    </aside>
 
-      <!-- INTERACTIVE PANEL -->
-      <div class="interactive-panel" id="interactivePanel" style="display: none;">
-        <div class="panel-header">
-          <h3><span id="panelMethod" class="method-badge"></span> Try it out</h3>
-        </div>
-        <div class="panel-body">
-          <div id="dynamicInputs" style="display:flex;flex-direction:column;gap:12px;"></div>
-          <button class="btn-send" id="btnSend" onclick="executeRequest()">
-            <span>Send Request</span>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
-          </button>
-        </div>
-        <div class="response-area" style="display:none;" id="responseArea">
-          <div class="res-header">
-            <div>Status: <span class="status-code" id="resStatus">-</span></div>
-            <div id="resTime">- ms</div>
+    <!-- MAIN CONTENT -->
+    <main class="main-content" id="mainContent">
+      <div class="top-bar-docs">
+        <button class="sidebar-toggle-btn" onclick="toggleSidebar()">☰ Menu & Endpoints</button>
+        <div class="api-key-container">
+          <div class="api-key-setup" id="apiKeyInputBox">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-muted)"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"></path></svg>
+            <input type="text" id="globalApiKey" placeholder="Paste X-Api-Key here..." oninput="debounceKeyCheck()">
           </div>
-          <pre class="res-body" id="resBody"></pre>
+          <div class="api-status-card" id="apiStatusCard">
+            <!-- Populated by JS -->
+          </div>
         </div>
       </div>
-    </div>
-  </main>
 
-  <div class="toast-container" id="toastContainer"></div>
+      <div class="content-grid">
+        <!-- DOCUMENTATION INFO -->
+        <div class="doc-section">
+          <div id="docSectionContent"></div>
+          
+          <!-- Code Integrations -->
+          <div class="code-snippets" id="codeIntegrationBlock">
+            <div class="code-tabs">
+              <div class="code-tab active" onclick="switchCodeTab('curl')">cURL</div>
+              <div class="code-tab" onclick="switchCodeTab('node')">Node.js</div>
+              <div class="code-tab" onclick="switchCodeTab('php')">PHP</div>
+              <div class="code-tab" onclick="switchCodeTab('python')">Python</div>
+            </div>
+            <pre class="code-content-wrapper active" id="code-curl"><code class="code-content"></code></pre>
+            <pre class="code-content-wrapper" id="code-node"><code class="code-content"></code></pre>
+            <pre class="code-content-wrapper" id="code-php"><code class="code-content"></code></pre>
+            <pre class="code-content-wrapper" id="code-python"><code class="code-content"></code></pre>
+          </div>
+        </div>
+
+        <!-- INTERACTIVE PLAYGROUND -->
+        <div class="interactive-panel" id="interactivePanel" style="display: none;">
+          <div class="panel-header">
+            <h3><span id="panelMethod" class="method-badge"></span> API Console</h3>
+          </div>
+          <div class="panel-body">
+            <div id="dynamicInputs" style="display:flex;flex-direction:column;gap:12px;"></div>
+            <button class="btn-send" id="btnSend" onclick="executeRequest()">Send Request</button>
+          </div>
+          <div class="response-area" style="display:none;" id="responseArea">
+            <div class="res-header">
+              <div>Status: <span class="status-code" id="resStatus">-</span></div>
+              <div id="resTime" style="font-family:Monaco, monospace; color:var(--text-main)">- ms</div>
+            </div>
+            <pre class="res-body" id="resBody"></pre>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
 
   <script>
-    // --- API DEFINITIONS ---
     const API_BASE = window.location.origin;
+    let keyCheckTimeout = null;
+    
+    // Platform Logos Data
+    let PROVIDERS = [];
+
+    async function loadActiveProviders() {
+      try {
+        const res = await fetch('/api/status');
+        const data = await res.json();
+        if (data.success && data.platforms) {
+          PROVIDERS = data.platforms
+            .filter(p => p.status === 'active')
+            .map(p => ({
+              id: p.id,
+              name: p.name,
+              logo: p.logo || ''
+            }));
+        }
+      } catch (e) {
+        console.error('Failed to load active providers:', e);
+      }
+    }
+
+    function getProviderLogo(id) {
+      const p = PROVIDERS.find(x => x.id === id);
+      return p ? p.logo : '';
+    }
+
+    // Toggle global navbar on mobile
+    function toggleGlobalNavbar() {
+      document.getElementById('globalNavLinks').classList.toggle('active');
+      document.getElementById('globalNavCta').classList.toggle('active');
+    }
+    
+    function toggleSidebar() {
+      document.getElementById('appSidebar').classList.toggle('open');
+      document.getElementById('mobileOverlay').classList.toggle('active');
+    }
+    
+    function closeSidebar() {
+      document.getElementById('appSidebar').classList.remove('open');
+      document.getElementById('mobileOverlay').classList.remove('active');
+    }
     
     const endpoints = [
       {
-        category: "Public API",
+        category: "Dramoo Scraper API",
         items: [
-          { id: "api-status", method: "GET", path: "/api/status", name: "Status Platform", desc: "Mendapatkan ringkasan dan daftar semua platform beserta statusnya." },
-          { id: "api-status-id", method: "GET", path: "/api/status/{id}", name: "Detail Platform", desc: "Mendapatkan detail spesifik dari satu platform.", pathParams: [{name: "id", required: true, example: "dramabox"}] },
-          { id: "api-packages", method: "GET", path: "/api/packages", name: "Paket Berlangganan", desc: "Mendapatkan daftar paket harga aktif yang tersedia untuk dibeli." },
-          { id: "health", method: "GET", path: "/health", name: "Health Check", desc: "Mengecek status kesehatan server dan uptime API." }
+          { 
+            id: "api-latest-all", method: "GET", path: "/api/latest", 
+            name: "Latest Drama (Global)", desc: "Mendapatkan daftar drama terbaru dari semua platform yang didukung secara bersamaan.", 
+            needsAuth: true, isGlobal: true, queryParams: [{name: "page", example: "1", desc: "Nomor halaman (1-100)"}] 
+          },
+          { 
+            id: "api-search-all", method: "GET", path: "/api/search", 
+            name: "Search Drama (Global)", desc: "Mencari drama di seluruh platform secara paralel menggunakan kata kunci.", 
+            needsAuth: true, isGlobal: true, queryParams: [{name: "q", required: true, example: "ceo", desc: "Kata kunci pencarian"}, {name: "page", example: "1"}] 
+          },
+          { 
+            id: "api-latest-plat", method: "GET", path: "/api/{platform}/latest", 
+            name: "Latest Drama (Per Platform)", desc: "Mendapatkan daftar drama terbaru dari satu platform spesifik.", 
+            needsAuth: true, 
+            pathParams: [{name: "platform", required: true, example: "netshort", desc: "Pilih platform target (contoh: melolo, netshort, dll)"}], 
+            queryParams: [{name: "page", example: "1", desc: "Nomor halaman"}] 
+          },
+          { 
+            id: "api-search-plat", method: "GET", path: "/api/{platform}/search", 
+            name: "Search Drama (Per Platform)", desc: "Mencari drama spesifik pada satu platform.", 
+            needsAuth: true, 
+            pathParams: [{name: "platform", required: true, example: "melolo", desc: "Platform target"}], 
+            queryParams: [{name: "q", required: true, example: "love"}, {name: "page", example: "1"}] 
+          },
+          { 
+            id: "api-detail", method: "GET", path: "/api/{platform}/detail", 
+            name: "Get Detail & Episodes", desc: "Mendapatkan detail metadata drama beserta daftar episode lengkap.", 
+            needsAuth: true, 
+            pathParams: [{name: "platform", required: true, example: "netshort", desc: "Platform target"}], 
+            queryParams: [{name: "id", required: true, example: "aHR0cHM6Ly9uZXRzaG9ydC5jb20vaWQvZXBpc29kZS9rZW1iYWxpbnlhLXBob2VuaXgtMTkwMzY2NDg4MTAzMjk3NDMzOA", desc: "ID drama (berasal dari API list)"}] 
+          },
+          { 
+            id: "api-stream", method: "GET", path: "/api/{platform}/stream", 
+            name: "Get Video Stream URL", desc: "Mengekstrak URL streaming video asli dari episode tertentu.", 
+            needsAuth: true, 
+            pathParams: [{name: "platform", required: true, example: "netshort"}], 
+            queryParams: [{name: "id", required: true, example: "aHR0cHM6Ly9uZXRzaG9ydC5jb20vaWQvZXBpc29kZS9rZW1iYWxpbnlhLXBob2VuaXgtMTkwMzY2NDg4MTAzMjk3NDMzOA", desc: "ID episode (berasal dari array episodes di get detail)"}] 
+          }
         ]
       },
       {
-        category: "Protected API",
+        category: "System APIs",
         items: [
-          { id: "api-validate", method: "GET", path: "/api/validate", name: "Validasi Key", desc: "Mengecek validitas API Key dan informasi sisa kuota/limit harian.", needsAuth: true },
-          { id: "api-me", method: "GET", path: "/api/me", name: "Profil Akun", desc: "Mendapatkan informasi akun pengguna dan daftar platform yang diizinkan oleh paket saat ini.", needsAuth: true },
-          { id: "api-platforms", method: "GET", path: "/api/platforms", name: "Platform Tersedia", desc: "Mendapatkan daftar platform yang bisa diakses oleh API Key ini, dengan opsi filter.", needsAuth: true, queryParams: [{name: "status", example: "active", desc: "Filter status (active, maintenance)"}, {name: "tag", example: "china", desc: "Filter berdasarkan tag konten"}] }
-        ]
-      },
-      {
-        category: "Scraper API",
-        items: [
-          { id: "scrape-platforms", method: "GET", path: "/scrape/platforms", name: "Daftar Scraper", desc: "Menampilkan daftar platform yang mendukung fitur scraping engine.", needsAuth: true },
-          { id: "scrape-latest", method: "GET", path: "/scrape/latest", name: "Drama Terbaru (Global)", desc: "Mengambil daftar drama terbaru dari semua platform scraper.", needsAuth: true, queryParams: [{name: "page", example: "1", desc: "Nomor halaman"}] },
-          { id: "scrape-latest-plat", method: "GET", path: "/scrape/latest/{platform}", name: "Drama Terbaru (Per Platform)", desc: "Mengambil daftar drama terbaru dari satu platform spesifik.", needsAuth: true, pathParams: [{name: "platform", required: true, example: "dramabox"}], queryParams: [{name: "page", example: "1"}] },
-          { id: "scrape-search", method: "GET", path: "/scrape/search", name: "Cari Drama Global", desc: "Mencari judul drama di seluruh platform scraper sekaligus.", needsAuth: true, queryParams: [{name: "q", required: true, example: "cinta", desc: "Kata kunci pencarian"}, {name: "page", example: "1"}] },
-          { id: "scrape-search-plat", method: "GET", path: "/scrape/search/{platform}", name: "Cari Drama (Per Platform)", desc: "Mencari judul drama pada satu platform spesifik.", needsAuth: true, pathParams: [{name: "platform", required: true, example: "melolo"}], queryParams: [{name: "q", required: true, example: "love"}, {name: "page", example: "1"}] },
-          { id: "scrape-detail", method: "GET", path: "/scrape/detail/{platform}", name: "Detail Drama & Episode", desc: "Mendapatkan detail drama dan daftar URL episode.", needsAuth: true, pathParams: [{name: "platform", required: true, example: "dramabox"}], queryParams: [{name: "url", required: true, example: "https://dramabox.com/drama/1", desc: "URL drama dari hasil pencarian/terbaru"}] },
-          { id: "scrape-stream", method: "GET", path: "/scrape/stream/{platform}", name: "Extract Video Stream", desc: "Mengekstrak URL video streaming langsung (mp4/m3u8) dari halaman episode. Membutuhkan waktu proses lebih lama (headless browser).", needsAuth: true, pathParams: [{name: "platform", required: true, example: "dramabox"}], queryParams: [{name: "url", required: true, example: "https://dramabox.com/ep/1", desc: "URL episode"}] }
+          { id: "sys-platforms", method: "GET", path: "/api/platforms", name: "Available Platforms", desc: "Daftar lengkap platform scraping yang bisa diakses beserta detailnya.", needsAuth: true, showProviders: true },
+          { id: "sys-me", method: "GET", path: "/api/me", name: "Account Profil", desc: "Cek informasi akun, paket, dan sisa limit harian.", needsAuth: true },
+          { id: "sys-status", method: "GET", path: "/api/status", name: "System Status", desc: "Cek kesehatan status layanan server scraper." }
         ]
       }
     ];
 
     let currentEndpoint = null;
 
-    // --- INIT ---
-    window.onload = () => {
+    window.onload = async () => {
+      await loadActiveProviders();
+      
       const savedKey = localStorage.getItem('dramoo_api_key');
-      if (savedKey) document.getElementById('globalApiKey').value = savedKey;
+      if (savedKey) {
+        document.getElementById('globalApiKey').value = savedKey;
+        checkApiKeyStatus(savedKey);
+      }
       
       renderSidebar();
-      // Select first endpoint by default
-      if (endpoints[0].items.length > 0) {
-        selectEndpoint(endpoints[0].items[0]);
-      }
+      if (endpoints[0].items.length > 0) selectEndpoint(endpoints[0].items[0]);
     };
 
-    function saveApiKey() {
-      const val = document.getElementById('globalApiKey').value;
+    function debounceKeyCheck() {
+      const val = document.getElementById('globalApiKey').value.trim();
       localStorage.setItem('dramoo_api_key', val);
+      
+      document.getElementById('apiKeyInputBox').classList.remove('valid', 'invalid');
+      document.getElementById('apiStatusCard').classList.remove('show');
+      
+      clearTimeout(keyCheckTimeout);
+      if (val.length > 10) {
+        keyCheckTimeout = setTimeout(() => {
+          checkApiKeyStatus(val);
+        }, 800);
+      }
     }
 
-    function showToast(msg) {
-      const c = document.getElementById('toastContainer');
-      const t = document.createElement('div');
-      t.className = 'toast'; t.textContent = msg;
-      c.appendChild(t);
-      setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.remove(), 300); }, 3000);
+    async function checkApiKeyStatus(key) {
+      try {
+        const res = await fetch('/api/me', { headers: { 'X-Api-Key': key } });
+        const data = await res.json();
+        
+        const card = document.getElementById('apiStatusCard');
+        const box = document.getElementById('apiKeyInputBox');
+        
+        if (data.success && (data.subscription || data.data)) {
+          box.classList.add('valid');
+          box.classList.remove('invalid');
+          
+          // /api/me returns { user, subscription } OR legacy { data }
+          const sub = data.subscription || data.data;
+          const remaining = sub.daily_limit - sub.daily_used;
+          
+          let expiryText = sub.expires_at;
+          const expDate = new Date(sub.expires_at);
+          const now = new Date();
+          if (expDate > now) {
+            const diffTime = Math.abs(expDate - now);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            expiryText = `${diffDays} Hari Lagi (${expDate.toLocaleDateString('id-ID')})`;
+          }
+          
+          const packageName = (sub.package || sub.package_name || 'N/A').toUpperCase();
+          const totalUsed = sub.total_requests || sub.total_used || 0;
+
+          card.innerHTML = `
+            <div class="status-item">
+              <span class="status-label">Plan / Paket</span>
+              <span class="status-val highlight">${packageName}</span>
+            </div>
+            <div class="status-item">
+              <span class="status-label">Limit Harian (Sisa)</span>
+              <span class="status-val">${remaining.toLocaleString()} / ${sub.daily_limit.toLocaleString()}</span>
+            </div>
+            <div class="status-item">
+              <span class="status-label">Total Akses Digunakan</span>
+              <span class="status-val">${totalUsed.toLocaleString()} Request</span>
+            </div>
+            <div class="status-item">
+              <span class="status-label">Masa Aktif</span>
+              <span class="status-val">${expiryText}</span>
+            </div>
+          `;
+          card.classList.add('show');
+        } else {
+          box.classList.add('invalid');
+          box.classList.remove('valid');
+        }
+        
+        if(currentEndpoint) updateCodeSnippets(currentEndpoint);
+      } catch (e) {
+        console.error(e);
+      }
     }
 
-    // --- UI RENDERING ---
     function renderSidebar() {
       const container = document.getElementById('navSections');
       let html = '';
-      
       endpoints.forEach(section => {
         html += `<div class="nav-group"><div class="nav-group-title">${section.category}</div>`;
         section.items.forEach(item => {
@@ -508,83 +503,172 @@
       }
     }
 
+    function buildSampleUrl(item) {
+      let url = API_BASE + item.path;
+      if (item.pathParams) {
+        item.pathParams.forEach(p => { 
+          const val = document.getElementById(`input_path_${p.name}`)?.value || p.example || `${p.name}`;
+          url = url.replace(`{${p.name}}`, val); 
+        });
+      }
+      if (item.queryParams && item.queryParams.length > 0) {
+        const queryStrings = item.queryParams.map(p => {
+          const val = document.getElementById(`input_query_${p.name}`)?.value || p.example || '';
+          return `${p.name}=${encodeURIComponent(val)}`;
+        });
+        url += '?' + queryStrings.join('&');
+      }
+      return url;
+    }
+
+    function updateCodeSnippets(item) {
+      const url = buildSampleUrl(item);
+      const key = '(your apikey)';
+      const headersStr = item.needsAuth ? `\n  -H "X-Api-Key: ${key}"` : '';
+      
+      const curlCode = `curl -X ${item.method} "${url}"${headersStr}`;
+      document.querySelector('#code-curl .code-content').textContent = curlCode;
+
+      const nodeHeaders = item.needsAuth ? `\n    headers: { 'X-Api-Key': '${key}' }` : '';
+      const nodeCode = `fetch("${url}", {
+  method: "${item.method}"${nodeHeaders}
+})
+  .then(response => response.json())
+  .then(data => console.log(data))
+  .catch(error => console.error('Error:', error));`;
+      document.querySelector('#code-node .code-content').textContent = nodeCode;
+
+      const phpHeaders = item.needsAuth ? `\n    "X-Api-Key: ${key}"` : '';
+      const phpCode = `<?php
+$ch = curl_init();
+curl_setopt($ch, CURLOPT_URL, "${url}");
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "${item.method}");${item.needsAuth ? `\ncurl_setopt($ch, CURLOPT_HTTPHEADER, array(${phpHeaders}\n));` : ''}
+
+$response = curl_exec($ch);
+curl_close($ch);
+
+echo $response;
+?>`;
+      document.querySelector('#code-php .code-content').textContent = phpCode;
+
+      const pyHeaders = item.needsAuth ? `, headers={'X-Api-Key': '${key}'}` : '';
+      const pyCode = `import requests
+
+url = "${url}"
+response = requests.request("${item.method}", url${pyHeaders})
+
+print(response.json())`;
+      document.querySelector('#code-python .code-content').textContent = pyCode;
+    }
+
+    function switchCodeTab(lang) {
+      document.querySelectorAll('.code-tab').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.code-content-wrapper').forEach(el => el.classList.remove('active'));
+      
+      event.target.classList.add('active');
+      document.getElementById(`code-${lang}`).classList.add('active');
+    }
+
+    function updateSnippetRealtime() {
+      if(currentEndpoint) updateCodeSnippets(currentEndpoint);
+      updateDynamicLogo();
+    }
+    
+    function updateDynamicLogo() {
+      if(!currentEndpoint) return;
+      const titleEl = document.getElementById('endpointTitle');
+      if (currentEndpoint.pathParams && currentEndpoint.pathParams.some(p => p.name === 'platform')) {
+        const platInput = document.getElementById('input_path_platform');
+        if (platInput) {
+          const val = platInput.value.trim().toLowerCase();
+          const logoUrl = getProviderLogo(val);
+          if (logoUrl) {
+            titleEl.innerHTML = `<img src="${logoUrl}" alt="${val}"> ${currentEndpoint.name}`;
+          } else {
+            titleEl.textContent = currentEndpoint.name;
+          }
+        }
+      }
+    }
+
     function selectEndpoint(item) {
       currentEndpoint = item;
       
-      // Update sidebar active state
       document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
       const activeNav = document.getElementById(`nav-${item.id}`);
       if (activeNav) activeNav.classList.add('active');
 
-      // Close sidebar on mobile after selection
-      if (window.innerWidth <= 768) {
-        document.querySelector('.sidebar').classList.remove('open');
-        document.querySelector('.mobile-overlay').classList.remove('open');
+      closeSidebar();
+
+      // Render Dynamic Header (Logo if platform is specific)
+      let headerImg = '';
+      if (item.pathParams && item.pathParams.some(p => p.name === 'platform') && item.pathParams[0].example) {
+        const logoUrl = getProviderLogo(item.pathParams[0].example.toLowerCase());
+        if(logoUrl) headerImg = `<img src="${logoUrl}" alt="${item.pathParams[0].example}"> `;
+      }
+      if (item.isGlobal || item.showProviders) {
+        headerImg = `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--accent-primary)" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg> `;
       }
 
-      // Render Docs
       let html = `
         <div class="endpoint-header">
-          <h1>${item.name}</h1>
+          <h1 id="endpointTitle">${headerImg}${item.name}</h1>
           <p>${item.desc}</p>
         </div>
         
-        <div class="endpoint-url">
-          <span class="method-badge method-${item.method}">${item.method}</span>
-          <span style="color:var(--text-main)">${item.path}</span>
+        <div class="endpoint-url-box">
+          <span class="method-badge method-${item.method}" style="font-size:12px; padding:4px 10px">${item.method}</span>
+          <span>${item.path}</span>
         </div>
       `;
 
       if (item.needsAuth) {
-        html += `<div class="auth-badge"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg> Requires X-Api-Key Header</div>`;
+        html += `<div style="margin-top:16px"><div class="auth-badge">Requires X-Api-Key Header</div></div>`;
       }
 
-      // Path Params
-      if (item.pathParams && item.pathParams.length > 0) {
-        html += `
-          <div>
-            <h3 style="font-size:1rem;margin-bottom:12px;border-bottom:1px solid var(--border-color);padding-bottom:8px">Path Parameters</h3>
-            <div class="table-container">
-              <table class="params-table">
-                <tbody>
-                  ${item.pathParams.map(p => `
-                    <tr>
-                      <td class="param-name">${p.name}${p.required ? '<span class="param-req">*</span>' : ''}</td>
-                      <td><div class="param-desc">${p.desc || ''}</div></td>
-                    </tr>
-                  `).join('')}
-                </tbody>
-              </table>
+      const buildParamsTable = (params, title) => {
+        if (!params || params.length === 0) return '';
+        return `
+          <div class="params-section" style="margin-top:24px">
+            <h3>${title}</h3>
+            <div class="params-list">
+              ${params.map(p => `
+                <div class="param-item">
+                  <div class="param-name">${p.name}${p.required ? '<span class="param-req">Required</span>' : ''}</div>
+                  <div class="param-desc">${p.desc || ''}</div>
+                  ${p.example ? `<div class="param-example">Example: ${p.example}</div>` : ''}
+                </div>
+              `).join('')}
             </div>
           </div>
         `;
-      }
+      };
 
-      // Query Params
-      if (item.queryParams && item.queryParams.length > 0) {
-        html += `
-          <div>
-            <h3 style="font-size:1rem;margin-bottom:12px;border-bottom:1px solid var(--border-color);padding-bottom:8px">Query Parameters</h3>
-            <div class="table-container">
-              <table class="params-table">
-                <tbody>
-                  ${item.queryParams.map(p => `
-                    <tr>
-                      <td class="param-name">${p.name}${p.required ? '<span class="param-req">*</span>' : ''}</td>
-                      <td><div class="param-desc">${p.desc || ''}</div></td>
-                    </tr>
-                  `).join('')}
-                </tbody>
-              </table>
+      html += buildParamsTable(item.pathParams, "Path Parameters");
+      html += buildParamsTable(item.queryParams, "Query Parameters");
+
+      // Render Providers Grid if applicable
+      if (item.isGlobal || item.showProviders) {
+        let gridHtml = `<div class="params-section" style="margin-top:24px">
+          <h3>🌐 ${PROVIDERS.length} Supported Providers</h3>
+          <div class="providers-grid">`;
+        PROVIDERS.forEach(p => {
+          gridHtml += `
+            <div class="provider-card">
+              <img src="${p.logo}" alt="${p.name}">
+              <span>${p.name}</span>
             </div>
-          </div>
-        `;
+          `;
+        });
+        gridHtml += `</div></div>`;
+        html += gridHtml;
       }
 
-      document.getElementById('docSection').innerHTML = html;
-
-      // Render Try It Out Panel
-      document.getElementById('interactivePanel').style.display = 'block';
+      document.getElementById('docSectionContent').innerHTML = html;
+      
+      // Render Interactive Panel
+      document.getElementById('interactivePanel').style.display = 'flex';
       document.getElementById('panelMethod').className = `method-badge method-${item.method}`;
       document.getElementById('panelMethod').textContent = item.method;
       
@@ -593,8 +677,8 @@
         item.pathParams.forEach(p => {
           inputsHtml += `
             <div class="input-group">
-              <label>PATH: ${p.name} ${p.required?'<span style="color:var(--accent-red)">*</span>':''}</label>
-              <input type="text" id="input_path_${p.name}" placeholder="${p.example || ''}">
+              <label>PATH: ${p.name} ${p.required?'*':''}</label>
+              <input type="text" id="input_path_${p.name}" value="${p.example || ''}" placeholder="${p.example || ''}" oninput="updateSnippetRealtime()">
             </div>
           `;
         });
@@ -603,139 +687,79 @@
         item.queryParams.forEach(p => {
           inputsHtml += `
             <div class="input-group">
-              <label>QUERY: ${p.name} ${p.required?'<span style="color:var(--accent-red)">*</span>':''}</label>
-              <input type="text" id="input_query_${p.name}" placeholder="${p.example || ''}">
+              <label>QUERY: ${p.name} ${p.required?'*':''}</label>
+              <input type="text" id="input_query_${p.name}" value="${p.example || ''}" placeholder="${p.example || ''}" oninput="updateSnippetRealtime()">
             </div>
           `;
         });
       }
       
-      if (inputsHtml === '') {
-        inputsHtml = '<div style="color:var(--text-muted);font-size:0.85rem;text-align:center;padding:10px 0;">No parameters required</div>';
-      }
+      if (inputsHtml === '') inputsHtml = '<div style="color:var(--text-muted);font-size:13px;text-align:center;padding:20px 0;">No parameters required for this request</div>';
 
       document.getElementById('dynamicInputs').innerHTML = inputsHtml;
       document.getElementById('responseArea').style.display = 'none';
+
+      // Update Snippets after inputs are rendered
+      updateCodeSnippets(item);
     }
 
-    // --- EXECUTE REQUEST ---
     async function executeRequest() {
       if (!currentEndpoint) return;
       const btn = document.getElementById('btnSend');
-      btn.innerHTML = '<div class="spinner"></div><span>Sending...</span>';
+      btn.textContent = 'Processing...';
       btn.disabled = true;
 
-      // Build URL
-      let url = API_BASE + currentEndpoint.path;
+      let url = buildSampleUrl(currentEndpoint);
       
-      // Replace Path Params
-      if (currentEndpoint.pathParams) {
-        currentEndpoint.pathParams.forEach(p => {
-          const val = document.getElementById(`input_path_${p.name}`).value.trim();
-          if (p.required && !val) {
-            showToast(`Path parameter ${p.name} is required!`);
-            btn.innerHTML = '<span>Send Request</span>'; btn.disabled = false;
-            throw new Error('Missing param');
-          }
-          url = url.replace(`{${p.name}}`, encodeURIComponent(val));
-        });
-      }
-
-      // Add Query Params
-      if (currentEndpoint.queryParams) {
-        const urlObj = new URL(url);
-        currentEndpoint.queryParams.forEach(p => {
-          const val = document.getElementById(`input_query_${p.name}`).value.trim();
-          if (p.required && !val) {
-            showToast(`Query parameter ${p.name} is required!`);
-            btn.innerHTML = '<span>Send Request</span>'; btn.disabled = false;
-            throw new Error('Missing param');
-          }
-          if (val) urlObj.searchParams.append(p.name, val);
-        });
-        url = urlObj.toString();
-      }
-
-      // Headers
-      const headers = { 'Content-Type': 'application/json' };
-      if (currentEndpoint.needsAuth) {
-        const apiKey = document.getElementById('globalApiKey').value.trim();
-        if (!apiKey) {
-          showToast('X-Api-Key is missing. Please enter it in the top bar.');
-          btn.innerHTML = '<span>Send Request</span>'; btn.disabled = false;
-          return;
-        }
-        headers['X-Api-Key'] = apiKey;
-      }
-
-      const startTime = performance.now();
       try {
-        const response = await fetch(url, {
-          method: currentEndpoint.method,
-          headers: headers
-        });
+        const headers = { 'Content-Type': 'application/json' };
+        if (currentEndpoint.needsAuth) {
+          const apiKey = document.getElementById('globalApiKey').value.trim();
+          if (!apiKey) throw new Error('X-Api-Key is missing. Please enter it at the top bar.');
+          headers['X-Api-Key'] = apiKey;
+        }
+
+        const startTime = performance.now();
+        const response = await fetch(url, { method: currentEndpoint.method, headers: headers });
         const endTime = performance.now();
         
-        // Show response area
-        const resArea = document.getElementById('responseArea');
-        resArea.style.display = 'block';
-        
-        // Status code
+        document.getElementById('responseArea').style.display = 'flex';
         const statusEl = document.getElementById('resStatus');
         statusEl.textContent = `${response.status} ${response.statusText}`;
         statusEl.className = `status-code ${response.ok ? 'status-200' : (response.status >= 500 ? 'status-5xx' : 'status-4xx')}`;
-        
-        // Time
         document.getElementById('resTime').textContent = `${Math.round(endTime - startTime)} ms`;
 
-        // Body
         let bodyText = await response.text();
         try {
-          // Format JSON beautifully
           const json = JSON.parse(bodyText);
-          const formatted = JSON.stringify(json, null, 2);
-          document.getElementById('resBody').innerHTML = syntaxHighlight(formatted);
+          document.getElementById('resBody').innerHTML = syntaxHighlight(JSON.stringify(json, null, 2));
         } catch(e) {
-          // Fallback to text
           document.getElementById('resBody').textContent = bodyText;
         }
       } catch (err) {
-        document.getElementById('responseArea').style.display = 'block';
-        document.getElementById('resStatus').textContent = 'Error';
-        document.getElementById('resStatus').className = 'status-code status-5xx';
-        document.getElementById('resTime').textContent = '- ms';
-        document.getElementById('resBody').textContent = err.message || 'Network Error / CORS Issue';
+        alert(err.message);
+      } finally {
+        btn.textContent = 'Send Request';
+        btn.disabled = false;
+        
+        const key = document.getElementById('globalApiKey').value.trim();
+        if(key.length > 10) checkApiKeyStatus(key);
       }
-
-      btn.innerHTML = '<span>Send Request</span>';
-      btn.disabled = false;
     }
 
-    // --- JSON HIGHLIGHTER ---
     function syntaxHighlight(json) {
       json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-      return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+      return json.replace(/("(\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
         var cls = 'json-number';
         if (/^"/.test(match)) {
           if (/:$/.test(match)) {
             cls = 'json-key';
-            // remove quotes from keys for cleaner look
             match = match.replace(/"/g, '');
-          } else {
-            cls = 'json-string';
-          }
-        } else if (/true|false/.test(match)) {
-          cls = 'json-boolean';
-        } else if (/null/.test(match)) {
-          cls = 'json-null';
-        }
+          } else { cls = 'json-string'; }
+        } else if (/true|false/.test(match)) { cls = 'json-boolean'; } 
+        else if (/null/.test(match)) { cls = 'json-null'; }
         return '<span class="' + cls + '">' + match + '</span>';
       });
-    }
-
-    function toggleMobileMenu() {
-      document.querySelector('.sidebar').classList.toggle('open');
-      document.querySelector('.mobile-overlay').classList.toggle('open');
     }
   </script>
 </body>

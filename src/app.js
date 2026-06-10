@@ -23,6 +23,16 @@ const PORT = process.env.PORT || 3000;
 app.set('trust proxy', 1);
 app.use(helmet({
   crossOriginResourcePolicy: { policy: 'cross-origin' },
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "'unsafe-inline'"],
+      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+      fontSrc: ["'self'", "https://fonts.gstatic.com"],
+      imgSrc: ["'self'", "data:", "https://*"],
+      connectSrc: ["'self'", "https://*"]
+    },
+  },
 }));
 
 // ─── CORS ────────────────────────────────────────────────────────────────────
@@ -73,32 +83,11 @@ app.use('/api', scraperRoutes); // Endpoint kini tergabung di dalam /api agar el
 
 // ─── ROOT ────────────────────────────────────────────────────────────────────
 app.get('/', (req, res) => {
-  res.json({
-    name: 'Dramoo API',
-    version: '1.0.0',
-    description: 'API Aggregator Platform Drama Pendek Asia',
-    docs: `${process.env.APP_URL || 'https://api.wmxservices.store'}/api/status`,
-    endpoints: {
-      status: 'GET /api/status',
-      platform_detail: 'GET /api/status/:id',
-      packages: 'GET /api/packages',
-      validate: 'GET /api/validate (requires X-Api-Key)',
-      me: 'GET /api/me (requires X-Api-Key)',
-      platforms: 'GET /api/platforms (requires X-Api-Key)',
-    },
-    media_endpoints: {
-      platforms:  'GET /api/platforms (requires X-Api-Key)',
-      latest_all: 'GET /api/latest?page=1 (requires X-Api-Key)',
-      latest:     'GET /api/:platform/latest?page=1 (requires X-Api-Key)',
-      search_all: 'GET /api/search?q=judul (requires X-Api-Key)',
-      search:     'GET /api/:platform/search?q=judul (requires X-Api-Key)',
-      detail:     'GET /api/:platform/detail?url=https://... (requires X-Api-Key)',
-      stream:     'GET /api/:platform/stream?url=https://... (requires X-Api-Key)',
-      proxy:      'GET /api/proxy?url=https://... (streaming video)',
-    },
-    supported_platforms: ['melolo', 'dramawave', 'pinedrama', 'dramabox'],
-    buy: 'https://t.me/dramoobot',
-  });
+  res.sendFile(path.join(__dirname, '../public/index.html'));
+});
+
+app.get('/docs.html', (req, res) => {
+  res.redirect('/docs/');
 });
 
 // ─── 404 ─────────────────────────────────────────────────────────────────────
@@ -106,7 +95,7 @@ app.use('*', (req, res) => {
   res.status(404).json({
     success: false,
     error: `Endpoint '${req.method} ${req.originalUrl}' tidak ditemukan`,
-    docs: 'https://dramoo.id/#api-docs',
+    docs: 'https://api.wmxservices.store/#api-docs',
   });
 });
 

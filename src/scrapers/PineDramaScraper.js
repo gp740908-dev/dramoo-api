@@ -55,14 +55,13 @@ class PineDramaScraper extends BaseScraper {
 
   async getLatest(page = 1) {
     return this.withRetry(async () => {
-      // PineDrama usually uses /dramas or root for latest.
-      const paths = [`/`, `/recently-added/page/${page}/`, `/drama/page/${page}/`];
+      const paths = [`/`, `/recently-added/page/${page}/`, `/latest/page/${page}/`];
       let $;
 
       for (const p of paths) {
         try {
           $ = await this._fetchHtml(p);
-          const count = $('a[href*="/dramas/"]').length;
+          const count = $('a[href*="/dramas/"] img').length;
           if (count > 0) break;
         } catch { /* coba path lain */ }
       }
@@ -70,9 +69,19 @@ class PineDramaScraper extends BaseScraper {
       if (!$) throw new Error('Semua path gagal untuk getLatest');
 
       const items = [];
-      $('a[href*="/dramas/"]').each((_, el) => {
-        const d = this._parseDramaItem($, el);
-        if (d.title && d.url && d.url.includes('/dramas/')) items.push(this.formatDrama(d));
+      // Fix: iterate over images inside drama links (img alt = real title, img src = thumbnail)
+      $('a[href*="/dramas/"] img').each((_, imgEl) => {
+        const imgLink = $(imgEl).closest('a[href*="/dramas/"]');
+        const href = imgLink.attr('href') || imgLink.attr('aria-label') || '';
+        const title = this.cleanText($(imgEl).attr('alt') || '');
+        const thumbnail = this.toAbsoluteUrl(
+          $(imgEl).attr('src') || $(imgEl).attr('data-src') || $(imgEl).attr('data-lazy-src')
+        );
+        const url = this.toAbsoluteUrl(imgLink.attr('href') || '');
+
+        if (title && url && url.includes('/dramas/') && !title.toLowerCase().includes('tonton')) {
+          items.push(this.formatDrama({ title, url, thumbnail, episodes: null, rating: null }));
+        }
       });
 
       // Hapus duplikat berdasarkan URL
@@ -92,9 +101,16 @@ class PineDramaScraper extends BaseScraper {
       const $ = await this._fetchHtml(`/id/search?q=${encodeURIComponent(query)}`);
 
       const items = [];
-      $('a[href*="/dramas/"]').each((_, el) => {
-        const d = this._parseDramaItem($, el);
-        if (d.title && d.url && d.url.includes('/dramas/')) items.push(this.formatDrama(d));
+      $('a[href*="/dramas/"] img').each((_, imgEl) => {
+        const imgLink = $(imgEl).closest('a[href*="/dramas/"]');
+        const title = this.cleanText($(imgEl).attr('alt') || '');
+        const thumbnail = this.toAbsoluteUrl(
+          $(imgEl).attr('src') || $(imgEl).attr('data-src') || $(imgEl).attr('data-lazy-src')
+        );
+        const url = this.toAbsoluteUrl(imgLink.attr('href') || '');
+        if (title && url && url.includes('/dramas/') && !title.toLowerCase().includes('tonton')) {
+          items.push(this.formatDrama({ title, url, thumbnail, episodes: null, rating: null }));
+        }
       });
 
       const uniqueItems = Array.from(new Map(items.map(item => [item.url, item])).values());

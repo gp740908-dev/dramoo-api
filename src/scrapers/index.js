@@ -7,6 +7,10 @@ const DramaWaveScraper = require('./DramaWaveScraper');
 const PineDramaScraper = require('./PineDramaScraper');
 const DramaBoxScraper  = require('./DramaBoxScraper');
 
+const NetShortScraper  = require('./NetShortScraper');
+const KlikFilmScraper  = require('./KlikFilmScraper');
+const ReelShortScraper = require('./ReelShortScraper');
+
 // ─── Registry ────────────────────────────────────────────────────────────────
 
 const SCRAPERS = {
@@ -14,6 +18,9 @@ const SCRAPERS = {
   dramawave: () => new DramaWaveScraper(),
   pinedrama: () => new PineDramaScraper(),
   dramabox:  () => new DramaBoxScraper(),
+  netshort:  () => new NetShortScraper(),
+  klikfilm:  () => new KlikFilmScraper(),
+  reelshort: () => new ReelShortScraper(),
 };
 
 const PLATFORM_INFO = {
@@ -21,6 +28,9 @@ const PLATFORM_INFO = {
   dramawave: { name: 'DramaWave', url: 'https://dramawave.io',     tool: 'playwright' },
   pinedrama: { name: 'PineDrama', url: 'https://pinedrama.com',    tool: 'puppeteer' },
   dramabox:  { name: 'DramaBox',  url: 'https://www.dramabox.com', tool: 'puppeteer' },
+  netshort:  { name: 'NetShort',  url: 'https://netshort.com',     tool: 'puppeteer' },
+  klikfilm:  { name: 'KlikFilm',  url: 'https://klikfilm.com',     tool: 'puppeteer' },
+  reelshort: { name: 'ReelShort', url: 'https://www.reelshort.com',tool: 'playwright' },
 };
 
 // ─── Cache sederhana in-memory (TTL 10 menit) ────────────────────────────────

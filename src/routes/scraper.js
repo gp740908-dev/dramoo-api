@@ -11,7 +11,7 @@ const { requireApiKey, trackUsage } = require('../middleware/auth');
 
 function validatePlatform(req, res, next) {
   const { platform } = req.params;
-  const available = ['melolo', 'dramawave', 'pinedrama', 'dramabox'];
+  const available = scraper.listPlatforms().map(p => p.id);
 
   if (platform && !available.includes(platform)) {
     return res.status(400).json({
@@ -127,19 +127,44 @@ router.get('/:platform/search', requireApiKey, trackUsage, validatePlatform, asy
  */
 router.get('/:platform/detail', requireApiKey, trackUsage, validatePlatform, async (req, res) => {
   const { platform } = req.params;
-  const { url }      = req.query;
+  let { url, id }    = req.query;
 
-  if (!url) {
-    return res.status(400).json({ success: false, error: 'Parameter ?url wajib diisi' });
+  if (!url && !id) {
+    return res.status(400).json({ success: false, error: 'Parameter ?id (atau ?url) wajib diisi' });
+  }
+
+  if (id && !url) {
+    try {
+      url = Buffer.from(id, 'base64url').toString('utf8');
+    } catch(e) {
+      return res.status(400).json({ success: false, error: 'Format id tidak valid' });
+    }
   }
 
   // Validasi URL sederhana
-  if (!url.startsWith('http')) {
-    return res.status(400).json({ success: false, error: 'URL harus dimulai dengan http/https' });
+  if (!url || !url.startsWith('http')) {
+    return res.status(400).json({ success: false, error: 'ID/URL tidak valid' });
   }
 
   try {
     const result = await scraper.getDetail(platform, url);
+    
+    // Inject 'id' into episodes array automatically for developer convenience
+    const injectId = (ep) => {
+      if (ep.url && !ep.id) ep.id = Buffer.from(ep.url).toString('base64url');
+      return ep;
+    };
+
+    if (result.episode_list && Array.isArray(result.episode_list)) {
+      result.episode_list = result.episode_list.map(injectId);
+    }
+    if (result.data && result.data.episodes && Array.isArray(result.data.episodes)) {
+      result.data.episodes = result.data.episodes.map(injectId);
+    }
+    if (result.episodes && Array.isArray(result.episodes)) {
+      result.episodes = result.episodes.map(injectId);
+    }
+
     res.json(result);
   } catch (err) {
     console.error(`[Scraper] getDetail(${platform}) error:`, err);
@@ -159,13 +184,22 @@ router.get('/:platform/detail', requireApiKey, trackUsage, validatePlatform, asy
  */
 router.get('/:platform/stream', requireApiKey, trackUsage, validatePlatform, async (req, res) => {
   const { platform } = req.params;
-  const { url }      = req.query;
+  let { url, id }    = req.query;
 
-  if (!url) {
-    return res.status(400).json({ success: false, error: 'Parameter ?url wajib diisi' });
+  if (!url && !id) {
+    return res.status(400).json({ success: false, error: 'Parameter ?id (atau ?url) wajib diisi' });
   }
-  if (!url.startsWith('http')) {
-    return res.status(400).json({ success: false, error: 'URL harus dimulai dengan http/https' });
+
+  if (id && !url) {
+    try {
+      url = Buffer.from(id, 'base64url').toString('utf8');
+    } catch(e) {
+      return res.status(400).json({ success: false, error: 'Format id tidak valid' });
+    }
+  }
+
+  if (!url || !url.startsWith('http')) {
+    return res.status(400).json({ success: false, error: 'ID/URL tidak valid' });
   }
 
   // Set timeout header agar tidak terkena proxy timeout

@@ -1,0 +1,37 @@
+[
+  {
+    "url": "https://klikfilm.com/v3/mobile/",
+    "status": 200,
+    "bodySnippet": "<!DOCTYPE html>\n<html>\n<head>\n<title>KlikFilm </title> \n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no\">\n<meta name=\"description\" content=\"KlikFilm adalah layanan streaming movie yang memberikan pengalaman menonton ratusan film Box Office Indonesia. Nonton seribuan film: Indonesia, Hollywood, Korea, Mandarin, Thailand di HP Anda.\"> \n<!--CSS <link rel=\"shortcut icon\" href=\"data:image/x-icon;,\" type=\"image/x-icon\"> -->\n<link rel=\"stylesheet\" t"
+  },
+  {
+    "url": "https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap",
+    "status": 200,
+    "bodySnippet": "/* devanagari */\n@font-face {\n  font-family: 'Poppins';\n  font-style: italic;\n  font-weight: 100;\n  font-display: swap;\n  src: url(https://fonts.gstatic.com/s/poppins/v24/pxiAyp8kv8JHgFVrJJLmE0tDMPKhSkFEkm8.woff2) format('woff2');\n  unicode-range: U+0900-097F, U+1CD0-1CF9, U+200C-200D, U+20A8, U+20B9, U+20F0, U+25CC, U+A830-A839, U+A8E0-A8FF, U+11B00-11B09;\n}\n/* latin-ext */\n@font-face {\n  font-family: 'Poppins';\n  font-style: italic;\n  font-weight: 100;\n  font-display: swap;\n  src: url(https://"
+  },
+  {
+    "url": "https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/fonts/fontawesome-webfont.woff2?v=4.5.0",
+    "status": 200,
+    "bodySnippet": "wOF2\u0000\u0001\u0000\u0000\u0000\u0001\u0004@\u0000\u000e\u0000\u0000\u0000\u0002*�\u0000\u0001\u0003�\u0000\u0004\u0001\u0006\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000?FFTM\u001c\u001a \u0006`\u0000�r\u0011\b\n��\u001c��5\u00016\u0002$\u0003�\n\u000b�\u0010\u0000\u0004 \u0005�\b\u0007� ?webf\u0006[�����@֌\u0017�nC��˜�t\u0001TL�ɡ�f\u0005��t\u001d��Ȱq\u0000��5����?=i�l�ґ\\�vl �\u0003T���b\u0016�\u0015� �1\u0007fú�7�T�Q�\n��D\u0013;:�Ю\u00121�l׾jv��e�\u0007��n�\u000fE��\u0007ߠk5>�d\u000f7Q�l�Ba��\n�u�x].������W�C����$�8\u0014v#��y`��F\u0015\u001f1aM�8��諠��w�=|'є�0��T|��2/\u001c�M�%�b\u0012� �tY$!�ʐ���5cb\u0013̚���(\u000b&�-A/mY�\f\u001d����/y�\u0007o\\���\u0007����Z=\u001d�\f��5c�k�_�n3�㌾�(WɃ������\u0017�Nag+\u0006�\u0005��O樴R�'���5���=?����m\u0017Ω�L���\f�\u001e:�ދ*�_V�\u0006�\u0017�\u0018\u0003����z+zc�1`\b�Q#j�\u001e�/�Z0��\u0011-��F�\u0012i�b\u0005F\"2�<EEŨ\u0013�;��\"u?ќ����\u0014\u000e\u001a��RفZ�HR�\u001dD���x�Y,\r5"
+  },
+  {
+    "url": "https://klikfilm.com/v3/mobile/ajax/setEME?eme=",
+    "status": 200,
+    "bodySnippet": "success"
+  },
+  {
+    "url": "https://klikfilm.com/v3/mobile/ajax/jsonTrend",
+    "status": 200,
+    "bodySnippet": "{\"general\":{\"nextCategory\":132},\"total\":10,\"video\":[{\"id\":20,\"series\":1,\"access\":\"SVOD\",\"title\":\"Bumi Manusi...\",\"genre\":\"Comedy\",\"rating\":\"4.0\",\"subCategory\":132,\"thumbnail\":{\"120x90\":\"https:\\/\\/posters.cdn.klikfilm.net\\/150_214\\/bumi_manusia_extended_main_rev_150_214.webp\",\"320x180\":\"https:\\/\\/posters.cdn.klikfilm.net\\/380_543\\/bumi_manusia_extended_main_rev_600_857.webp\"}},{\"id\":5559,\"series\":0,\"access\":\"SVOD\",\"title\":\"Koridor\",\"genre\":\"Drama\",\"rating\":\"4.0\",\"subCategory\":49,\"thumbnail\":{\"120"
+  },
+  {
+    "url": "https://klikfilm.com/v3/mobile/ajax/jsonrottentomatoes",
+    "status": 200,
+    "bodySnippet": "{\"status\":\"error\"}"
+  },
+  {
+    "url": "https://klikfilm.com/v3/mobile/ajax/jsonCategoryVideo",
+    "status": 200,
+    "bodySnippet": "{\"general\":{\"nextCategory\":14},\"total\":10,\"video\":[{\"id\":3166,\"access\":\"SVOD\",\"title\":\"KH. Abdul W...\",\"genre\":\"Sang Kyai\",\"rating\":\"4.0\",\"subCategory\":51,\"thumbnail\":{\"120x90\":\"https:\\/\\/posters.cdn.klikfilm.net\\/150_214\\/3131_150_214.jpg\",\"320x180\":\"https:\\/\\/posters.cdn.klikfilm.net\\/380_543\\/3131_380_543.jpg\"}},{\"id\":3165,\"access\":\"SVOD\",\"title\":\"KH. Ali Mak...\",\"genre\":\"Sang Kyai\",\"rating\":\"4.0\",\"subCategory\":51,\"thumbnail\":{\"120x90\":\"https:\\/\\/posters.cdn.klikfilm.net\\/150_214\\/3130_150_21"
+  }
+]

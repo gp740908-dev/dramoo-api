@@ -1,0 +1,458 @@
+<!DOCTYPE html><html><head>
+<title>KlikFilm </title> 
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="KlikFilm adalah layanan streaming movie yang memberikan pengalaman menonton ratusan film Box Office Indonesia.">
+<!--CSS <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon"> -->
+<link rel="stylesheet" type="text/css" href="https://posters.cdn.klikfilm.net/frontend_assets/v3/mobile/assets/css/based.css">
+<link rel="stylesheet" type="text/css" href="https://posters.cdn.klikfilm.net/frontend_assets/mobile/css/icon.css">
+<link rel="stylesheet" type="text/css" href="https://posters.cdn.klikfilm.net/frontend_assets/v3/mobile/assets/css/help.css">
+<link rel="stylesheet" type="text/css" href="https://posters.cdn.klikfilm.net/frontend_assets/mobile/css/card.css">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<!--JAVASCRIPT-->
+<script type="text/javascript" src="https://posters.cdn.klikfilm.net/frontend_assets/mobile/javascript/jquery.js"></script>
+<script type="text/javascript" src="https://posters.cdn.klikfilm.net/frontend_assets/mobile/javascript/sprintf.min.js"></script>
+<script type="text/javascript" src="https://posters.cdn.klikfilm.net/frontend_assets/v3/mobile/assets/javascript/no-ajax.js"></script> <script type="text/javascript" src="https://posters.cdn.klikfilm.net/frontend_assets/mobile/javascript/function.js"></script>
+<script type="text/javascript" src="https://posters.cdn.klikfilm.net/frontend_assets/mobile/javascript/poster_screen.js"></script>
+<style>
+#klik_header_login .icon {
+
+background-image: url(https://posters.cdn.klikfilm.net/frontend_theme/black/mobile-logo-home-sd-white.png);
+background-size: 150px 60px;
+background-repeat:no-repeat;
+width: 160px;
+  height: 80px;
+
+
+}
+
+</style>
+<script type="text/javascript" src="https://posters.cdn.klikfilm.net/frontend_assets/mobile/assets/js/shaka-player.compiled.js"></script>
+
+<script type="text/javascript">var BASE_URL = "https://klikfilm.com/v3/mobile/";</script>
+
+	<!-- to get eme-->
+	<script>
+var isDetected=!1;function sendEME(e){var t=new XMLHttpRequest;t.open("GET",BASE_URL+"ajax/setEME?eme="+e,!0),t.send(null);var r="";return t.onreadystatechange=function(){if(4!=t.readyState||200!=t.status)return"error";r=t.responseText},r}function checkEME(){shaka.polyfill.installAll(),shaka.Player.isBrowserSupported()?shaka.Player.probeSupport().then(function(e){for(var t in e.drm){if(null!==e.drm[t]&&"org.w3.clearkey"!=t)isDetected=!0,result=sendEME(t),if(callbackUri !== undefined) window.location=callbackUri}0==isDetected&&(result=sendEME(""))}):result=sendEME("")}checkEME();	
+	</script>
+	
+</head>
+
+<body><!--POPUP START-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link rel="preconnect" href="https://m.cdn.klikfilm.net" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap" rel="stylesheet">
+
+<script>
+
+function hamburger_menu3(){
+if(!$("#hamburger_menu").is(':visible')){
+    //ditampilai
+   
+    $('#klik_header').css('opacity','0');
+    $('#klik_header').css('z-index','48');
+    $('#hamburger_icon').show();//css('opacity', '1');
+    $("#hamburger_menu").slideDown('fast');
+    //$("#hamburger_icon").removeClass('icn_hamburger');
+	$("#hamburger_icon").removeClass('icn_burger');
+    $("#hamburger_icon").addClass('icn_x');
+}else{
+    $('#klik_header').css('opacity', '1');
+    
+    $('#klik_header').css('z-index','50');
+    $("#hamburger_menu").slideUp('fast');
+    $("#hamburger_icon").removeClass('icn_x');
+    $("#hamburger_icon").addClass('icn_burger');
+}
+}
+</script>
+<span id="popupbox" class="hidden">
+	<div class="popup_close" onclick="open_popup('0');"></div>
+	<div id="popup_cvs" class="popup_cvs hidden">
+		<div class="pc_head bg_button">
+			<span id="pc_head_title"></span>
+			<div class="pch_close right icn icn_x pointer " onclick="open_popup('0');"></div>
+		</div>
+		<div id="pc_body" class="pc_body"></div>
+
+		
+	</div>
+	
+</span>
+
+
+<!--POPUP END-->
+
+
+<!--POPUP COLOR START-->
+<span id="popupcolor" class="popup_color hidden">
+			<div onclick="open_popupcolor('0');"></div>
+			<div>
+				<div></div>
+			</div>
+		</span>
+<!--POPUP COLOR END-->
+
+
+<link rel="stylesheet" type="text/css" href="https://klikfilm.com/v3/mobile/file/2026-06-10/css2026-06-10-19.css"><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+
+<!--ALERT-->
+<div id="alert_box" class="alert slow">
+<div id="alert_box_text" class="alert_info" onclick="alert_open('0', '');"></div>
+</div>
+
+
+<!--HAMBURGER MENU START-->
+<div id="hamburger_menu" class="hidden">
+<div id="klik_header2">
+        <div class="header_icon left">
+	<a href="https://klikfilm.com/v3/mobile/search" title="search"><i class="fa fa-search" style="font-size:25px;margin-top:8px;padding-left:5px;color: var(--coloricon);" aria-hidden="true"></i></a>	
+            </div>
+        <div class="header_icon right" onclick="hamburger_menu3();" style="margin-left:-17px;">
+            <div class="icon slow  icn_x2 icn_theme"></div>
+        </div>
+        <div class="header_logo " style="padding-top:5px;">
+			<a href="#" onclick="hamburger_menu3();">
+			<center>  <img src="https://posters.cdn.klikfilm.net/frontend_theme/black/mobile-logo-home-sd-white.png" style="max-height:28px;"></center>
+		</a></div>	
+
+    </div>
+    <div class="big_space" align="right"></div>
+
+	<a href="https://klikfilm.com/v3/mobile/sosmed/twitter" title="login"><div class="big_menu"><div class="icon left icn_theme icn_loginx"></div><div class="title left">LOGIN</div></div></a><a href="https://klikfilm.com/v3/mobile/payment/voucher/aHR0cHM6Ly9rbGlrZmlsbS5jb20vdjMvbW9iaWxlL2ZpbG0vZGV0YWlsLzU2MDQvNDksU1ZPRCxNZWx1a2lzIEx1a2EsLCwsNTYwNA--" title="Redeem Voucher"><div class="big_menu"><div class="icon left icn_ticket icn_theme"></div><div class="title left">Redeem Voucher</div></div></a><a href="https://klikfilm.com/v3/mobile/" title="home"><div class="big_menu"><div class="icon left icn_home2 icn_theme"></div><div class="title left">HOME</div></div></a><a href="https://klikfilm.com/v3/mobile/static_page/batik" title="BATIK"><div class="big_menu"><div class="icon left icn_batik icn_theme"></div><div class="title left">KlikFilm #PEDULIBATIK</div></div></a><a href="https://klikfilm.com/v3/mobile/static_page/iphone?" title="REWARDS PROGRAM"><div class="big_menu"><div class="icon left icn_gift icn_theme"></div><div class="title left">REWARDS PROGRAM</div></div></a><a href="https://klikfilm.com/v3/mobile/static_page/faqpoin" title="KLIKFILM POINT"><div class="big_menu"><div class="icon left icn_poin icn_theme"></div><div class="title left">KLIKFILM POINT</div></div></a>	
+	<div class="big_menu" onclick="menu_dropdown('dropdown_support_icon', 'dropdown_support');">
+		<div class="icon left  icn_supportx icn_theme"></div>
+		<div id="dropdown_support_icon" class="icon slow right icn_theme icn_right_arrow"></div>
+		<div class="title left">SUPPORT</div>
+	</div>
+	<!--DROPDOWN PUNYA MENU SUPPORT-->
+	<div id="dropdown_support" class="big_menu_dropdown hidden">
+		<a href="https://klikfilm.com/v3/mobile/static_page/contact_us" title="contact us"><div class="list">Contact Us</div></a><a href="https://klikfilm.com/v3/mobile/static_page/tos" title="term of use"><div class="list">Term of Use</div></a><a href="https://klikfilm.com/v3/mobile/static_page/faq" title="Frequently Asked Question"><div class="list">FAQ</div></a>	</div>
+
+	<!--start tambahan kids mode-->
+	
+	<span id="menu_switch_kids_on" class="hidden">
+		<center>Silahkan Membuat Kode Akses<br>Yang Terdiri dari 4 Digit Angka</center>
+		<div class="inputDigit">
+			<input type="number" maxlength="1" class="inputson" name="digit1on" id="digit1on" onkeyup="navigateInput('on', 1, 4)">
+			<input type="number" maxlength="1" class="inputson" name="digit2on" id="digit2on" onkeyup="navigateInput('on', 2, 4)">
+			<input type="number" maxlength="1" class="inputson" name="digit3on" id="digit3on" onkeyup="navigateInput('on', 3, 4)">
+			<input type="number" maxlength="1" class="inputson" name="digit4on" id="digit4on" onkeyup="navigateInput('on', 4, 4)">
+			<script language="javascript">
+				$("#digit1on").focus();
+			</script>
+		</div>
+		<center>
+			<button class="bg_button" onclick="kids_on()">OK</button>
+		</center>
+	</span>
+
+	<span id="menu_switch_kids_on_success" class="hidden">
+		<center>
+			SELAMAT<br>Kids Mode Anda telah diaktifkan<br>Pastikan Anda Mengingat Kode<br>Yang Telah Anda Masukkan<br><br>
+			<button class="bg_button" onclick="open_popup('0');">OK</button>
+		</center>
+	</span>
+	
+	<span id="menu_switch_kids_on_failed" class="hidden">
+		<center>
+			Access Denied<br>
+			Silahkan cek kembali Kode Akses Anda<br><br>
+			<button class="bg_button" onclick="open_popup('0');">OK</button>
+		</center>
+	</span>
+	
+	
+
+	
+	<span id="menu_switch_kids_off" class="hidden">
+		<center>Silahkan Masukkan<br>Kode Akses Anda</center>
+		<div class="inputDigit">
+			
+			<input type="number" maxlength="1" name="digit1off" class="inputsoff" id="digit1off" onkeyup="navigateInput('off', 1, 4)">
+			<input type="number" maxlength="1" name="digit2off" class="inputsoff" id="digit2off" onkeyup="navigateInput('off', 2, 4)">
+			<input type="number" maxlength="1" name="digit3off" class="inputsoff" id="digit3off" onkeyup="navigateInput('off', 3, 4)">
+			<input type="number" maxlength="1" name="digit4off" class="inputsoff" id="digit4off" onkeyup="navigateInput('off', 4, 4)">
+			<script language="javascript">
+				$("#digit1off").focus();
+			</script>
+		</div>
+		<center>
+			<button class="bg_button" onclick="kids_off();">OK</button>
+		</center>
+	</span>
+	<span id="menu_switch_kids_off_success" class="hidden">
+		<center>
+			Kids Mode Anda telah<br>Dinonaktifkan<br><br>
+			<button class="bg_button" onclick="open_popup('0');">OK</button>
+		</center>
+	</span>
+	
+	<span id="menu_switch_kids_off_failed" class="hidden">
+		<center>
+			Access Denied<br>
+			Silahkan cek kembali Kode Akses Anda<br><br>
+			<button class="bg_button" onclick="open_popup('0');">OK</button>
+		</center>
+	</span>
+	<div class="big_menu" style="display:none;">
+		<div class="icon left icn_theme icn_kidsmode"></div>
+		<div class="title left">KIDS MODE</div>
+		<div class="onoff right pointer" onclick="switch_kids(this);" id="kidsmodebutton">
+			<div id="option_switch" class="oo_options right"></div>
+		</div>
+	</div>
+	<!--end tambahan kids mode-->
+		
+</div>
+<!--HAMBURGER MENU END-->
+<!--HEADER START-->
+<div id="klik_header">
+	<div class="header_icon left">
+		<a href="https://klikfilm.com/v3/mobile/search" title="search"><i class="fa fa-search" style="font-size:25px;margin-top:8px;padding-left:5px;color: var(--coloricon);" aria-hidden="true"></i></a>	</div>
+	<div class="header_icon right" onclick="hamburger_menu3();">
+		<div id="hamburger_icon" class="icon slow icn_theme icn_burger"></div>
+	</div>
+	<div class="header_logo  "><a href="https://klikfilm.com/v3/mobile/"><center><img src="https://posters.cdn.klikfilm.net/frontend_theme/black/mobile-logo-home-sd-white.png" style="max-height:28px;"></center></a></div>	
+</div>
+<!--HEADER END-->
+	<script>
+
+$(".inputson").keyup(function () {
+	
+    
+      $(this).next('.inputson').focus();
+   
+});
+
+$(".inputsoff").keyup(function () {
+	
+    
+      $(this).next('.inputsoff').focus();
+   
+});
+
+function navigateInput(type, idx, maxIdx)
+{
+	if ($('#digit' + idx + type).val().length > 0)
+	{
+		if ($.isNumeric($('#digit' + idx + type).val()))
+		{
+			if (idx < maxIdx)
+				$('#digit' + (idx + 1) + type).focus();
+		}
+		else
+			$('#digit' + idx + type).val("");
+			
+	}
+}
+
+$(document).keydown(function(objEvent) {
+    if (objEvent.keyCode == 9) {  //tab pressed
+        objEvent.preventDefault(); // stops its action
+    }
+})
+
+</script><style>
+body{
+	
+	    background-image: url(https://klikfilm.com/tes/poin/sidebatik.png);
+    background-repeat: repeat-y;
+    background-attachment: fixed;
+}
+
+
+.inputBox input {
+    background-color: var(--searchbox_bg) !important;
+    color:  var(--bggeneral)  !important;
+}
+
+
+#klik_header:before {
+ background-image: url('https://klikfilm.com/tes/poin/upbatik-noputih.png');
+ opacity:0.6;
+  content: ' ';
+  display: block;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;z-index:-1;
+}
+</style>
+<div id="klik_content" class="klik_content_topsize">
+
+	<div class="contentbody">
+		
+		<div class="inputBox searchb" onclick="search_click('1');">
+			<input id="keyword" name="keyword" class="searchbox" placeholder="Search" autocomplete="off">
+		</div>
+		
+		<div id="result_search" class="">
+		
+			<div class="search_result">
+<div class="title_page"><div class="title left awalunderline">Popular</div></div>
+
+     <table style="max-width:300px;"><tbody>
+            <tr>
+                <td style="width:121px;"><a href="https://klikfilm.com/v3/mobile/film/detail/5559/49"><span><img src="https://posters.cdn.klikfilm.net/120_90/koridor_120_90.png" style="max-width:120px;"></span> </a></td>
+                <td style="width:179px;"><a href="https://klikfilm.com/v3/mobile/film/detail/5559/49"><div class="search_result">Koridor</div></a></td></tr>
+            <tr>
+                <td colspan="2"><div class="line"></div></td></tr></tbody>
+        </table>
+    
+     <table style="max-width:300px;"><tbody>
+            <tr>
+                <td style="width:121px;"><a href="https://klikfilm.com/v3/mobile/film/detail/6210/49"><span><img src="https://posters.cdn.klikfilm.net/120_90/telepon_yang_tak_120_90.jpg" style="max-width:120px;"></span> </a></td>
+                <td style="width:179px;"><a href="https://klikfilm.com/v3/mobile/film/detail/6210/49"><div class="search_result">Telepon Yang Tak Pernah Berdering</div></a></td></tr>
+            <tr>
+                <td colspan="2"><div class="line"></div></td></tr></tbody>
+        </table>
+    
+     <table style="max-width:300px;"><tbody>
+            <tr>
+                <td style="width:121px;"><a href="https://klikfilm.com/v3/mobile/film/detail/4033/49"><span><img src="https://posters.cdn.klikfilm.net/120_90/4012_120_90.jpg" style="max-width:120px;"></span> </a></td>
+                <td style="width:179px;"><a href="https://klikfilm.com/v3/mobile/film/detail/4033/49"><div class="search_result">Marriage</div></a></td></tr>
+            <tr>
+                <td colspan="2"><div class="line"></div></td></tr></tbody>
+        </table>
+    
+     <table style="max-width:300px;"><tbody>
+            <tr>
+                <td style="width:121px;"><a href="https://klikfilm.com/v3/mobile/film/detail/6278/49"><span><img src="https://posters.cdn.klikfilm.net/120_90/surga_di_telapak_kaki_bapak_120_90.jpg" style="max-width:120px;"></span> </a></td>
+                <td style="width:179px;"><a href="https://klikfilm.com/v3/mobile/film/detail/6278/49"><div class="search_result">Surga di Telapak Kaki Bapak</div></a></td></tr>
+            <tr>
+                <td colspan="2"><div class="line"></div></td></tr></tbody>
+        </table>
+    
+     <table style="max-width:300px;"><tbody>
+            <tr>
+                <td style="width:121px;"><a href="https://klikfilm.com/v3/mobile/film/detail/3067/2"><span><img src="https://posters.cdn.klikfilm.net/120_90/dilan_1990_extended_rev_120_90.webp" style="max-width:120px;"></span> </a></td>
+                <td style="width:179px;"><a href="https://klikfilm.com/v3/mobile/film/detail/3067/2"><div class="search_result">Dilan 1990 Extended Version</div></a></td></tr>
+            <tr>
+                <td colspan="2"><div class="line"></div></td></tr></tbody>
+        </table>
+    
+     <table style="max-width:300px;"><tbody>
+            <tr>
+                <td style="width:121px;"><a href="https://klikfilm.com/v3/mobile/film/detail/3066/2"><span><img src="https://posters.cdn.klikfilm.net/120_90/dilan_1991_extended_rev3_120_90.webp" style="max-width:120px;"></span> </a></td>
+                <td style="width:179px;"><a href="https://klikfilm.com/v3/mobile/film/detail/3066/2"><div class="search_result">Dilan 1991 Extended Version</div></a></td></tr>
+            <tr>
+                <td colspan="2"><div class="line"></div></td></tr></tbody>
+        </table>
+    
+     <table style="max-width:300px;"><tbody>
+            <tr>
+                <td style="width:121px;"><a href="https://klikfilm.com/v3/mobile/film/detail/5945/49"><span><img src="https://posters.cdn.klikfilm.net/120_90/crossroad_v1_120_90.jpg" style="max-width:120px;"></span> </a></td>
+                <td style="width:179px;"><a href="https://klikfilm.com/v3/mobile/film/detail/5945/49"><div class="search_result">Crossroad</div></a></td></tr>
+            <tr>
+                <td colspan="2"><div class="line"></div></td></tr></tbody>
+        </table>
+    
+     <table style="max-width:300px;"><tbody>
+            <tr>
+                <td style="width:121px;"><a href="https://klikfilm.com/v3/mobile/film/detail/4457/49"><span><img src="https://posters.cdn.klikfilm.net/120_90/7_24_120_90.jpg" style="max-width:120px;"></span> </a></td>
+                <td style="width:179px;"><a href="https://klikfilm.com/v3/mobile/film/detail/4457/49"><div class="search_result">7-24</div></a></td></tr>
+            <tr>
+                <td colspan="2"><div class="line"></div></td></tr></tbody>
+        </table>
+    
+     <table style="max-width:300px;"><tbody>
+            <tr>
+                <td style="width:121px;"><a href="https://klikfilm.com/v3/mobile/film/detail/6170/49"><span><img src="https://posters.cdn.klikfilm.net/120_90/semusim_setelah_kemarau_120_90.jpg" style="max-width:120px;"></span> </a></td>
+                <td style="width:179px;"><a href="https://klikfilm.com/v3/mobile/film/detail/6170/49"><div class="search_result">Semusim Setelah Kemarau</div></a></td></tr>
+            <tr>
+                <td colspan="2"><div class="line"></div></td></tr></tbody>
+        </table>
+    
+     <table style="max-width:300px;"><tbody>
+            <tr>
+                <td style="width:121px;"><a href="https://klikfilm.com/v3/mobile/film/detail/2231/2"><span><img src="https://posters.cdn.klikfilm.net/120_90/2231_120_90.jpg" style="max-width:120px;"></span> </a></td>
+                <td style="width:179px;"><a href="https://klikfilm.com/v3/mobile/film/detail/2231/2"><div class="search_result">My Stupid Boss</div></a></td></tr>
+            <tr>
+                <td colspan="2"><div class="line"></div></td></tr></tbody>
+        </table>
+    
+     <table style="max-width:300px;"><tbody>
+            <tr>
+                <td style="width:121px;"><a href="https://klikfilm.com/v3/mobile/film/detail/3692/49"><span><img src="https://posters.cdn.klikfilm.net/120_90/milea_extended_rev_120_90.webp" style="max-width:120px;"></span> </a></td>
+                <td style="width:179px;"><a href="https://klikfilm.com/v3/mobile/film/detail/3692/49"><div class="search_result">Milea: Suara dari Dilan [Extended]</div></a></td></tr>
+            <tr>
+                <td colspan="2"><div class="line"></div></td></tr></tbody>
+        </table>
+    </div>		</div>
+
+	</div>
+</div>
+
+<script language="javascript">
+var typingTimer; //timer identifier
+var doneTypingInterval = 500; //time in ms, 1 second for example
+var $input = $('#keyword');
+
+//on keyup, start the countdown
+$input.on('keyup', function () {
+  clearTimeout(typingTimer);
+  typingTimer = setTimeout(doneTyping, doneTypingInterval);
+});
+
+//on keydown, clear the countdown 
+$input.on('keydown', function () {
+  clearTimeout(typingTimer);
+});
+
+//user is "finished typing," do something
+function doneTyping () {
+  if ($("#keyword").val().length > 2)
+   {
+	   $.ajax({
+			url : BASE_URL + "ajax/result",
+			type: "POST",
+			data:{keyword:$("#keyword").val()},
+			dataType: "json",
+			beforeSend: function(){},
+			complete: function(){
+			},
+			success: function(response){
+				var html = "";
+				var linkUrl = BASE_URL+'film/detail/%s/%s';
+				var linkUrlseries = BASE_URL+'series/detail/%s/%s';
+				
+				if (response.status == "error")
+					html += "<div class='search_result'>" + response.desc + "</div>";
+				else
+				{
+					var ddContent = '<div class="search_result"><table style="max-width:300px;"><tr ><td style="width:121px;"><a href="%s"><span><img src="%s" style="max-width:120px;"/></span> <td style="width:179px;"><a href="%s"><div class="search_result">%s</div></a></td></tr><tr><td colspan="2"><div class="line"></div></td></tr></table></div>';
+					var objVideoCat={},
+						linkCat=[],
+						titleCat=[];
+					var offset = 0;
+					var i = 0;
+					
+					$.each(response.data, function (index, value){
+						if (value['series'] == "1")
+						{
+							html += sprintf(ddContent, sprintf(linkUrlseries,value['id'],value['subCategory']), value['thumbnail'],sprintf(linkUrlseries,value['id'],value['subCategory']),value['title']);
+						}else{
+							html += sprintf(ddContent, sprintf(linkUrl,value['id'],value['subCategory']),value['thumbnail'], sprintf(linkUrl,value['id'],value['subCategory']) ,value['title']);
+						}
+					});
+				}
+					
+				$('#result_search').empty();
+				$("#result_search").html(html);
+					
+				
+			  },
+			  crossDomain : true,
+			  cache: false,
+			  error: function(xhr, status) {
+				 
+			  }
+		}); 
+   }
+   else
+	   $('#result_search').empty();
+}
+</script></body></html>

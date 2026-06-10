@@ -7,7 +7,7 @@ const BaseScraper  = require('./BaseScraper');
 
 class DramaWaveScraper extends BaseScraper {
   constructor(options = {}) {
-    super('dramawave', 'https://dramawave.io', options);
+    super('dramawave', 'https://dramawave.dramaflixs.com', options);
     this._browser = null;
   }
 
@@ -91,7 +91,7 @@ class DramaWaveScraper extends BaseScraper {
       const cards = [];
       const anchors = [...document.querySelectorAll('a[href]')].filter(a => {
         const href = a.getAttribute('href') || '';
-        return /\/(drama|series|show|watch)\//i.test(href) &&
+        return /\/(drama|series|show|watch|playlet)\//i.test(href) &&
           (a.querySelector('img') || a.querySelector('[class*="title"]'));
       });
 
@@ -123,22 +123,27 @@ class DramaWaveScraper extends BaseScraper {
   // ─── Public API ──────────────────────────────────────────────────────────
 
   async getLatest(page = 1) {
-    return this.withRetry(async () => {
-      const { page: pw, ctx } = await this._newPage();
-      try {
-        await pw.goto(`${this.baseUrl}/latest?page=${page}`, { waitUntil: 'domcontentloaded', timeout: this.timeout });
-        await this._waitForContent(pw);
-        await this._autoScroll(pw);
-        await this._sleep(1500);
-
-        const raw   = await this._extractCards(pw);
-        const items = raw.map(r => this.formatDrama(r));
-
-        return { success: true, platform: this.platformId, page, data: items };
-      } finally {
-        await this._closePage(ctx);
-      }
-    }, 'getLatest');
+    try {
+      const axios = require('axios');
+      const apiUrl = `https://dramawave.dramaflixs.com/api/dramawave/v2/en/home?next=${page}&position_index=10000&tab_key=678`;
+      const response = await axios.get(apiUrl, {
+        headers: { 'x-api-key': '5MwPu5YD9iauUUpyztW5DVvBrj7btX6a' }
+      });
+      
+      const items = response.data.items || [];
+      const cards = items.filter(item => item.playlet_id).map(item => this.formatDrama({
+        id: item.playlet_id,
+        title: item.title,
+        cover: item.cover,
+        thumbnail: item.cover,
+        url: `${this.baseUrl}/playlet/${item.playlet_id}`,
+      }));
+      
+      return { success: true, platform: this.platformId, page, data: cards };
+    } catch (error) {
+      console.error(`[${this.platformId}] getLatest attempt failed: ${error.message}`);
+      return { success: false, platform: this.platformId, page, data: [], error: error.message };
+    }
   }
 
   async search(query, page = 1) {

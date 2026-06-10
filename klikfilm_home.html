@@ -1,0 +1,1214 @@
+<!DOCTYPE html><html><head>
+<title>KlikFilm </title> 
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="description" content="KlikFilm adalah layanan streaming movie yang memberikan pengalaman menonton ratusan film Box Office Indonesia. Nonton seribuan film: Indonesia, Hollywood, Korea, Mandarin, Thailand di HP Anda."> 
+<!--CSS <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon"> -->
+<link rel="stylesheet" type="text/css" href="https://posters.cdn.klikfilm.net/frontend_assets/v3/mobile/assets/css/based.css">
+<link rel="stylesheet" type="text/css" href="https://posters.cdn.klikfilm.net/frontend_assets/mobile/css/icon.css">
+<link rel="stylesheet" type="text/css" href="https://posters.cdn.klikfilm.net/frontend_assets/v3/mobile/assets/css/help.css">
+<link rel="stylesheet" type="text/css" href="https://posters.cdn.klikfilm.net/frontend_assets/mobile/css/card.css">
+<link rel="stylesheet" type="text/css" href="https://posters.cdn.klikfilm.net/frontend_assets/v3/mobile/assets/css/custom.css">
+<!--JAVASCRIPT-->
+<script type="text/javascript" src="https://posters.cdn.klikfilm.net/frontend_assets/mobile/javascript/jquery.js"></script>
+<script type="text/javascript" src="https://posters.cdn.klikfilm.net/frontend_assets/mobile/javascript/sprintf.min.js"></script>
+<script type="text/javascript" src="https://posters.cdn.klikfilm.net/frontend_assets/v3/mobile/assets/javascript/no-ajax.js"></script>
+<script type="text/javascript" src="https://posters.cdn.klikfilm.net/frontend_assets/mobile/javascript/function.js"></script>
+<script type="text/javascript" src="https://posters.cdn.klikfilm.net/frontend_assets/v3/mobile/assets/javascript/poster_screen.js"></script>
+<script type="text/javascript">var BASE_URL = "https://klikfilm.com/v3/mobile/"; var IPCC = "SG";</script>
+
+<link rel="stylesheet" type="text/css" href="https://klikfilm.com/v3/mobile/file/2026-06-10/css2026-06-10-19.css">
+<style type="text/css">
+/*https://klikfilm.com/v3/mobile/images/logo_klikfilm_193_75.png */
+.login_page2{
+    background-color: var(--card_sub_bg);
+	padding:30px;
+	border-radius:45px;
+}
+
+.login_page .lp_logo.lpl_basic {
+    /*!important;*/
+	max-width:300px;
+	width:300px;
+	    background-image: url(https://posters.cdn.klikfilm.net/frontend_theme/showcase_022025/mobile-logo-home-sd-black.png) !important;
+	background-repeat:no-repeat;
+}
+
+@media screen and (max-width: 321px) {
+	 div.title.left{ font-size:9px;font-family: bold;}
+ div.title_txt.left{ font-size:7px;font-family: bold;}
+ .title_page .title {font-size:7px;font-family: bold;}
+ 
+}
+
+@media screen and (max-width: 361px) {
+	 div.title.left{ font-size:13px;font-family: bold;}
+ div.title_txt.left{ font-size:11px;font-family: bold;}
+ .title_page .title {font-size:11px;font-family: bold;}
+ 
+}
+
+ 
+</style>
+<script type="text/javascript" src="https://posters.cdn.klikfilm.net/frontend_assets/mobile/assets/js/shaka-player.compiled.js"></script>	<!-- to get eme ,window.location=callbackUri-->
+	<script>
+var isDetected=!1;function sendEME(e){var t=new XMLHttpRequest;t.open("GET",BASE_URL+"ajax/setEME?eme="+e,!0),t.send(null);var r="";return t.onreadystatechange=function(){if(4!=t.readyState||200!=t.status)return"error";r=t.responseText},r}function checkEME(){shaka.polyfill.installAll(),shaka.Player.isBrowserSupported()?shaka.Player.probeSupport().then(function(e){for(var t in e.drm){if(null!==e.drm[t]&&"org.w3.clearkey"!=t)isDetected=!0,result=sendEME(t)}0==isDetected&&(result=sendEME(""))}):result=sendEME("")}checkEME();	
+	</script>
+</head>
+
+<body>
+<div id="loading" style="z-index:999;  position: fixed;  top: 50%;  left: 50%;  transform: translate(-50%, -50%);border-radius: 100px;
+padding: 10px; 
+ background-color: rgba(255, 255, 255, 0.8);"></div>
+
+<!--POPUP START-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link rel="preconnect" href="https://m.cdn.klikfilm.net" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap" rel="stylesheet">
+
+<script>
+
+function hamburger_menu3(){
+if(!$("#hamburger_menu").is(':visible')){
+    //ditampilai
+   
+    $('#klik_header').css('opacity','0');
+    $('#klik_header').css('z-index','48');
+    $('#hamburger_icon').show();//css('opacity', '1');
+    $("#hamburger_menu").slideDown('fast');
+    //$("#hamburger_icon").removeClass('icn_hamburger');
+	$("#hamburger_icon").removeClass('icn_burger');
+    $("#hamburger_icon").addClass('icn_x');
+}else{
+    $('#klik_header').css('opacity', '1');
+    
+    $('#klik_header').css('z-index','50');
+    $("#hamburger_menu").slideUp('fast');
+    $("#hamburger_icon").removeClass('icn_x');
+    $("#hamburger_icon").addClass('icn_burger');
+}
+}
+</script>
+<span id="popupbox" class="hidden">
+	<div class="popup_close" onclick="open_popup('0');"></div>
+	<div id="popup_cvs" class="popup_cvs hidden">
+		<div class="pc_head bg_button">
+			<span id="pc_head_title"></span>
+			<div class="pch_close right icn icn_x pointer " onclick="open_popup('0');"></div>
+		</div>
+		<div id="pc_body" class="pc_body"></div>
+
+		
+	</div>
+	
+</span>
+
+
+<!--POPUP END-->
+
+
+<!--POPUP COLOR START-->
+<span id="popupcolor" class="popup_color hidden">
+			<div onclick="open_popupcolor('0');"></div>
+			<div>
+				<div></div>
+			</div>
+		</span>
+<!--POPUP COLOR END-->
+
+
+<link rel="stylesheet" type="text/css" href="https://klikfilm.com/v3/mobile/file/2026-06-10/css2026-06-10-19.css"><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+
+<!--ALERT-->
+<div id="alert_box" class="alert slow">
+<div id="alert_box_text" class="alert_info" onclick="alert_open('0', '');"></div>
+</div>
+
+
+<!--HAMBURGER MENU START-->
+<div id="hamburger_menu" class="hidden">
+<div id="klik_header2">
+        <div class="header_icon left">
+	<a href="https://klikfilm.com/v3/mobile/search" title="search"><i class="fa fa-search" style="font-size:25px;margin-top:8px;padding-left:5px;color: var(--coloricon);" aria-hidden="true"></i></a>	
+            </div>
+        <div class="header_icon right" onclick="hamburger_menu3();" style="margin-left:-17px;">
+            <div class="icon slow  icn_x2 icn_theme"></div>
+        </div>
+        <div class="header_logo " style="padding-top:5px;">
+			<a href="#" onclick="hamburger_menu3();">
+			<center>  <img src="https://posters.cdn.klikfilm.net/frontend_theme/black/mobile-logo-home-sd-white.png" style="max-height:28px;"></center>
+		</a></div>	
+
+    </div>
+    <div class="big_space" align="right"></div>
+
+	<a href="https://klikfilm.com/v3/mobile/sosmed/twitter" title="login"><div class="big_menu"><div class="icon left icn_theme icn_loginx"></div><div class="title left">LOGIN</div></div></a><a href="https://klikfilm.com/v3/mobile/payment/voucher/aHR0cHM6Ly9rbGlrZmlsbS5jb20vdjMvbW9iaWxlL2ZpbG0vZGV0YWlsLzU2MDQvNDksU1ZPRCxNZWx1a2lzIEx1a2EsLCwsNTYwNA--" title="Redeem Voucher"><div class="big_menu"><div class="icon left icn_ticket icn_theme"></div><div class="title left">Redeem Voucher</div></div></a><a href="https://klikfilm.com/v3/mobile/" title="home"><div class="big_menu"><div class="icon left icn_home2 icn_theme"></div><div class="title left">HOME</div></div></a><a href="https://klikfilm.com/v3/mobile/static_page/batik" title="BATIK"><div class="big_menu"><div class="icon left icn_batik icn_theme"></div><div class="title left">KlikFilm #PEDULIBATIK</div></div></a><a href="https://klikfilm.com/v3/mobile/static_page/iphone?" title="REWARDS PROGRAM"><div class="big_menu"><div class="icon left icn_gift icn_theme"></div><div class="title left">REWARDS PROGRAM</div></div></a><a href="https://klikfilm.com/v3/mobile/static_page/faqpoin" title="KLIKFILM POINT"><div class="big_menu"><div class="icon left icn_poin icn_theme"></div><div class="title left">KLIKFILM POINT</div></div></a>	
+	<div class="big_menu" onclick="menu_dropdown('dropdown_support_icon', 'dropdown_support');">
+		<div class="icon left  icn_supportx icn_theme"></div>
+		<div id="dropdown_support_icon" class="icon slow right icn_theme icn_right_arrow"></div>
+		<div class="title left">SUPPORT</div>
+	</div>
+	<!--DROPDOWN PUNYA MENU SUPPORT-->
+	<div id="dropdown_support" class="big_menu_dropdown hidden">
+		<a href="https://klikfilm.com/v3/mobile/static_page/contact_us" title="contact us"><div class="list">Contact Us</div></a><a href="https://klikfilm.com/v3/mobile/static_page/tos" title="term of use"><div class="list">Term of Use</div></a><a href="https://klikfilm.com/v3/mobile/static_page/faq" title="Frequently Asked Question"><div class="list">FAQ</div></a>	</div>
+
+	<!--start tambahan kids mode-->
+	
+	<span id="menu_switch_kids_on" class="hidden">
+		<center>Silahkan Membuat Kode Akses<br>Yang Terdiri dari 4 Digit Angka</center>
+		<div class="inputDigit">
+			<input type="number" maxlength="1" class="inputson" name="digit1on" id="digit1on" onkeyup="navigateInput('on', 1, 4)">
+			<input type="number" maxlength="1" class="inputson" name="digit2on" id="digit2on" onkeyup="navigateInput('on', 2, 4)">
+			<input type="number" maxlength="1" class="inputson" name="digit3on" id="digit3on" onkeyup="navigateInput('on', 3, 4)">
+			<input type="number" maxlength="1" class="inputson" name="digit4on" id="digit4on" onkeyup="navigateInput('on', 4, 4)">
+			<script language="javascript">
+				$("#digit1on").focus();
+			</script>
+		</div>
+		<center>
+			<button class="bg_button" onclick="kids_on()">OK</button>
+		</center>
+	</span>
+
+	<span id="menu_switch_kids_on_success" class="hidden">
+		<center>
+			SELAMAT<br>Kids Mode Anda telah diaktifkan<br>Pastikan Anda Mengingat Kode<br>Yang Telah Anda Masukkan<br><br>
+			<button class="bg_button" onclick="open_popup('0');">OK</button>
+		</center>
+	</span>
+	
+	<span id="menu_switch_kids_on_failed" class="hidden">
+		<center>
+			Access Denied<br>
+			Silahkan cek kembali Kode Akses Anda<br><br>
+			<button class="bg_button" onclick="open_popup('0');">OK</button>
+		</center>
+	</span>
+	
+	
+
+	
+	<span id="menu_switch_kids_off" class="hidden">
+		<center>Silahkan Masukkan<br>Kode Akses Anda</center>
+		<div class="inputDigit">
+			
+			<input type="number" maxlength="1" name="digit1off" class="inputsoff" id="digit1off" onkeyup="navigateInput('off', 1, 4)">
+			<input type="number" maxlength="1" name="digit2off" class="inputsoff" id="digit2off" onkeyup="navigateInput('off', 2, 4)">
+			<input type="number" maxlength="1" name="digit3off" class="inputsoff" id="digit3off" onkeyup="navigateInput('off', 3, 4)">
+			<input type="number" maxlength="1" name="digit4off" class="inputsoff" id="digit4off" onkeyup="navigateInput('off', 4, 4)">
+			<script language="javascript">
+				$("#digit1off").focus();
+			</script>
+		</div>
+		<center>
+			<button class="bg_button" onclick="kids_off();">OK</button>
+		</center>
+	</span>
+	<span id="menu_switch_kids_off_success" class="hidden">
+		<center>
+			Kids Mode Anda telah<br>Dinonaktifkan<br><br>
+			<button class="bg_button" onclick="open_popup('0');">OK</button>
+		</center>
+	</span>
+	
+	<span id="menu_switch_kids_off_failed" class="hidden">
+		<center>
+			Access Denied<br>
+			Silahkan cek kembali Kode Akses Anda<br><br>
+			<button class="bg_button" onclick="open_popup('0');">OK</button>
+		</center>
+	</span>
+	<div class="big_menu" style="display:none;">
+		<div class="icon left icn_theme icn_kidsmode"></div>
+		<div class="title left">KIDS MODE</div>
+		<div class="onoff right pointer" onclick="switch_kids(this);" id="kidsmodebutton">
+			<div id="option_switch" class="oo_options right"></div>
+		</div>
+	</div>
+	<!--end tambahan kids mode-->
+		
+</div>
+<!--HAMBURGER MENU END-->
+<!--HEADER START-->
+<div id="klik_header">
+	<div class="header_icon left">
+		<a href="https://klikfilm.com/v3/mobile/search" title="search"><i class="fa fa-search" style="font-size:25px;margin-top:8px;padding-left:5px;color: var(--coloricon);" aria-hidden="true"></i></a>	</div>
+	<div class="header_icon right" onclick="hamburger_menu3();">
+		<div id="hamburger_icon" class="icon slow icn_theme icn_burger"></div>
+	</div>
+	<div class="header_logo  "><a href="https://klikfilm.com/v3/mobile/"><center><img src="https://posters.cdn.klikfilm.net/frontend_theme/black/mobile-logo-home-sd-white.png" style="max-height:28px;"></center></a></div>	
+</div>
+<!--HEADER END-->
+	<script>
+
+$(".inputson").keyup(function () {
+	
+    
+      $(this).next('.inputson').focus();
+   
+});
+
+$(".inputsoff").keyup(function () {
+	
+    
+      $(this).next('.inputsoff').focus();
+   
+});
+
+function navigateInput(type, idx, maxIdx)
+{
+	if ($('#digit' + idx + type).val().length > 0)
+	{
+		if ($.isNumeric($('#digit' + idx + type).val()))
+		{
+			if (idx < maxIdx)
+				$('#digit' + (idx + 1) + type).focus();
+		}
+		else
+			$('#digit' + idx + type).val("");
+			
+	}
+}
+
+$(document).keydown(function(objEvent) {
+    if (objEvent.keyCode == 9) {  //tab pressed
+        objEvent.preventDefault(); // stops its action
+    }
+})
+
+</script><script type="text/javascript" src="https://klikfilm.com/v3/mobile/assets/javascript/home2.js"></script><link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap" rel="stylesheet">
+
+<link rel="stylesheet" type="text/css" href="https://klikfilm.com/v3/mobile/assets/css/home1.css">
+
+<style>
+/*
+.card_film .list2 {
+    overflow: hidden;
+    height: 31px;
+    font-size: 9px;
+    font-weight: 900;
+}
+*/
+
+.card_film .list2 {
+    overflow: hidden;
+    height: 35px;
+    padding-top: 3px;
+    font-size: 12px;
+    font-weight: 900;
+
+	display: grid;
+	gap: 1px;
+
+  	grid-template-columns: 1fr ; 
+	/* 1fr 1fr Ini kuncinya untuk responsivitas/dinamika 
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));*/
+
+}
+
+      .list2-item{
+display: flex; /* Mengaktifkan Flexbox untuk menyelaraskan gambar dan teks */
+        align-items: center; 
+		  flex-direction: column;
+		  gap: 3px;
+      }
+ .font-kecil {
+    font-size: 8px !important;
+  }
+
+
+#index_body{
+	/*background-image: url(https://posters.cdn.klikfilm.net/frontend_assets/mobile/images/sidebatik.png);*/
+
+	
+    background: 
+    linear-gradient(transparent 70px, var(--bggeneral) 70px), 
+    url('https://posters.cdn.klikfilm.net/frontend_assets/mobile/images/sidebatik.png') !important;
+    box-shadow: none !important;
+
+	
+    background-repeat: repeat-y;
+	background-attachment: fixed;}
+
+</style>
+	
+
+<!--POPUP COLOR START-->
+		<span id="popupcolor" class="popup_color hidden" style="width:100%;">
+			<div onclick="open_popupcolor('0');"></div>
+			<div style="width:100%;">
+				<div style="width:100%;"></div>
+			</div>
+		</span>
+<!--POPUP COLOR END-->
+<span id="popupcolor3" class="hidden" style="">  
+
+		
+	<div class="pc_content1" style="Position: fixed; top: 50%; left: 50%; width: 100%;transform: translateY(-50%) translateX(-50%);z-index:9;">
+	
+		<center style="max-width:450px;">
+			<div class="pc_head" align="right" style="opacity:0.55;    float: right;margin-bottom:-151px;z-index:999999999;position:relative;">
+				<a href="#" onclick="open_popupcolor('0');">
+					
+				</a>
+	</div> 
+				</center>
+	</div> 
+</span>
+		
+<span id="popupcolor1" class="hidden">
+			<div class="pc_head color1">
+				<h2>HOT SALE</h2>
+				<div class="pch_desc">
+					Anda juga bisa berlangganan nonton 1000 film untuk 2 bulan dengan tarif promo
+				</div>
+				<div class="pch_price"><b>Rp 24.000,-</b></div>
+				<div class="pch_desc">
+					*tidak termasuk film premiere<br>
+					*berikutnya Rp 24.000,-/30 hari
+				</div>
+			</div>
+			<div class="pc_content1">
+				<button class="bg_button mb10">MAU</button>
+				<button onclick="open_popupcolor('0');">Tidak</button>
+			</div>
+</span>
+		
+<span id="popupcolor2" class="hidden">
+			<div class="pc_head color2">
+				<div class="pch_logo bsize"></div>
+				<div class="pch_desc">
+					Film ini adalah bersifat Single Rental yaitu Anda membayar hanya untuk menonton satu film premiere
+				</div>
+			</div>
+			<div class="pc_content2">
+				<button class="bg_button">Setuju</button>
+			</div>
+</span>
+		
+
+
+<!-- -->
+<div id="klik_content" class="klik_content_topsize">
+	
+<!-- start popup-->
+<span id="notif_continue" class="hidden" style="">
+	<b></b> 
+	<div align="center" style="" id="popuphd">
+	
+	<br><br>
+<font style="color:var(--premiumbg);"> Remove From Row </font>  .
+	<br><br><hr><br><div align="center">
+		<table>
+			<tbody><tr><td>
+	
+	<a href="javascript:removecontinue();">Yes</a> 
+</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;</td><td>
+	<a href="javascript:open_popup('0');">No</a> 
+</td></tr></tbody></table>
+	<br><br>
+	
+	</div>
+	</div>
+</span>
+<!-- end popup-->
+
+	<!--SLIDER START-->
+	<div id="index_head" class="index_head">
+		<span class="hidden">
+			<input id="slider_save_count" value="">
+			
+			<input id="slider_url_1" value="https://klikfilm.com/v3/mobile/series/detail/20/0"><input id="slider_img_1" value="https://posters.cdn.klikfilm.net/380_543/bumi_manusia_extended_main_rev_600_857.webp"><input id="slider_count" value="1">
+		</span>
+		<div class="best_slider">
+					</div>
+		<a id="slider_url" href="https://klikfilm.com/v3/mobile/series/detail/20/0">
+			<div id="slider_images" class="best_film bsize slow" style="background-image: url(&quot;https://posters.cdn.klikfilm.net/380_543/bumi_manusia_extended_main_rev_600_857.webp&quot;); opacity: 1;"></div>
+		</a>
+		<div class="clear"></div>
+	</div>
+	<!--SLIDER END-->
+	
+	<div id="index_body" class="index_body" style="top: 558px;">
+	
+	<span id="silahkan_login" class="hidden">
+	Anda perlu login KlikFilm untuk mengakses menu ini 
+			<!-- berlangganan-->
+	<br><br><div align="center">
+	<button class="bg_button" onclick="tologinurl();">Ya</button></div>
+	</span>
+	
+	<span id="notif_buka_lewat_browser_lain" class="hidden">
+	Maaf pulsa Anda tidak mencukupi untuk lanjut berlangganan KlikFilm. Silahkan isi pulsa Anda.
+	<br><br><div align="center">
+	<button class="bg_button" onclick="open_popup('0');">Ya</button></div>
+	</span>
+	
+	
+
+
+		<div id="personalhighred" style="background-repeat: no-repeat; background-size: 100%;position:inherit;top:-15px;" class="hidden"><!-- isi personal highred--></div>
+
+	<!-- tes tempat trending-->
+
+<div id="personalhigh" class="hidden" style="display: block;"><!-- isi personal high--><!-- tes tempat special--> 	<div id="trending" class="hidden" style="display: block;"> 				<div class="title_page"> 				<div class="title left awalunderline"> Trending </div> 				<span class="right"> 					<a href="https://klikfilm.com/v3/mobile/home/special/trending"> 						<div class="title_txt left morehome">more</div> 										</a> 				</span> 				</div> 			 	<div class="scrollmenu" id="trendingv"><a href="https://klikfilm.com/v3/mobile/series/detail/20/132"><div class="card_film left mb10"><div class="film_box"><div class="photo bsize" style="background-image: url('https://posters.cdn.klikfilm.net/150_214/bumi_manusia_extended_main_rev_150_214.webp');"></div><div class="list">Bumi Manusi...</div></div></div></a><a href="https://klikfilm.com/v3/mobile/film/detail/5559/49"><div class="card_film left mb10"><div class="film_box"><div class="photo bsize" data-src="https://posters.cdn.klikfilm.net/150_214/koridor_150_214.png" style="background-image: url(&quot;https://posters.cdn.klikfilm.net/150_214/koridor_150_214.png&quot;);"></div><div class="list">Koridor</div></div></div></a><a href="https://klikfilm.com/v3/mobile/film/detail/6210/49"><div class="card_film left mb10"><div class="film_box"><div class="photo bsize" data-src="https://posters.cdn.klikfilm.net/150_214/telepon_yang_tak_150_214.jpg" style="background-image: url(&quot;https://posters.cdn.klikfilm.net/150_214/telepon_yang_tak_150_214.jpg&quot;);"></div><div class="list">Telepon Yan...</div></div></div></a><a href="https://klikfilm.com/v3/mobile/film/detail/4033/49"><div class="card_film left mb10"><div class="film_box"><div class="photo bsize" data-src="https://posters.cdn.klikfilm.net/150_214/4012_150_214.jpg" style="background-image: url(&quot;https://posters.cdn.klikfilm.net/150_214/4012_150_214.jpg&quot;);"></div><div class="list">Marriage</div></div></div></a><a href="https://klikfilm.com/v3/mobile/film/detail/7117/49"><div class="card_film left mb10"><div class="film_box"><div class="photo bsize" data-src="https://posters.cdn.klikfilm.net/150_214/dibalik_layar_dilan_itb_150_214.webp" style="background-image: url(&quot;https://posters.cdn.klikfilm.net/150_214/dibalik_layar_dilan_itb_150_214.webp&quot;);"></div><div class="list">Di Balik La...</div></div></div></a><a href="https://klikfilm.com/v3/mobile/film/detail/3067/2"><div class="card_film left mb10"><div class="film_box"><div class="photo bsize" data-src="https://posters.cdn.klikfilm.net/150_214/dilan_1990_extended_rev_150_214.webp" style="background-image: url(&quot;https://posters.cdn.klikfilm.net/150_214/dilan_1990_extended_rev_150_214.webp&quot;);"></div><div class="list">Dilan 1990 ...</div></div></div></a><a href="https://klikfilm.com/v3/mobile/film/detail/6278/49"><div class="card_film left mb10"><div class="film_box"><div class="photo bsize" data-src="https://posters.cdn.klikfilm.net/150_214/surga_di_telapak_kaki_bapak_150_214.jpg" style="background-image: url(&quot;https://posters.cdn.klikfilm.net/150_214/surga_di_telapak_kaki_bapak_150_214.jpg&quot;);"></div><div class="list">Surga di Te...</div></div></div></a><a href="https://klikfilm.com/v3/mobile/film/detail/3066/2"><div class="card_film left mb10"><div class="film_box"><div class="photo bsize" data-src="https://posters.cdn.klikfilm.net/150_214/dilan_1991_extended_rev3_150_214.webp" style="background-image: url(&quot;https://posters.cdn.klikfilm.net/150_214/dilan_1991_extended_rev3_150_214.webp&quot;);"></div><div class="list">Dilan 1991 ...</div></div></div></a><a href="https://klikfilm.com/v3/mobile/series/detail/21/49"><div class="card_film left mb10"><div class="film_box"><div class="photo bsize" style="background-image: url('https://posters.cdn.klikfilm.net/150_214/a_plus_150_214.webp');"></div><div class="list">A+ </div></div></div></a><a href="https://klikfilm.com/v3/mobile/film/detail/5945/49"><div class="card_film left mb10"><div class="film_box"><div class="photo bsize" data-src="https://posters.cdn.klikfilm.net/150_214/crossroad_v1_150_214.jpg" style="background-image: url(&quot;https://posters.cdn.klikfilm.net/150_214/crossroad_v1_150_214.jpg&quot;);"></div><div class="list">Crossroad</div></div></div></a></div> 			<div class="clear"></div>	 </div> 	<!-- end tes tempat special--><!-- tes tempat special--> 	<div id="history" class="hidden"> 				<div class="title_page"> 				<div class="title left awalunderline"> Continue Watching </div> 				<span class="right"> 					<a href="https://klikfilm.com/v3/mobile/home/special/history"> 						<div class="title_txt left morehome">more</div> 										</a> 				</span> 				</div> 			 	<div class="scrollmenu" id="historyv"> 		</div> 			<div class="clear"></div>	 </div> 	<!-- end tes tempat special--><!-- tes tempat special--> 	<div id="playlist" class="hidden"> 				<div class="title_page"> 				<div class="title left awalunderline"> My List </div> 				<span class="right"> 					<a href="https://klikfilm.com/v3/mobile/home/playlist"> 						<div class="title_txt left morehome">more</div> 										</a> 				</span> 				</div> 			 	<div class="scrollmenu" id="playlistv"> 		</div> 			<div class="clear"></div>	 </div> 	<!-- end tes tempat special--><!-- tes tempat special--> 	<div id="rottentomatoes" class="hidden rediv" style="display: block;"> 				<div class="title_page"> 				<div class="title left awalunderline">Fresh &amp; Poppin'</div> 				<span class="right"> 					<a href="https://klikfilm.com/v3/mobile/home/special/rottentomatoes"> 						<div class="title_txt left morehome">more</div> 										</a> 				</span> 				</div> 			 	<div class="scrollmenu" id="rottentomatoesv"> 		</div> 			<div class="clear"></div>	 </div> 	<!-- end tes tempat special--></div>	
+	
+	<div id="personal" class="hidden"><!-- isi personal--></div>
+	<div id="personalcat" class="hidden" style="display: block;"><!-- isi personal high--><div id="personalcat51" class="hidden" style="display: block;"><div class="title_page"><div class="title left awalunderline">Original Docuseries-Sang Kyai</div><span class="right"><a href="https://klikfilm.com/v3/mobile/category/detail/14/51"><div class="title_txt left morehome">more</div></a></span></div><div class="clear"></div><div class="scrollmenu" id="personalcatv51"><a href="https://klikfilm.com/v3/mobile/film/detail/3166/51"><div class="card_film left mb10"><div class="film_box"><div class="photo bsize" data-src="https://posters.cdn.klikfilm.net/150_214/3131_150_214.jpg" style="background-image: url(&quot;https://posters.cdn.klikfilm.net/150_214/3131_150_214.jpg&quot;);"></div><div class="list">KH. Abdul W...</div></div></div></a><a href="https://klikfilm.com/v3/mobile/film/detail/3165/51"><div class="card_film left mb10"><div class="film_box"><div class="photo bsize" data-src="https://posters.cdn.klikfilm.net/150_214/3130_150_214.jpg" style="background-image: url(&quot;https://posters.cdn.klikfilm.net/150_214/3130_150_214.jpg&quot;);"></div><div class="list">KH. Ali Mak...</div></div></div></a><a href="https://klikfilm.com/v3/mobile/film/detail/3164/51"><div class="card_film left mb10"><div class="film_box"><div class="photo bsize" data-src="https://posters.cdn.klikfilm.net/150_214/3129_150_214.jpg" style="background-image: url(&quot;https://posters.cdn.klikfilm.net/150_214/3129_150_214.jpg&quot;);"></div><div class="list">KH. Mohamma...</div></div></div></a><a href="https://klikfilm.com/v3/mobile/film/detail/3163/51"><div class="card_film left mb10"><div class="film_box"><div class="photo bsize" data-src="https://posters.cdn.klikfilm.net/150_214/3128_150_214.jpg" style="background-image: url(&quot;https://posters.cdn.klikfilm.net/150_214/3128_150_214.jpg&quot;);"></div><div class="list">KH. Muhamma...</div></div></div></a><a href="https://klikfilm.com/v3/mobile/film/detail/3162/51"><div class="card_film left mb10"><div class="film_box"><div class="photo bsize" data-src="https://posters.cdn.klikfilm.net/150_214/3127_150_214.jpg" style="background-image: url(&quot;https://posters.cdn.klikfilm.net/150_214/3127_150_214.jpg&quot;);"></div><div class="list">KH. Achmad ...</div></div></div></a><a href="https://klikfilm.com/v3/mobile/film/detail/3161/51"><div class="card_film left mb10"><div class="film_box"><div class="photo bsize" data-src="https://posters.cdn.klikfilm.net/150_214/3126_150_214.jpg" style="background-image: url(&quot;https://posters.cdn.klikfilm.net/150_214/3126_150_214.jpg&quot;);"></div><div class="list">KH. Cholil ...</div></div></div></a><a href="https://klikfilm.com/v3/mobile/film/detail/3160/51"><div class="card_film left mb10"><div class="film_box"><div class="photo bsize" data-src="https://posters.cdn.klikfilm.net/150_214/3125_150_214.jpg" style="background-image: url(&quot;https://posters.cdn.klikfilm.net/150_214/3125_150_214.jpg&quot;);"></div><div class="list">KH. Achmad ...</div></div></div></a><a href="https://klikfilm.com/v3/mobile/film/detail/3159/51"><div class="card_film left mb10"><div class="film_box"><div class="photo bsize" data-src="https://posters.cdn.klikfilm.net/150_214/3124_150_214.jpg" style="background-image: url(&quot;https://posters.cdn.klikfilm.net/150_214/3124_150_214.jpg&quot;);"></div><div class="list">KH. Muhamma...</div></div></div></a><a href="https://klikfilm.com/v3/mobile/film/detail/3158/51"><div class="card_film left mb10"><div class="film_box"><div class="photo bsize" data-src="https://posters.cdn.klikfilm.net/150_214/3123_150_214.jpg" style="background-image: url(&quot;https://posters.cdn.klikfilm.net/150_214/3123_150_214.jpg&quot;);"></div><div class="list">KH. Abbas A...</div></div></div></a><a href="https://klikfilm.com/v3/mobile/film/detail/3131/51"><div class="card_film left mb10"><div class="film_box"><div class="photo bsize" data-src="https://posters.cdn.klikfilm.net/150_214/3131_150_214.jpg" style="background-image: url(&quot;https://posters.cdn.klikfilm.net/150_214/3131_150_214.jpg&quot;);"></div><div class="list">KH. Abdul W...</div></div></div></a></div><div class="clear"></div></div></div></div>		
+	</div>
+	
+
+
+<div class="" data-src="https://posters.cdn.klikfilm.net/frontend_assets/mobile/images/general/icon.png" style="background-image: url(&quot;https://posters.cdn.klikfilm.net/frontend_assets/mobile/images/general/icon.png&quot;);"></div>
+<!--CONTENT END-->
+<script>
+
+
+//demi menutup 
+
+var linkUrl2x=BASE_URL+'film/detail/%s/%s';
+var linkUrlSeries2x=BASE_URL+'series/detail/%s/%s';
+var Contentv32x='<a href="%s"><div class="card_film left mb10"><div class="film_box"><div class="photo bsize" style="background-image: url(\'%s\');"></div><div class="list">%s</div></div></div></a>';
+var Contentv3tvod2x='<a href="%s"><div class="card_film left mb10"><div class="film_box"><div class="tvod_icon"><img src="https://posters.cdn.klikfilm.net/frontend_assets/mobile/images/premium-brown.png" style="max-height: 25px;"/></div> <div class="photo bsize" style="background-image: url(\'%s\');"></div><div class="list">%s</div></div></div></a>';
+
+var Contentv3lazy2x='<a href="%s"><div class="card_film left mb10"><div class="film_box"><div class="photo bsize lazy" data-src="%s" ></div><div class="list">%s</div></div></div></a>';
+var Contentv3lazy_continue2x='<a id="Scontinue%s" href="%s"><div class="card_film left mb10"><div class="film_box"><div class="photo bsize lazy" data-src="%s" ></div><div class="list">%s</div><div class="continueopt"> <div class="icon right icn_continue icn_continue_theme" style="z-index:5;" onclick="popremovecontinue(\'%s\');return false;">&nbsp;</div></div></div></div></a>';
+var Contentv3tvod_continue2x='<a id="Scontinue%s"  href="%s"><div class="card_film left mb10"><div class="film_box"><div class="tvod_icon"><img src="https://posters.cdn.klikfilm.net/frontend_assets/mobile/images/premium-brown.png" style="max-height: 25px;"/></div> <div class="photo bsize" style="background-image: url(\'%s\');"></div><div class="list">%s</div><div class="continueopt"> <div class="icon right icn_continue icn_continue_theme"  style="z-index:5;" onclick="popremovecontinue(\'%s\');return false;">&nbsp;</div></div></div></div></a>';
+
+
+function getVideoCat2x(response, divId) {
+  var objVideoCat = {},
+    linkCat = [],
+    titleCat = [],
+    thumbnailCat = [],
+    thumbnailSmallCat = [],
+    genreCat = [],
+    ratingCat = [];
+  var offset = 0;
+  var i = 0,
+    html = "";
+  $.each(response.video, function (index, value) {
+    if (value.series == "1") {
+      linkCat.push(sprintf(linkUrlSeries2x, value.id, value.subCategory));
+    } else {
+      linkCat.push(sprintf(linkUrl2x, value.id, value.subCategory));
+    }
+
+    titleCat.push(value.title);
+    thumbnailCat.push(value.thumbnail["320x180"]);
+    thumbnailSmallCat.push(value.thumbnail["120x90"]);
+    genreCat.push(value.genre);
+    ratingCat.push(value.rating);
+    if (value.series == "1") {
+      if (value.access == "SVOD") {
+        html += sprintf(Contentv32x, sprintf(linkUrlSeries2x, value.id, value.subCategory), value.thumbnail["120x90"], value.title);
+        i++;
+      } else {
+        html += sprintf(Contentv3tvod2x, sprintf(linkUrlSeries2x, value.id, value.subCategory), value.thumbnail["120x90"], value.title);
+        i++;
+      }
+    } else {
+      if (value.access == "SVOD") {
+        //html+=sprintf(Contentv3,sprintf(linkUrl,value.id,value.subCategory),value.thumbnail['120x90'],value.title);i++
+        if (divId == "historyv") {
+          html += sprintf(Contentv3lazy_continue2x, value.id, sprintf(linkUrl2x, value.id, value.subCategory), value.thumbnail["120x90"], value.title, value.id);
+          i++;
+        } else {
+          html += sprintf(Contentv3lazy2x, sprintf(linkUrl2x, value.id, value.subCategory), value.thumbnail["120x90"], value.title);
+          i++;
+        }
+      } else {
+        if (divId == "historyv") {
+          html += sprintf(Contentv3tvod_continue2x, value.id, sprintf(linkUrl2x, value.id, value.subCategory), value.thumbnail["120x90"], value.title, value.id);
+          i++;
+        } else {
+          html += sprintf(Contentv3tvod2x, sprintf(linkUrl2x, value.id, value.subCategory), value.thumbnail["120x90"], value.title);
+          i++;
+        }
+      }
+    }
+  });
+  $("#" + divId).html(html);
+  lazyloadImages = document.querySelectorAll("div.lazy");
+}
+//document.addEventListener("DOMContentLoaded", function(event) { 
+var idfilmrow=0;
+
+
+
+function ajaxGetDatahis(kategori)
+{$.ajax({
+	url:BASE_URL+"ajax/json"+kategori,
+	type:"POST",
+	data:{offset:12},
+	dataType:"json",
+	beforeSend:function(){},
+	complete:function(){},
+	success:function(response)
+	{if(response.total>0){
+		if(kategori=="History"){$("#history").show();getVideoCat2x(response,"historyv")}
+		
+		
+		}
+	},crossDomain:!0,cache:!1,error:function(xhr,status){}}
+)}
+
+function popremovecontinue(idf){
+	idfilmrow=idf;
+	$(".pc_head").css("display", "none");
+	open_popup('1', '<b>Remove Continue Watching </b>', 'notif_continue');
+	return false;
+
+}
+
+
+function removecontinue(){
+	//alert(idfilmrow);
+	$.ajax({
+			type:'POST',
+			url : BASE_URL+'homepro/removecontinue',
+			data: {idf:idfilmrow},
+			beforeSend: function(){
+						//Display_Load();
+					},
+			success: function(resp) {
+				  console.log(resp);  
+				  if(resp.status=="success"){
+					
+					open_popup('0');
+					alert_open('1', 'Remove Continue berhasil');
+					$("#Scontinue"+resp.idf).slideUp('slow', function(){ 
+						$("#Scontinue"+resp.idf).remove(); 
+						 console.log("historyv=");
+        				console.log($("#historyv").html());
+						if($("#historyv").html()=="")
+								{
+									$("#history").hide();
+									ajaxGetDatahis("History");
+						
+								}
+						
+/*
+						ajaxGetData("History").then(result => {
+							console.log("Selesai dapet data:", result);
+							//doSomething(result);
+							if($("#historyv").html()=="")
+								{
+									$("#history").hide();
+						
+								}	
+							}); */
+
+						
+
+					});
+					
+					
+
+					//
+
+				  }else{
+					open_popup('0');
+					alert_open('1', 'Remove Continue Gagal');
+					
+				  }                  
+			},
+			dataType: "json",
+			complete: function(){
+						
+			},
+			});
+
+}
+//});
+
+//mulai lazy
+document.addEventListener("DOMContentLoaded", function() {
+  lazyloadImages = document.querySelectorAll("div.lazy");
+  var lazyloadThrottleTimeout;
+
+  function lazyload () {
+    if(lazyloadThrottleTimeout) {
+      clearTimeout(lazyloadThrottleTimeout);
+    }    
+    
+    lazyloadThrottleTimeout = setTimeout(function() {
+        var scrollTop = window.pageYOffset;
+		
+        lazyloadImages.forEach(function(img) {
+			if(img.offsetTop < (window.innerHeight + scrollTop+501)) {
+			
+			  var timeStampInMs = window.performance && window.performance.now && window.performance.timing && window.performance.timing.navigationStart ? window.performance.now() + window.performance.timing.navigationStart : Date.now();
+			  img.classList.remove('lazy');
+			  img.style.backgroundImage = "url('"+img.dataset.src+"')";
+			  lazyloadImages = document.querySelectorAll("div.lazy"); 
+            }
+        });
+       
+    }, 20);
+  }
+  
+  document.addEventListener("scroll", lazyload);
+  window.addEventListener("resize", lazyload);
+  window.addEventListener("orientationChange", lazyload);
+});
+
+slider_set();$("html,body").animate({scrollTop:$("#index_head").height()-250},1000);$("#index_body").css('top',$("#index_head").height());$(document).scroll(function(){var y=$(this).scrollTop();var navWrap=$('#index_body').offset().top;if(y>navWrap){$("#index_head").hide()}else{$("#index_head").show()}
+if(y>navWrap-200){$("#slider_images").css("opacity","0.5")}else{$("#slider_images").css("opacity","1")}
+var psarray=["0"];for(var ps=0;ps<psarray.length;ps++){$("#psid_"+psarray[ps]+" > .poster_image").hide();var isElementInView=Utils.isElementInView($("#psid_"+psarray[ps]+" > .poster_screen"),!1);if(isElementInView){$("#psid_"+psarray[ps]+" > .poster_image").show()}else{$("#psid_"+psarray[ps]+" > .poster_image").hide()}}});$(document).ready(function(){var ddContent='<a href="%s"><div class="card_film left mb10"><div class="film_box"><div class="photo bsize" style="background-image: url(\'%s\');"></div><div class="list">%s</div></div></div></a>';
+var linkUrl=BASE_URL+'film/detail/%s/%s';
+var linkUrlSeries=BASE_URL+'series/detail/%s/%s';
+var Contentv3='<a href="%s"><div class="card_film left mb10"><div class="film_box"><div class="photo bsize" style="background-image: url(\'%s\');"></div><div class="list">%s</div></div></div></a>';
+var Contentv3lazy=	   '<a href="%s"><div class="card_film left mb10"><div class="film_box"><div class="photo bsize lazy" data-src="%s" ></div><div class="list">%s</div></div></div></a>';
+var Contentv3lazy_rate='<a href="%s"><div class="card_film left mb10"><div class="film_box"><div class="photo bsize lazy" data-src="%s" ></div><div class="list">%s</div><div class="list2">%s</div></div></div></div></a>';
+
+var Contentv3lazy_continue='<a id="Scontinue%s" href="%s"><div class="card_film left mb10"><div class="film_box"><div class="photo bsize lazy" data-src="%s" ></div><div class="list">%s</div><div class="continueopt"> <div class="icon right icn_continue icn_continue_theme" style="z-index:5;" onclick="popremovecontinue(\'%s\');return false;">&nbsp;</div></div></div></div></a>';
+
+var Contentv3tvod='<a href="%s"><div class="card_film left mb10"><div class="film_box"><div class="tvod_icon"><img src="https://posters.cdn.klikfilm.net/frontend_assets/mobile/images/premium-brown.png" style="max-height: 25px;"/></div> <div class="photo bsize" style="background-image: url(\'%s\');"></div><div class="list">%s</div></div></div></a>';
+
+var Contentv3tvod_continue='<a id="Scontinue%s"  href="%s"><div class="card_film left mb10"><div class="film_box"><div class="tvod_icon"><img src="https://posters.cdn.klikfilm.net/frontend_assets/mobile/images/premium-brown.png" style="max-height: 25px;"/></div> <div class="photo bsize" style="background-image: url(\'%s\');"></div><div class="list">%s</div><div class="continueopt"> <div class="icon right icn_continue icn_continue_theme"  style="z-index:5;" onclick="popremovecontinue(\'%s\');return false;">&nbsp;</div></div></div></div></a>';
+var Contentv3tvod_rate='<a href="%s"><div class="card_film left mb10"><div class="film_box"><div class="tvod_icon"><img src="https://posters.cdn.klikfilm.net/frontend_assets/mobile/images/premium-brown.png" style="max-height: 25px;"/></div> <div class="photo bsize" style="background-image: url(\'%s\');"></div><div class="list">%s</div><div class="list2">%s</div></div></div></a>';
+
+
+var Contentv3tvod_old1='<a href="%s"><div class="card_film left mb10"><div class="film_box"><div class="tvod_icon"><img src="https://posters.cdn.klikfilm.net/frontend_assets/v3/mobile/assets/images/pita.png" style="max-width: 15px;"/></div> <div class="photo bsize" style="background-image: url(\'%s\');"></div><div class="list">%s</div></div></div></a>';
+var redone=0;
+
+var Contentv3pop='<a href="%s"  onclick="return open_popupcolor2(\'1\', \'popupcolor2\');"><div class="card_film left mb10"><div class="film_box"><div class="photo bsize" style="background-image: url(\'%s\');"></div><div class="list">%s</div></div></div></a>';
+var personalContent='<div id="%s" class="hidden"><div class="title_page"><div class="title left">%s</div><span class="right"></span></div><div class="clear"></div><div class="scrollmenu" id="%s"></div><div class="clear"></div></div>';
+var categoryContent='<div id="%s" class="hidden"><div class="title_page"><div class="title left awalunderline">%s</div><span class="right"><a href="%s"><div class="title_txt left morehome">more</div></a></span></div><div class="clear"></div><div class="scrollmenu" id="%s"></div><div class="clear"></div></div>';
+var categoryContentred='<div id="%s" class="hidden"><div class="title_page"><div class="title left awalunderlinered">%s</div><span class="right"><a href="%s"><div class="title_txt left morehomered">more</div></a></span></div><div class="clear"></div><div class="scrollmenu" id="%s"></div><div class="clear"></div></div>';
+
+
+var titleArr=[];
+var idArr=[];
+var jtok=0;
+var busy = false;
+var busy2 = false;
+
+var terbesar=0;
+
+
+
+	
+function getVideoCat(response,divId)
+{
+	
+	var objVideoCat={},
+linkCat=[],
+titleCat=[],
+thumbnailCat=[],
+thumbnailSmallCat=[],
+genreCat=[],
+ratingCat=[];
+var offset=0;
+var i=0,html='';
+var addlist2="";
+$.each(
+	response.video,function(index,value)
+	{
+      
+       if(value.series=="1"){
+        linkCat.push(sprintf(linkUrlSeries,value.id,value.subCategory));
+       }else{
+        linkCat.push(sprintf(linkUrl,value.id,value.subCategory));
+       
+       }
+		
+		titleCat.push(value.title);thumbnailCat.push(value.thumbnail['320x180']);
+		thumbnailSmallCat.push(value.thumbnail['120x90']);
+		genreCat.push(value.genre);
+		ratingCat.push(value.rating);
+       if(value.series=="1"){ 
+			if(value.access=="SVOD"){
+				html+=sprintf(Contentv3,sprintf(linkUrlSeries,value.id,value.subCategory),value.thumbnail['120x90'],value.title);i++
+			}else{
+				html+=sprintf(Contentv3tvod,sprintf(linkUrlSeries,value.id,value.subCategory),value.thumbnail['120x90'],value.title);i++
+			}
+       }else{
+			if(value.access=="SVOD"){
+				//html+=sprintf(Contentv3,sprintf(linkUrl,value.id,value.subCategory),value.thumbnail['120x90'],value.title);i++
+				if(divId=="historyv"){
+					html+=sprintf(Contentv3lazy_continue,value.id,sprintf(linkUrl,value.id,value.subCategory),value.thumbnail['120x90'],value.title,value.id);i++
+				
+				}else if((divId=="imdbv")||(divId=="letterboxdv")||(divId=="rottentomatoesv")){
+					console.log('imdb=');console.log(value);
+					addlist2="";
+					
+					if(value.rating.imdb== null){}else{
+						addlist2+='<div class="list2-item"><img src="https://klikfilm.com/v3/mobile/assets/images/rating/imdb.png" style="max-width:35px;"> '+value.rating.imdb+"</div>";
+					}
+					
+					if(value.rating.rottenTomatoes== null){
+							if(value.rating.rottentomatoes== null){}else{
+								addlist2+='<div class="list2-item"><img src="https://klikfilm.com/v3/mobile/assets/images/rating/rotten.png" style="max-width:17px;"> '+value.rating.rottentomatoes+"</div>";
+							}
+					}else{
+						addlist2+='<div class="list2-item"><img src="https://klikfilm.com/v3/mobile/assets/images/rating/rotten.png" style="max-width:17px;"> '+value.rating.rottenTomatoes+"</div>";
+					}
+					if(value.rating.letterboxd== null){}else{
+						addlist2+='<div class="list2-item"><img src="https://klikfilm.com/v3/mobile/assets/images/rating/letterboxd.png" style="max-width:85px;"> '+value.rating.letterboxd+"</div>";
+					}
+
+					html+=sprintf(Contentv3lazy_rate,sprintf(linkUrl,value.id,value.subCategory),value.thumbnail['120x90'],value.title,addlist2);i++
+					//html+=sprintf(Contentv3lazy,sprintf(linkUrl,value.id,value.subCategory),value.thumbnail['120x90'],value.title);i++
+				
+
+				}else{
+					html+=sprintf(Contentv3lazy,sprintf(linkUrl,value.id,value.subCategory),value.thumbnail['120x90'],value.title);i++
+				}
+			}else{
+				if(divId=="historyv"){
+					html+=sprintf(Contentv3tvod_continue,value.id,sprintf(linkUrl,value.id,value.subCategory),value.thumbnail['120x90'],value.title,value.id);i++
+				
+				}else if((divId=="imdbv")||(divId=="letterboxdv")||(divId=="rottentomatoesv")){
+					addlist2="";
+					
+					if(value.rating.imdb== null){}else{
+						addlist2+='<div class="list2-item"><img src="https://klikfilm.com/v3/mobile/assets/images/rating/imdb.png" style="max-width:35px;"> '+value.rating.imdb+'</div>';
+					}
+					
+					if(value.rating.rottenTomatoes== null){}else{
+						addlist2+='<div class="list2-item"><img src="https://klikfilm.com/v3/mobile/assets/images/rating/rotten.png" style="max-width:17px;"> '+value.rating.rottenTomatoes+'</div>';
+					}
+					if(value.rating.letterboxd== null){}else{
+						addlist2+='<div class="list2-item"><img src="https://klikfilm.com/v3/mobile/assets/images/rating/letterboxd.png" style="max-width:85px;"> '+value.rating.letterboxd+'</div>';
+					}
+
+					html+=sprintf(Contentv3tvod_rate,sprintf(linkUrl,value.id,value.subCategory),value.thumbnail['120x90'],value.title,addlist2);i++
+				
+				}else{
+					html+=sprintf(Contentv3tvod,sprintf(linkUrl,value.id,value.subCategory),value.thumbnail['120x90'],value.title);i++
+				}
+			}
+       }
+	}
+	);
+		$("#"+divId).html(html);
+		lazyloadImages = document.querySelectorAll("div.lazy");
+}
+
+
+function getVideoCatSeries(response,divId)
+{
+	
+	var objVideoCat={},
+linkCat=[],
+titleCat=[],
+thumbnailCat=[],
+thumbnailSmallCat=[],
+genreCat=[],
+ratingCat=[];
+var offset=0;
+var i=0,html='';
+$.each(
+	response.video,function(index,value)
+	{
+		linkCat.push(sprintf(linkUrlSeries,value.id,value.subCategory));
+		titleCat.push(value.title);thumbnailCat.push(value.thumbnail['320x180']);
+		thumbnailSmallCat.push(value.thumbnail['120x90']);
+		genreCat.push(value.genre);
+		ratingCat.push(value.rating);
+		html+=sprintf(Contentv3,sprintf(linkUrlSeries,value.id,value.subCategory),value.thumbnail['120x90'],value.title);i++
+	}
+	);
+		$("#"+divId).html(html)
+}
+function createPersonal(totalp,response){
+	var html=$("#personal").html();
+	for(var i=0;i<totalp;i++){
+		html+=sprintf(personalContent,'personal'+i,response[i].category,"personalv"+i);
+	}
+	$("#personal").html(html);
+	
+}
+
+
+function createCatVideo(menuId,catId,response){
+	var html=$("#personalcat").html();
+	html+=sprintf(categoryContent,'personalcat'+response.id,response.category,BASE_URL+"category/detail/"+menuId+"/"+catId,"personalcatv"+response.id);
+	$("#personalcat").html(html);
+	
+}
+
+function createCatHighlight(catId,response){
+	var html=$("#personalhigh").html();
+	html+=sprintf(categoryContent,'personalcathigh'+response.id,response.category,BASE_URL+"home/more/"+catId,"personalcathighv"+response.id);
+	$("#personalhigh").html(html);
+	
+}
+
+
+function createCatHighlightId(catId,titleId){
+	var html=$("#personalhigh").html();
+	html+=sprintf(categoryContent,'personalcathigh'+catId,titleId,BASE_URL+"home/more/"+catId,"personalcathighv"+catId);
+	$("#personalhigh").html(html);
+	
+}
+
+
+function createCatHighlightSeries(catId,response){
+	var html=$("#personalhigh").html();
+	html+=sprintf(categoryContent,'personalcathigh'+response.id,response.category,BASE_URL+"home/moreseries/"+catId,"personalcathighv"+response.id);
+	$("#personalhigh").html(html);
+	
+}
+
+function createCatHighlightred(catId,response){
+	var html=$("#personalhighred").html();
+	html+=sprintf('<div class="rediv">'+categoryContentred+'</div>','personalcathighred'+response.id,response.category,BASE_URL+"home/more/"+catId,"personalcathighredv"+response.id);
+	$("#personalhighred").html(html);
+	
+}
+
+  function createCatHighlightredId(catId, titleId) {
+    var html = $("#personalhigh").html();
+    //html += '<div class="rediv">' + sprintf(categoryContent, "personalcathigh" + catId, titleId, BASE_URL + "home/more/" + catId, "personalcathighv" + catId) + "</div >";
+    html += '<div class="rediv">' + sprintf(categoryContentred, "personalcathigh" + catId, titleId, BASE_URL + "home/more/" + catId, "personalcathighv" + catId) + "</div >";
+
+    $("#personalhigh").html(html);
+  }
+  
+
+function createCatHighlightredIdOLDXYZ(catId,titleId){
+	var html=$("#personalhighred").html();
+	html+=sprintf('<div class="rediv">'+categoryContentred+'</div>','personalcathighred'+catId,titleId,BASE_URL+"home/more/"+catId,"personalcathighredv"+catId);
+	$("#personalhighred").html(html);
+	
+}
+
+
+function ajaxGetData(kategori)
+{$.ajax({
+	url:BASE_URL+"ajax/json"+kategori,
+	type:"POST",
+	data:{offset:12},
+	dataType:"json",
+	beforeSend:function(){},
+	complete:function(){},
+	success:function(response)
+	{if(response.total>0){
+		if(kategori=="Trend"){$("#trending").show();getVideoCat(response,"trendingv");}
+		else if(kategori=="imdb"){$("#imdb").show();getVideoCat(response,"imdbv")}
+		else if(kategori=="letterboxd"){$("#letterboxd").show();getVideoCat(response,"letterboxdv")}
+		else if(kategori=="rottentomatoes"){$("#rottentomatoes").show();getVideoCat(response,"rottentomatoesv")}
+		else if(kategori=="History"){$("#history").show();getVideoCat(response,"historyv")}
+		else if(kategori=="Playlist"){$("#playlist").show();getVideoCat(response,"playlistv")}
+		else if(kategori=="Recommendation"){$("#rekommendation").show();getVideoCat(response,"rekommendationv");}
+		else if(kategori=="Personal")
+			{	createPersonal(response.totalcat,response);
+				$("#personal").show();
+				
+				for(var i=0;i<response.totalcat;i++){
+					getVideoCat(response[i],"personalv"+i);
+					$("#personal"+i).show();
+				}
+			}
+		
+		}
+	},crossDomain:!0,cache:!1,error:function(xhr,status){}}
+)}
+
+function isihighlight(response,catId,catName){
+	
+	if(response.total>0){
+			response.category=catName;//"namacat";
+			response.id=catId;
+			
+			$("#personalhigh").show();			if(catId==''){//53
+			/*
+				//if(redone==0){	
+				
+				//createCatHighlightred(catId,response);
+				$("#personalhighred").show();
+				getVideoCat(response,"personalcathighredv"+response.id);
+				$("#personalcathighred"+response.id).show();
+				redone=1; */
+				 const myDiv = document.getElementById("personalcathighredv" + response.id);
+
+					if (myDiv) {
+					console.log("Elemen ditemukan!");
+					$("#personalhighred").show();
+						getVideoCat(response, "personalcathighredv" + response.id);
+						$("#personalcathighred" + response.id).show();
+						redone = 1;
+						
+					} else {
+					$("#personalhigh").show();
+					getVideoCat(response, "personalcathighv" + response.id);
+					$("#personalcathigh" + response.id).show();
+					}
+			
+			}else{
+				//createCatHighlight(catId,response);
+				$("#personalhigh").show();
+				getVideoCat(response,"personalcathighv"+response.id);
+				$("#personalcathigh"+response.id).show();
+			}
+			
+			
+				
+		
+		
+		}
+
+}
+
+function ajaxGetDataHighlight(catId,catName)
+{
+	console.log(catId+"-"+catName);
+	var lanjutajax=true;
+	
+	if (typeof localStorage.getItem("high_"+IPCC+"_"+catId) == "string") 
+	{
+		$("#loading").fadeOut('slow');
+		var response = JSON.parse(localStorage.getItem("high_SG_"+catId));
+		var y=Math.floor(Date.now() / 1000);
+		var waktutersimpan=y-response.waktusave;
+		if(waktutersimpan<=1800){ //1800 12 jam=43200, 0.5jam=1800
+			lanjutajax=false;
+			
+		}
+		
+
+	}
+
+	if(lanjutajax){
+		
+			$.ajax({
+			url:BASE_URL+"ajax/jsonHighlight",
+			type:"POST",
+			data:{catId:catId},
+			dataType:"json",
+			beforeSend:function(){
+				Display_Load();
+
+			},
+			complete:function(){
+				//ajaxexe();
+				busy =false;
+				Hide_Load();
+			},
+			success:function(response)
+			{
+				Hide_Load();
+				response["waktusave"] = new Date().getTime() / 1000;
+				localStorage.setItem("high_SG_"+catId, JSON.stringify(response));
+				
+				isihighlight(response,catId,catName);
+			},crossDomain:!0,cache:!1,error:function(xhr,status){Hide_Load();}}
+		);//end ajax
+	}else{
+		Hide_Load();
+		
+		
+		response.video=shuffleArray(response.video);
+        isihighlight(response,catId,catName);
+		
+		//coba tutup nih biar ngurut
+		//jtok++;
+		
+		response["waktusave"] = new Date().getTime() / 1000;
+		localStorage.setItem("high_SG_"+catId, JSON.stringify(response));
+
+		//ajaxexe();
+		busy =false;
+
+	}
+}
+
+function ajaxGetDataHighlightSeries(catId,catName)
+{$.ajax({
+	url:BASE_URL+"ajax/jsonHighlightSeries",
+	type:"POST",
+	data:{catId:catId},
+	dataType:"json",
+	beforeSend:function(){},
+	complete:function(){},
+	success:function(response)
+	{if(response.total>0){
+			response.category=catName;//"namacat";
+			response.id=catId;
+			
+				createCatHighlightSeries(catId,response);
+				$("#personalhigh").show();
+				getVideoCatSeries(response,"personalcathighv"+response.id);
+				$("#personalcathigh"+response.id).show();
+			
+			
+			
+				
+		
+		
+		}
+	},crossDomain:!0,cache:!1,error:function(xhr,status){}}
+)}
+
+
+
+
+function ajaxGetDataCategoryVideo(menuId,catId,catName)
+{
+	
+	var lanjutajax=true;
+	
+	if (typeof localStorage.getItem("catv_SG_"+catId) == "string") 
+	{
+		var response = JSON.parse(localStorage.getItem("catv_SG_"+catId));
+		var y=Math.floor(Date.now() / 1000);
+		var waktutersimpan=y-response.waktusave;
+		if(waktutersimpan<=1800){ //12 jam=43200, 0.5jam=1800
+			lanjutajax=false;
+			
+		}
+		
+
+	}
+
+	if(lanjutajax){
+	$.ajax({
+	url:BASE_URL+"ajax/jsonCategoryVideo",
+	type:"POST",
+	data:{catId:catId},
+	dataType:"json",
+	beforeSend:function(){},
+	complete:function(){
+		//busy=false;
+	},
+	success:function(response)
+	{if(response.total>0){
+			//save
+			response["waktusave"] = new Date().getTime() / 1000;
+			localStorage.setItem("catv_SG_"+catId, JSON.stringify(response));
+
+			response.category=catName;//"namacat";
+			response.id=catId;
+			
+			createCatVideo(menuId,catId,response);
+			$("#personalcat").show();
+			getVideoCat(response,"personalcatv"+response.id);
+			$("#personalcat"+response.id).show();
+				
+		
+		
+		}
+	},crossDomain:!0,cache:!1,error:function(xhr,status){}}
+	)//end ajax
+	}else{
+		//ambil dari storage
+		response.video=shuffleArray(response.video);
+        //harus diganti dengan yg cat video
+		//isihighlight(response,catId,catName);
+		
+		response["waktusave"] = new Date().getTime() / 1000;
+			localStorage.setItem("catv_SG_"+catId, JSON.stringify(response));
+
+			response.category=catName;//"namacat";
+			response.id=catId;
+			
+			createCatVideo(menuId,catId,response);
+			$("#personalcat").show();
+			getVideoCat(response,"personalcatv"+response.id);
+			$("#personalcat"+response.id).show();
+
+		
+		response["waktusave"] = new Date().getTime() / 1000;
+		localStorage.setItem("high_SG_"+catId, JSON.stringify(response));
+
+		//ajaxexe();
+		//busy =false;
+
+	}
+
+}//end function getcategoryvide
+
+
+
+function ajaxexe(){
+		
+		
+	if(jtok>=idArr.length){	
+    	return false;
+	}else{
+		ajaxGetDataHighlight(idArr[jtok],titleArr[jtok]);
+	}
+					
+	jtok++;
+	
+}
+
+
+
+
+
+busy =false;
+$(window).scroll(function() 
+		{
+			clearTimeout($.data(this, 'scrollTimer'));
+			$.data(this, 'scrollTimer', setTimeout(function() {
+			
+				if($(window).scrollTop()>=terbesar){
+					terbesar=$(window).scrollTop();
+					busy2=false;
+					busy=false;
+					console.log("eks terbesar="+ terbesar+"scrolltop= "+$(window).scrollTop() );
+				}
+				if ($(window).scrollTop() + $(window).height() >= ($(document).height() - 500) && !busy ) //&& !busy2
+				{
+					
+					busy2 = true;
+					busy = true;
+					
+					ajaxexe();ajaxexe();ajaxexe();
+					busy = false;
+					//lazyload();
+				}
+			}, 250));
+		});
+
+
+
+
+
+
+
+function init()
+{
+	
+		
+	
+	
+	divspecial_js('trending','trendingv','special/trending',' Trending ');ajaxGetData('Trend');divspecial_js('history','historyv','special/history',' Continue Watching ');divspecial_js('playlist','playlistv','playlist',' My List ');divspecial_js('rottentomatoes','rottentomatoesv','special/rottentomatoes',`Fresh & Poppin'`);ajaxGetData("rottentomatoes");$("#rottentomatoes").css({ "display": "block"});$("#rottentomatoes").addClass("rediv");$("#rottentomatoes").show();$("#personalhigh").show();ajaxGetDataCategoryVideo(14,51,"Original Docuseries-Sang Kyai");	
+}
+init();
+		function Display_Load()
+		{
+			$("#loading").fadeIn(900,0);
+			$("#loading").html("<center><img style src='https://posters.cdn.klikfilm.net/frontend_assets/mobile/images/bigLoader.gif' /></center>");
+		};
+		
+		function Hide_Load(){
+			$("#loading").fadeOut('slow');
+		};
+
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</script>
+<div style="height: 213px;"></div>
+
+
+</body></html>

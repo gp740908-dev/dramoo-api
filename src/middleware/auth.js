@@ -11,7 +11,7 @@ function requireApiKey(req, res, next) {
     return res.status(401).json({
       success: false,
       error: 'API key tidak ditemukan. Kirim via header X-Api-Key atau query ?key=',
-      docs: 'https://dramoo.id/#api-docs',
+      docs: 'https://api.wmxservices.store/#api-docs',
     });
   }
 

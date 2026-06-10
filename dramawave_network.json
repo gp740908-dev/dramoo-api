@@ -1,0 +1,65 @@
+[
+  {
+    "url": "https://dramawave.dramaflixs.com/playlet/PInDoT52ty",
+    "status": 200,
+    "headers": {
+      "alt-svc": "h3=\":443\"; ma=86400",
+      "cache-control": "no-cache, private",
+      "cf-cache-status": "DYNAMIC",
+      "cf-ray": "a0986007f994ce67-SIN",
+      "content-encoding": "zstd",
+      "content-type": "text/html; charset=UTF-8",
+      "date": "Wed, 10 Jun 2026 12:28:18 GMT",
+      "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
+      "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=0DVFLpiZ22XPcmQECO8BPHtc1tMpbjhaRRiNxbqPJcpDsXtUJV4Atsxf2b%2FwqI89B5UANX4YEyoCojCqG%2BI3UZfj2jOJYgZo%2Fg8WfIshkyTte5CHgp%2FT%2BSABlYApknzoqqMq7nneBtrIjN8VOXXUZsSnku3J5VU%3D\"}]}",
+      "server": "cloudflare",
+      "server-timing": "cfCacheStatus;desc=\"DYNAMIC\"\ncfEdge;dur=19,cfOrigin;dur=190",
+      "vary": "accept-encoding"
+    },
+    "bodySnippet": "<!DOCTYPE html>\n<html lang=\"\">\n\n    <head>\n        <meta charset=\"UTF-8\" />\n        <meta\n              name=\"viewport\"\n              content=\"width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover\" />\n\n        <link rel=\"icon\" type=\"image/png\" href=\"/favicon-96x96.png\" sizes=\"96x96\" />\n        <link rel=\"icon\" type=\"image/svg+xml\" href=\"/favicon.svg\" />\n        <link rel=\"shortcut icon\" href=\"/favicon.ico\" />\n        <link rel=\"apple-touch-icon\" sizes=\"18"
+  },
+  {
+    "url": "https://dramawave.dramaflixs.com/cdn-cgi/rum?",
+    "status": 204,
+    "headers": {
+      "access-control-max-age": "86400",
+      "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
+      "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=UV8yTyqfg0uVsxm41WYa1DDsDN1o6%2BMyDsMQq3A8tBTfhUOeH2XFfCL2Vu61BA41evVdaOxBeIqDDuUWWNsrEotrsc0zBtV8VHhaEB%2FpktFl423uAfwSn9FLp7qP4RWscLG4Lzk4Y%2FWMEIEATE6CvLz8%2FtpGaAE%3D\"}]}",
+      "access-control-allow-credentials": "true",
+      "access-control-allow-methods": "POST,OPTIONS",
+      "cf-ray": "a0986033b87dfd40-SIN",
+      "access-control-allow-origin": "https://dramawave.dramaflixs.com",
+      "alt-svc": "h3=\":443\"; ma=86400",
+      "server-timing": "cfExtPri",
+      "date": "Wed, 10 Jun 2026 12:28:25 GMT",
+      "content-type": "text/plain",
+      "vary": "Origin",
+      "server": "cloudflare",
+      "priority": "u=1,i"
+    },
+    "bodySnippet": ""
+  },
+  {
+    "url": "https://free.freeipapi.com/api/json",
+    "status": 200,
+    "headers": {
+      "content-encoding": "zstd",
+      "cf-cache-status": "DYNAMIC",
+      "report-to": "{\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=PMjfeTYufYI4i05znHjSV%2Fh%2BggUZM%2FoY6Jz42pap0E4uzbR7zJQmfTwsjAh8o9El%2B%2FWv6Tv3vwFcEv4cfrfBgPnKDL73EqV8flhtRWp1TWtzbs3fq3MEtb2uQAOgZenYQtYDgW%2FS3BoQA7JX6q9eAQY%3D\"}]}",
+      "x-content-type-options": "nosniff",
+      "alt-svc": "h3=\":443\"; ma=86400",
+      "date": "Wed, 10 Jun 2026 12:28:25 GMT",
+      "content-type": "application/json",
+      "x-frame-options": "SAMEORIGIN",
+      "nel": "{\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}",
+      "cache-control": "no-cache, private",
+      "x-ratelimit-remaining": "58",
+      "cf-ray": "a0986033cc328231-SIN",
+      "access-control-allow-origin": "*",
+      "x-ratelimit-limit": "60",
+      "x-powered-by": "PHP/8.4.8",
+      "server": "cloudflare"
+    },
+    "bodySnippet": "{\"ipVersion\":6,\"ipAddress\":\"2406:da18:af5:d200:6e4f:2dcc:f352:1294\",\"latitude\":1.35208,\"longitude\":103.82,\"countryName\":\"Singapore\",\"countryCode\":\"SG\",\"capital\":\"Singapore\",\"phoneCodes\":[65],\"timeZones\":[\"Asia\\/Singapore\"],\"zipCode\":\"179431\",\"cityName\":\"Singapore\",\"regionName\":null,\"regionCode\":null,\"continent\":\"Asia\",\"continentCode\":\"AS\",\"currencies\":[\"SGD\"],\"languages\":[\"en\",\"ms\",\"ta\",\"zh\"],\"asn\":\"16509\",\"asnOrganization\":\"Amazon.com, Inc.\",\"isProxy\":false}"
+  }
+]

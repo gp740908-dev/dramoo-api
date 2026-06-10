@@ -92,11 +92,17 @@ class BaseScraper {
 
   /** Format output drama yang konsisten lintas platform */
   formatDrama(raw = {}) {
+    const url = raw.url || null;
+    let id = raw.id;
+    if (!id && url) {
+      id = Buffer.from(url).toString('base64url');
+    }
+
     return {
-      id:          raw.id          || null,
+      id:          id,
       title:       this.cleanText(raw.title || ''),
       thumbnail:   raw.thumbnail   || null,
-      url:         raw.url         || null,
+      url:         url,
       description: this.cleanText(raw.description || ''),
       genre:       Array.isArray(raw.genre)    ? raw.genre    : (raw.genre ? [raw.genre] : []),
       episodes:    raw.episodes    || null,

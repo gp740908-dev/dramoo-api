@@ -265,11 +265,11 @@ async function processApproval(adminChatId, targetChatId, packageId, callbackQue
 
 *Cara pakai:*
 \`\`\`
-curl -H "X-Api-Key: ${keyData.api_key}" \\
-  https://api.wmxservices.store/api/validate
+curl -H "X-Api-Key: (your apikey)" \\
+  https://api.wmxservices.store/api/me
 \`\`\`
 
-📖 Dokumentasi: https://dramoo.id/#api-docs
+📖 Dokumentasi: https://api.wmxservices.store/#api-docs
 💬 Support: @dramoobot
 
 Selamat menggunakan Dramoo API! 🚀`;
@@ -405,11 +405,11 @@ GET /api/platforms    — Platform yang bisa diakses
 
 *3. Contoh Request*
 \`\`\`bash
-curl -H "X-Api-Key: KODE_KAMU" \\
-  https://api.wmxservices.store/api/validate
+curl -H "X-Api-Key: (your apikey)" \\
+  https://api.wmxservices.store/api/me
 \`\`\`
 
-📚 Dokumentasi lengkap: https://dramoo.id/#api-docs`;
+📚 Dokumentasi lengkap: https://api.wmxservices.store/#api-docs`;
 
   bot.sendMessage(msg.chat.id, text, { parse_mode: 'Markdown' });
 });

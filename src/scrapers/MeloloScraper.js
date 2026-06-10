@@ -89,12 +89,26 @@ class MeloloScraper extends BaseScraper {
 
   async search(query, page = 1) {
     return this.withRetry(async () => {
-      const $ = await this._fetchHtml(`/id/search?q=${encodeURIComponent(query)}`);
+      const $ = await this._fetchHtml(`/search?q=${encodeURIComponent(query)}`);
 
       const items = [];
-      $('a[href*="/dramas/"]').each((_, el) => {
-        const d = this._parseDramaItem($, el);
-        if (d.title && d.url && d.url.includes('/dramas/')) items.push(this.formatDrama(d));
+      // Melolo: img and anchor are siblings inside a parent div
+      $('img[alt][src]').each((_, imgEl) => {
+        const $img = $(imgEl);
+        const src = $img.attr('src') || $img.attr('data-src') || '';
+        const alt = this.cleanText($img.attr('alt') || '');
+        // Find sibling or ancestor link
+        const parent = $img.parent();
+        const link = parent.find('a[href*="/dramas/"]').first().attr('href') || 
+                     parent.closest('[href*="/dramas/"]').attr('href') || '';
+        // Also look at nearest anchor with /dramas/
+        const nearestLink = $img.closest('div').find('a[href*="/dramas/"]').first();
+        const url = this.toAbsoluteUrl(nearestLink.attr('href') || link);
+        const thumbnail = this.toAbsoluteUrl(src);
+        
+        if (alt && url && url.includes('/dramas/')) {
+          items.push(this.formatDrama({ title: alt, url, thumbnail, episodes: null, rating: null }));
+        }
       });
 
       const uniqueItems = Array.from(new Map(items.map(item => [item.url, item])).values());
@@ -169,12 +183,14 @@ class MeloloScraper extends BaseScraper {
       return {
         success:  true,
         platform: this.platformId,
-        drama: this.formatDrama({
-          title, thumbnail, description, genre, rating, year, status,
-          url:      this.toAbsoluteUrl(dramaUrl),
-          episodes: episodes.length || null,
-        }),
-        episode_list: episodes.sort((a, b) => a.episode - b.episode),
+        data: {
+          ...this.formatDrama({
+            title, thumbnail, description, genre, rating, year, status,
+            url:      this.toAbsoluteUrl(dramaUrl),
+            episodes: episodes.length || null,
+          }),
+          episodes: episodes.sort((a, b) => a.episode - b.episode)
+        }
       };
     }, 'getDetail');
   }
