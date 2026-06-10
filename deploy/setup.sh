@@ -34,7 +34,7 @@ ADMIN_ID=""
 
 # ─── INPUT ───────────────────────────────────────────────────────────────────
 echo ""
-read -p "🌐 Masukkan domain API (contoh: api.dramoo.id): " DOMAIN
+read -p "🌐 Masukkan domain API (contoh: api.wmxservices.store): " DOMAIN
 read -p "🤖 Token Bot Telegram (dari @BotFather): " BOT_TOKEN
 read -p "👤 Telegram User ID Admin: " ADMIN_ID
 read -s -p "🔐 Master Key admin API (buat yang panjang): " MASTER_KEY
@@ -131,7 +131,7 @@ echo -e "${YELLOW}🌐 Konfigurasi Nginx...${NC}"
 cp $APP_DIR/nginx/dramoo.conf /etc/nginx/sites-available/dramoo
 
 # Ganti placeholder domain
-sed -i "s/api.dramoo.id/$DOMAIN/g" /etc/nginx/sites-available/dramoo
+sed -i "s/api.wmxservices.store/$DOMAIN/g" /etc/nginx/sites-available/dramoo
 
 # Buat konfigurasi sementara (HTTP only dulu, sebelum SSL)
 cat > /etc/nginx/sites-available/dramoo-temp << EOF

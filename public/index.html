@@ -1,0 +1,1125 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dramoo API — Platform Drama Pendek Asia Terlengkap</title>
+  <meta name="description" content="Dramoo API Aggregator - Akses 38+ platform drama pendek Asia dalam satu API. DramaBox, ReelShort, MicroDrama, dan lebih banyak lagi.">
+  <meta name="keywords" content="dramoo, api, drama pendek, short drama, dramabox, reelshort, streaming api">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg-primary: #0a0a1a;
+      --bg-secondary: #111127;
+      --bg-card: rgba(17, 17, 39, 0.7);
+      --bg-glass: rgba(255, 255, 255, 0.04);
+      --border-glass: rgba(255, 255, 255, 0.08);
+      --text-primary: #e8e8f0;
+      --text-secondary: #8888a8;
+      --text-muted: #5a5a7a;
+      --accent-purple: #8b5cf6;
+      --accent-blue: #3b82f6;
+      --accent-cyan: #06b6d4;
+      --accent-green: #10b981;
+      --accent-red: #ef4444;
+      --accent-amber: #f59e0b;
+      --gradient-primary: linear-gradient(135deg, #8b5cf6, #06b6d4);
+      --gradient-hero: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --radius: 16px;
+      --radius-sm: 8px;
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg-primary); }
+    ::-webkit-scrollbar-thumb { background: var(--accent-purple); border-radius: 3px; }
+
+    /* ─── NAVBAR ──────────────────────────────────────────── */
+    .navbar {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+      padding: 0 2rem; height: 72px;
+      display: flex; align-items: center; justify-content: space-between;
+      background: rgba(10, 10, 26, 0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border-glass);
+      transition: var(--transition);
+    }
+    .navbar.scrolled { background: rgba(10, 10, 26, 0.95); box-shadow: 0 4px 30px rgba(0,0,0,0.3); }
+    .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .nav-brand .logo { width: 36px; height: 36px; background: var(--gradient-primary); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 18px; color: #fff; }
+    .nav-brand span { font-weight: 700; font-size: 1.2rem; color: var(--text-primary); }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a { color: var(--text-secondary); text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: var(--transition); position: relative; }
+    .nav-links a:hover { color: var(--text-primary); }
+    .nav-links a::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 2px; background: var(--gradient-primary); transition: var(--transition); border-radius: 1px; }
+    .nav-links a:hover::after { width: 100%; }
+    .nav-cta { padding: 10px 24px; background: var(--gradient-primary); color: #fff; border: none; border-radius: 50px; font-weight: 600; font-size: 0.85rem; cursor: pointer; text-decoration: none; transition: var(--transition); }
+    .nav-cta:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4); }
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 5px; }
+    .hamburger span { width: 24px; height: 2px; background: var(--text-primary); transition: var(--transition); }
+
+    @media (max-width: 768px) {
+      .hamburger { display: flex; }
+      .nav-links { display: none; position: fixed; top: 72px; left: 0; right: 0; background: rgba(10,10,26,0.98); backdrop-filter: blur(20px); flex-direction: column; padding: 2rem; gap: 1.5rem; border-bottom: 1px solid var(--border-glass); }
+      .nav-links.active { display: flex; }
+      .nav-cta { display: none; }
+    }
+
+    /* ─── HERO ────────────────────────────────────────────── */
+    .hero {
+      min-height: 100vh; display: flex; align-items: center; justify-content: center;
+      position: relative; overflow: hidden; padding: 120px 2rem 80px;
+    }
+    .hero-bg {
+      position: absolute; inset: 0; z-index: 0;
+      background: radial-gradient(ellipse at 30% 20%, rgba(139,92,246,0.15) 0%, transparent 60%),
+                  radial-gradient(ellipse at 70% 80%, rgba(6,182,212,0.1) 0%, transparent 60%);
+    }
+    .particles { position: absolute; inset: 0; z-index: 0; overflow: hidden; }
+    .particle {
+      position: absolute; border-radius: 50%;
+      animation: particleFloat linear infinite;
+      opacity: 0.15;
+    }
+    @keyframes particleFloat {
+      0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+      10% { opacity: 0.15; }
+      90% { opacity: 0.15; }
+      100% { transform: translateY(-100px) rotate(720deg); opacity: 0; }
+    }
+    .hero-content { text-align: center; position: relative; z-index: 1; max-width: 800px; }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 8px 20px; background: var(--bg-glass); border: 1px solid var(--border-glass);
+      border-radius: 50px; font-size: 0.8rem; color: var(--accent-cyan); margin-bottom: 2rem;
+      backdrop-filter: blur(10px);
+    }
+    .hero-badge .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent-green); animation: pulse 2s infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+    .hero h1 {
+      font-size: clamp(2.5rem, 6vw, 4.5rem); font-weight: 900; line-height: 1.1;
+      margin-bottom: 1.5rem;
+      background: linear-gradient(135deg, #fff 0%, #c4b5fd 30%, #06b6d4 60%, #8b5cf6 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text; background-size: 300% 300%;
+      animation: gradientShift 8s ease infinite;
+    }
+    @keyframes gradientShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+    .hero p { font-size: 1.15rem; color: var(--text-secondary); margin-bottom: 2.5rem; max-width: 600px; margin-left: auto; margin-right: auto; }
+    .hero-buttons { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+    .btn-primary {
+      padding: 14px 36px; background: var(--gradient-primary); color: #fff;
+      border: none; border-radius: 50px; font-weight: 600; font-size: 1rem;
+      cursor: pointer; text-decoration: none; transition: var(--transition);
+      display: inline-flex; align-items: center; gap: 8px;
+    }
+    .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 12px 35px rgba(139,92,246,0.4); }
+    .btn-secondary {
+      padding: 14px 36px; background: transparent; color: var(--text-primary);
+      border: 1px solid var(--border-glass); border-radius: 50px; font-weight: 600;
+      font-size: 1rem; cursor: pointer; text-decoration: none; transition: var(--transition);
+      backdrop-filter: blur(10px);
+    }
+    .btn-secondary:hover { background: var(--bg-glass); border-color: var(--accent-purple); transform: translateY(-3px); }
+
+    /* ─── SECTIONS ────────────────────────────────────────── */
+    section { padding: 100px 2rem; max-width: 1200px; margin: 0 auto; }
+    .section-header { text-align: center; margin-bottom: 4rem; }
+    .section-header h2 { font-size: 2.2rem; font-weight: 800; margin-bottom: 1rem; }
+    .section-header p { color: var(--text-secondary); max-width: 600px; margin: 0 auto; }
+    .gradient-text { background: var(--gradient-primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+
+    /* ─── STATS CARDS ────────────────────────────────────── */
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 3rem; }
+    .stat-card {
+      background: var(--bg-glass); border: 1px solid var(--border-glass);
+      border-radius: var(--radius); padding: 1.5rem; text-align: center;
+      backdrop-filter: blur(10px); transition: var(--transition);
+    }
+    .stat-card:hover { border-color: var(--accent-purple); transform: translateY(-4px); box-shadow: 0 8px 30px rgba(139,92,246,0.15); }
+    .stat-card .number { font-size: 2.5rem; font-weight: 800; margin-bottom: 0.3rem; }
+    .stat-card .label { color: var(--text-secondary); font-size: 0.85rem; font-weight: 500; }
+    .stat-card.purple .number { color: var(--accent-purple); }
+    .stat-card.green .number { color: var(--accent-green); }
+    .stat-card.amber .number { color: var(--accent-amber); }
+    .stat-card.blue .number { color: var(--accent-cyan); }
+
+    /* ─── PLATFORMS GRID ─────────────────────────────────── */
+    .filter-bar {
+      display: flex; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap; align-items: center;
+    }
+    .filter-bar input {
+      flex: 1; min-width: 200px; padding: 12px 20px; background: var(--bg-glass);
+      border: 1px solid var(--border-glass); border-radius: 50px; color: var(--text-primary);
+      font-size: 0.9rem; outline: none; transition: var(--transition);
+    }
+    .filter-bar input:focus { border-color: var(--accent-purple); }
+    .filter-btn {
+      padding: 10px 20px; background: var(--bg-glass); border: 1px solid var(--border-glass);
+      border-radius: 50px; color: var(--text-secondary); cursor: pointer; font-size: 0.85rem;
+      transition: var(--transition); font-family: inherit;
+    }
+    .filter-btn.active, .filter-btn:hover { background: var(--accent-purple); color: #fff; border-color: var(--accent-purple); }
+
+    .platforms-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem; }
+    .platform-card {
+      background: var(--bg-glass); border: 1px solid var(--border-glass);
+      border-radius: var(--radius); padding: 1.25rem;
+      backdrop-filter: blur(10px); transition: var(--transition);
+      display: flex; align-items: center; gap: 1rem;
+    }
+    .platform-card:hover { border-color: var(--accent-purple); transform: translateY(-3px); box-shadow: 0 8px 30px rgba(139,92,246,0.1); }
+    .platform-icon {
+      width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center;
+      justify-content: center; font-weight: 700; font-size: 1rem; color: #fff; flex-shrink: 0;
+    }
+    .platform-info { flex: 1; min-width: 0; }
+    .platform-info h4 { font-size: 0.95rem; font-weight: 600; margin-bottom: 4px; }
+    .platform-info .meta { display: flex; gap: 6px; flex-wrap: wrap; }
+    .badge {
+      display: inline-flex; padding: 3px 10px; border-radius: 50px; font-size: 0.7rem;
+      font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    .badge-active { background: rgba(16,185,129,0.15); color: var(--accent-green); }
+    .badge-maintenance { background: rgba(245,158,11,0.15); color: var(--accent-amber); }
+    .badge-coming_soon { background: rgba(59,130,246,0.15); color: var(--accent-blue); }
+    .badge-tier { background: rgba(139,92,246,0.15); color: var(--accent-purple); }
+
+    /* ─── PRICING ─────────────────────────────────────────── */
+    .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; }
+    .pricing-card {
+      background: var(--bg-glass); border: 1px solid var(--border-glass);
+      border-radius: var(--radius); padding: 2rem; position: relative;
+      backdrop-filter: blur(10px); transition: var(--transition); overflow: hidden;
+    }
+    .pricing-card:hover { border-color: var(--accent-purple); transform: translateY(-6px); box-shadow: 0 12px 40px rgba(139,92,246,0.15); }
+    .pricing-card.popular { border-color: var(--accent-purple); }
+    .pricing-card.popular::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: var(--gradient-primary);
+    }
+    .popular-badge {
+      position: absolute; top: 12px; right: -28px; background: var(--gradient-primary);
+      color: #fff; font-size: 0.7rem; font-weight: 700; padding: 4px 36px;
+      transform: rotate(45deg); text-transform: uppercase; letter-spacing: 1px;
+    }
+    .pricing-card h3 { font-size: 1.3rem; margin-bottom: 0.5rem; }
+    .pricing-price { font-size: 2rem; font-weight: 800; color: var(--accent-purple); margin-bottom: 0.3rem; }
+    .pricing-period { color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.5rem; }
+    .pricing-features { list-style: none; margin-bottom: 2rem; }
+    .pricing-features li {
+      padding: 8px 0; border-bottom: 1px solid var(--border-glass); color: var(--text-secondary);
+      font-size: 0.9rem; display: flex; align-items: center; gap: 10px;
+    }
+    .pricing-features li::before { content: '✓'; color: var(--accent-green); font-weight: 700; }
+    .pricing-btn {
+      width: 100%; padding: 14px; border-radius: 12px; font-weight: 600; font-size: 0.95rem;
+      cursor: pointer; transition: var(--transition); text-align: center; text-decoration: none; display: block;
+      font-family: inherit;
+    }
+    .pricing-card.popular .pricing-btn { background: var(--gradient-primary); color: #fff; border: none; }
+    .pricing-card:not(.popular) .pricing-btn { background: transparent; color: var(--text-primary); border: 1px solid var(--border-glass); }
+    .pricing-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(139,92,246,0.3); }
+
+    /* ─── DOCS ────────────────────────────────────────────── */
+    .docs-tabs { display: flex; gap: 0.5rem; margin-bottom: 2rem; flex-wrap: wrap; }
+    .doc-tab {
+      padding: 10px 24px; background: var(--bg-glass); border: 1px solid var(--border-glass);
+      border-radius: 50px; color: var(--text-secondary); cursor: pointer; font-size: 0.9rem;
+      font-weight: 500; transition: var(--transition); font-family: inherit;
+    }
+    .doc-tab.active { background: var(--accent-purple); color: #fff; border-color: var(--accent-purple); }
+    .doc-tab:hover:not(.active) { border-color: var(--accent-purple); color: var(--text-primary); }
+    .doc-panel { display: none; }
+    .doc-panel.active { display: block; }
+
+    .endpoint-card {
+      background: var(--bg-glass); border: 1px solid var(--border-glass);
+      border-radius: var(--radius); margin-bottom: 1.5rem; overflow: hidden;
+    }
+    .endpoint-header {
+      display: flex; align-items: center; gap: 12px; padding: 1rem 1.5rem;
+      cursor: pointer; transition: var(--transition);
+    }
+    .endpoint-header:hover { background: rgba(255,255,255,0.02); }
+    .method-badge {
+      padding: 4px 12px; border-radius: 6px; font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem; font-weight: 600; text-transform: uppercase;
+    }
+    .method-GET { background: rgba(16,185,129,0.15); color: var(--accent-green); }
+    .method-POST { background: rgba(59,130,246,0.15); color: var(--accent-blue); }
+    .method-PATCH { background: rgba(245,158,11,0.15); color: var(--accent-amber); }
+    .method-DELETE { background: rgba(239,68,68,0.15); color: var(--accent-red); }
+    .endpoint-path { font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; flex: 1; }
+    .endpoint-desc { color: var(--text-secondary); font-size: 0.85rem; }
+    .endpoint-body { padding: 0 1.5rem 1.5rem; display: none; }
+    .endpoint-card.open .endpoint-body { display: block; }
+    .endpoint-card.open .endpoint-header { border-bottom: 1px solid var(--border-glass); }
+
+    .code-block {
+      background: #0d1117; border: 1px solid rgba(255,255,255,0.06);
+      border-radius: var(--radius-sm); padding: 1.25rem; position: relative;
+      overflow-x: auto; margin: 1rem 0;
+    }
+    .code-block pre {
+      font-family: 'JetBrains Mono', monospace; font-size: 0.82rem;
+      line-height: 1.7; color: #c9d1d9; white-space: pre; margin: 0;
+    }
+    .code-block .copy-btn {
+      position: absolute; top: 8px; right: 8px; padding: 6px 14px;
+      background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 6px; color: var(--text-secondary); cursor: pointer; font-size: 0.75rem;
+      transition: var(--transition); font-family: inherit;
+    }
+    .code-block .copy-btn:hover { background: var(--accent-purple); color: #fff; }
+    .code-label { font-size: 0.8rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.5rem; }
+
+    /* Syntax highlighting */
+    .hl-str { color: #a5d6ff; }
+    .hl-key { color: #ff7b72; }
+    .hl-num { color: #79c0ff; }
+    .hl-bool { color: #ffa657; }
+    .hl-comment { color: #8b949e; }
+
+    /* ─── VALIDATOR ───────────────────────────────────────── */
+    .validator-card {
+      max-width: 600px; margin: 0 auto; background: var(--bg-glass);
+      border: 1px solid var(--border-glass); border-radius: var(--radius);
+      padding: 2.5rem; text-align: center; backdrop-filter: blur(10px);
+    }
+    .validator-input-group { display: flex; gap: 0.75rem; margin-top: 1.5rem; }
+    .validator-input-group input {
+      flex: 1; padding: 14px 20px; background: rgba(0,0,0,0.3);
+      border: 1px solid var(--border-glass); border-radius: 12px;
+      color: var(--text-primary); font-family: 'JetBrains Mono', monospace;
+      font-size: 0.9rem; outline: none; transition: var(--transition);
+    }
+    .validator-input-group input:focus { border-color: var(--accent-purple); }
+    .validator-input-group button {
+      padding: 14px 28px; background: var(--gradient-primary); color: #fff;
+      border: none; border-radius: 12px; font-weight: 600; cursor: pointer;
+      transition: var(--transition); font-family: inherit; white-space: nowrap;
+    }
+    .validator-input-group button:hover { transform: translateY(-2px); }
+    .validator-result {
+      margin-top: 1.5rem; padding: 1.5rem; background: rgba(0,0,0,0.2);
+      border-radius: 12px; text-align: left; display: none;
+    }
+    .validator-result.show { display: block; }
+    .validator-result .info-row {
+      display: flex; justify-content: space-between; padding: 8px 0;
+      border-bottom: 1px solid var(--border-glass); font-size: 0.9rem;
+    }
+    .validator-result .info-row .label { color: var(--text-secondary); }
+    .validator-result .info-row .value { font-weight: 600; }
+
+    /* ─── FAQ ─────────────────────────────────────────────── */
+    .faq-list { max-width: 800px; margin: 0 auto; }
+    .faq-item {
+      background: var(--bg-glass); border: 1px solid var(--border-glass);
+      border-radius: var(--radius); margin-bottom: 1rem; overflow: hidden;
+      transition: var(--transition);
+    }
+    .faq-item:hover { border-color: rgba(139,92,246,0.3); }
+    .faq-question {
+      padding: 1.25rem 1.5rem; cursor: pointer; display: flex;
+      justify-content: space-between; align-items: center; font-weight: 600;
+      font-size: 0.95rem; transition: var(--transition);
+    }
+    .faq-question .icon { font-size: 1.2rem; color: var(--accent-purple); transition: var(--transition); }
+    .faq-item.open .faq-question .icon { transform: rotate(45deg); }
+    .faq-answer { padding: 0 1.5rem; max-height: 0; overflow: hidden; transition: max-height 0.4s ease, padding 0.4s ease; color: var(--text-secondary); font-size: 0.9rem; line-height: 1.8; }
+    .faq-item.open .faq-answer { max-height: 500px; padding: 0 1.5rem 1.5rem; }
+
+    /* ─── FOOTER ──────────────────────────────────────────── */
+    .footer {
+      padding: 60px 2rem 30px; border-top: 1px solid var(--border-glass);
+      background: rgba(0,0,0,0.3);
+    }
+    .footer-inner { max-width: 1200px; margin: 0 auto; }
+    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 3rem; margin-bottom: 3rem; }
+    .footer-brand p { color: var(--text-secondary); font-size: 0.9rem; margin-top: 0.75rem; max-width: 300px; }
+    .footer h4 { font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 1rem; }
+    .footer ul { list-style: none; }
+    .footer ul li { margin-bottom: 0.5rem; }
+    .footer ul a { color: var(--text-secondary); text-decoration: none; font-size: 0.9rem; transition: var(--transition); }
+    .footer ul a:hover { color: var(--accent-purple); }
+    .footer-bottom { text-align: center; padding-top: 2rem; border-top: 1px solid var(--border-glass); color: var(--text-muted); font-size: 0.85rem; }
+
+    @media (max-width: 768px) {
+      .footer-grid { grid-template-columns: 1fr 1fr; gap: 2rem; }
+      section { padding: 60px 1.25rem; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .platforms-grid { grid-template-columns: 1fr; }
+      .pricing-grid { grid-template-columns: 1fr; max-width: 400px; margin: 0 auto; }
+      .validator-input-group { flex-direction: column; }
+    }
+
+    /* ─── ANIMATIONS ──────────────────────────────────────── */
+    .fade-up { opacity: 0; transform: translateY(30px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+    /* ─── TOAST ───────────────────────────────────────────── */
+    .toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 9999; display: flex; flex-direction: column; gap: 8px; }
+    .toast {
+      padding: 14px 24px; border-radius: 12px; font-size: 0.9rem; font-weight: 500;
+      backdrop-filter: blur(20px); box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+      animation: toastIn 0.4s ease; min-width: 280px;
+    }
+    .toast.success { background: rgba(16,185,129,0.9); color: #fff; }
+    .toast.error { background: rgba(239,68,68,0.9); color: #fff; }
+    .toast.info { background: rgba(59,130,246,0.9); color: #fff; }
+    @keyframes toastIn { from { transform: translateX(100px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+    /* ─── LOADING ─────────────────────────────────────────── */
+    .spinner { width: 40px; height: 40px; border: 3px solid var(--border-glass); border-top-color: var(--accent-purple); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 2rem auto; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .skeleton { background: linear-gradient(90deg, var(--bg-glass) 25%, rgba(255,255,255,0.06) 50%, var(--bg-glass) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: var(--radius-sm); }
+    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+  </style>
+</head>
+<body>
+  <!-- NAVBAR -->
+  <nav class="navbar" id="navbar">
+    <a href="#" class="nav-brand">
+      <div class="logo">D</div>
+      <span>Dramoo</span>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#platforms">Platform</a></li>
+      <li><a href="#pricing">Harga</a></li>
+      <li><a href="#docs">Dokumentasi</a></li>
+      <li><a href="#validator">Cek Key</a></li>
+      <li><a href="#faq">FAQ</a></li>
+      <li><a href="/admin/" style="color:var(--accent-purple)">Admin</a></li>
+    </ul>
+    <a href="https://t.me/dramoobot" target="_blank" class="nav-cta">Beli API Key</a>
+    <div class="hamburger" id="hamburger" onclick="document.getElementById('navLinks').classList.toggle('active')">
+      <span></span><span></span><span></span>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="particles" id="particles"></div>
+    <div class="hero-content">
+      <div class="hero-badge"><span class="dot"></span> API Live & Siap Digunakan</div>
+      <h1>Dramoo API</h1>
+      <p>API Aggregator Platform Drama Pendek Asia Terlengkap — Akses 38+ platform streaming dalam satu API yang powerful.</p>
+      <div class="hero-buttons">
+        <a href="#platforms" class="btn-primary">🎬 Lihat Platform</a>
+        <a href="https://t.me/dramoobot" target="_blank" class="btn-secondary">🔑 Beli API Key</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- PLATFORMS -->
+  <section id="platforms">
+    <div class="section-header fade-up">
+      <h2>Status <span class="gradient-text">Platform</span></h2>
+      <p>38+ platform drama pendek dari berbagai negara Asia, live status dari server</p>
+    </div>
+    <div class="stats-grid fade-up" id="platformStats">
+      <div class="stat-card purple"><div class="number" data-count="0">-</div><div class="label">Total Platform</div></div>
+      <div class="stat-card green"><div class="number" data-count="0">-</div><div class="label">Aktif</div></div>
+      <div class="stat-card amber"><div class="number" data-count="0">-</div><div class="label">Maintenance</div></div>
+      <div class="stat-card blue"><div class="number" data-count="0">-</div><div class="label">Segera Hadir</div></div>
+    </div>
+    <div class="filter-bar fade-up">
+      <input type="text" id="platformSearch" placeholder="🔍 Cari platform...">
+      <button class="filter-btn active" data-filter="all">Semua</button>
+      <button class="filter-btn" data-filter="active">Aktif</button>
+      <button class="filter-btn" data-filter="maintenance">Maintenance</button>
+      <button class="filter-btn" data-filter="coming_soon">Segera</button>
+    </div>
+    <div class="platforms-grid fade-up" id="platformsGrid">
+      <div class="spinner"></div>
+    </div>
+  </section>
+
+  <!-- PRICING -->
+  <section id="pricing">
+    <div class="section-header fade-up">
+      <h2>Pilih <span class="gradient-text">Paket</span></h2>
+      <p>Harga terjangkau, akses unlimited, beli langsung via Telegram Bot</p>
+    </div>
+    <div class="pricing-grid fade-up" id="pricingGrid">
+      <div class="spinner"></div>
+    </div>
+  </section>
+
+  <!-- DOCS -->
+  <section id="docs">
+    <div class="section-header fade-up">
+      <h2>Dokumentasi <span class="gradient-text">API</span></h2>
+      <p>Panduan lengkap cara menggunakan Dramoo API</p>
+    </div>
+    <div class="docs-tabs fade-up">
+      <button class="doc-tab active" data-tab="public">Public</button>
+      <button class="doc-tab" data-tab="protected">Protected</button>
+      <button class="doc-tab" data-tab="scraper">Scraper</button>
+    </div>
+
+    <!-- Public Docs -->
+    <div class="doc-panel active" id="tab-public">
+      <div class="endpoint-card">
+        <div class="endpoint-header" onclick="this.parentElement.classList.toggle('open')">
+          <span class="method-badge method-GET">GET</span>
+          <span class="endpoint-path">/api/status</span>
+          <span class="endpoint-desc">Daftar semua platform + status</span>
+        </div>
+        <div class="endpoint-body">
+          <div class="code-label">Request</div>
+          <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre><span class="hl-comment"># Tidak butuh authentication</span>
+curl https://api.wmxservices.store/api/status</pre></div>
+          <div class="code-label">Response</div>
+          <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre>{
+  <span class="hl-key">"success"</span>: <span class="hl-bool">true</span>,
+  <span class="hl-key">"summary"</span>: {
+    <span class="hl-key">"total"</span>: <span class="hl-num">38</span>,
+    <span class="hl-key">"active"</span>: <span class="hl-num">35</span>,
+    <span class="hl-key">"maintenance"</span>: <span class="hl-num">2</span>,
+    <span class="hl-key">"coming_soon"</span>: <span class="hl-num">1</span>
+  },
+  <span class="hl-key">"platforms"</span>: [
+    {
+      <span class="hl-key">"id"</span>: <span class="hl-str">"dramabox"</span>,
+      <span class="hl-key">"name"</span>: <span class="hl-str">"DramaBox"</span>,
+      <span class="hl-key">"status"</span>: <span class="hl-str">"active"</span>,
+      <span class="hl-key">"tags"</span>: [<span class="hl-str">"china"</span>, <span class="hl-str">"romance"</span>]
+    }
+  ]
+}</pre></div>
+        </div>
+      </div>
+
+      <div class="endpoint-card">
+        <div class="endpoint-header" onclick="this.parentElement.classList.toggle('open')">
+          <span class="method-badge method-GET">GET</span>
+          <span class="endpoint-path">/api/status/:id</span>
+          <span class="endpoint-desc">Detail satu platform</span>
+        </div>
+        <div class="endpoint-body">
+          <div class="code-label">Request</div>
+          <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre>curl https://api.wmxservices.store/api/status/dramabox</pre></div>
+          <div class="code-label">Response</div>
+          <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre>{
+  <span class="hl-key">"success"</span>: <span class="hl-bool">true</span>,
+  <span class="hl-key">"platform"</span>: {
+    <span class="hl-key">"id"</span>: <span class="hl-str">"dramabox"</span>,
+    <span class="hl-key">"name"</span>: <span class="hl-str">"DramaBox"</span>,
+    <span class="hl-key">"status"</span>: <span class="hl-str">"active"</span>,
+    <span class="hl-key">"tier"</span>: <span class="hl-num">1</span>,
+    <span class="hl-key">"tags"</span>: [<span class="hl-str">"china"</span>, <span class="hl-str">"romance"</span>]
+  }
+}</pre></div>
+        </div>
+      </div>
+
+      <div class="endpoint-card">
+        <div class="endpoint-header" onclick="this.parentElement.classList.toggle('open')">
+          <span class="method-badge method-GET">GET</span>
+          <span class="endpoint-path">/api/packages</span>
+          <span class="endpoint-desc">Daftar paket harga</span>
+        </div>
+        <div class="endpoint-body">
+          <div class="code-label">Request</div>
+          <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre>curl https://api.wmxservices.store/api/packages</pre></div>
+          <div class="code-label">Response</div>
+          <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre>{
+  <span class="hl-key">"success"</span>: <span class="hl-bool">true</span>,
+  <span class="hl-key">"packages"</span>: [
+    {
+      <span class="hl-key">"id"</span>: <span class="hl-str">"starter"</span>,
+      <span class="hl-key">"name"</span>: <span class="hl-str">"Starter"</span>,
+      <span class="hl-key">"price"</span>: <span class="hl-num">40000</span>,
+      <span class="hl-key">"price_formatted"</span>: <span class="hl-str">"Rp 40.000"</span>,
+      <span class="hl-key">"duration_days"</span>: <span class="hl-num">30</span>,
+      <span class="hl-key">"platform_count"</span>: <span class="hl-num">12</span>,
+      <span class="hl-key">"daily_limit"</span>: <span class="hl-num">100000</span>,
+      <span class="hl-key">"is_popular"</span>: <span class="hl-bool">false</span>
+    }
+  ]
+}</pre></div>
+        </div>
+      </div>
+
+      <div class="endpoint-card">
+        <div class="endpoint-header" onclick="this.parentElement.classList.toggle('open')">
+          <span class="method-badge method-GET">GET</span>
+          <span class="endpoint-path">/health</span>
+          <span class="endpoint-desc">Health check server</span>
+        </div>
+        <div class="endpoint-body">
+          <div class="code-label">Request</div>
+          <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre>curl https://api.wmxservices.store/health</pre></div>
+          <div class="code-label">Response</div>
+          <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre>{
+  <span class="hl-key">"status"</span>: <span class="hl-str">"ok"</span>,
+  <span class="hl-key">"service"</span>: <span class="hl-str">"Dramoo API"</span>,
+  <span class="hl-key">"version"</span>: <span class="hl-str">"1.0.0"</span>,
+  <span class="hl-key">"uptime"</span>: <span class="hl-num">86400</span>,
+  <span class="hl-key">"memory"</span>: <span class="hl-str">"45MB"</span>
+}</pre></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Protected Docs -->
+    <div class="doc-panel" id="tab-protected">
+      <div style="background:var(--bg-glass);border:1px solid var(--border-glass);border-radius:var(--radius);padding:1.25rem;margin-bottom:1.5rem;display:flex;gap:12px;align-items:center;">
+        <span style="font-size:1.3rem">🔑</span>
+        <div>
+          <strong>Authentication</strong>
+          <p style="color:var(--text-secondary);font-size:0.85rem;margin-top:2px">Semua endpoint berikut membutuhkan header <code style="background:rgba(139,92,246,0.15);padding:2px 8px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:0.8rem">X-Api-Key: drm_xxx</code></p>
+        </div>
+      </div>
+
+      <div class="endpoint-card">
+        <div class="endpoint-header" onclick="this.parentElement.classList.toggle('open')">
+          <span class="method-badge method-GET">GET</span>
+          <span class="endpoint-path">/api/validate</span>
+          <span class="endpoint-desc">Validasi API key + info sisa waktu</span>
+        </div>
+        <div class="endpoint-body">
+          <div class="code-label">Request</div>
+          <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre>curl -H <span class="hl-str">"X-Api-Key: drm_xxxxxxxxxxxx"</span> \
+  https://api.wmxservices.store/api/validate</pre></div>
+          <div class="code-label">Response</div>
+          <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre>{
+  <span class="hl-key">"success"</span>: <span class="hl-bool">true</span>,
+  <span class="hl-key">"valid"</span>: <span class="hl-bool">true</span>,
+  <span class="hl-key">"key_info"</span>: {
+    <span class="hl-key">"package"</span>: <span class="hl-str">"Standard"</span>,
+    <span class="hl-key">"status"</span>: <span class="hl-str">"active"</span>,
+    <span class="hl-key">"days_remaining"</span>: <span class="hl-num">28</span>,
+    <span class="hl-key">"daily_limit"</span>: <span class="hl-num">500000</span>,
+    <span class="hl-key">"daily_used"</span>: <span class="hl-num">1234</span>,
+    <span class="hl-key">"daily_remaining"</span>: <span class="hl-num">498766</span>
+  }
+}</pre></div>
+        </div>
+      </div>
+
+      <div class="endpoint-card">
+        <div class="endpoint-header" onclick="this.parentElement.classList.toggle('open')">
+          <span class="method-badge method-GET">GET</span>
+          <span class="endpoint-path">/api/me</span>
+          <span class="endpoint-desc">Info akun + platform yang bisa diakses</span>
+        </div>
+        <div class="endpoint-body">
+          <div class="code-label">Request</div>
+          <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre>curl -H <span class="hl-str">"X-Api-Key: drm_xxxxxxxxxxxx"</span> \
+  https://api.wmxservices.store/api/me</pre></div>
+          <div class="code-label">Response</div>
+          <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre>{
+  <span class="hl-key">"success"</span>: <span class="hl-bool">true</span>,
+  <span class="hl-key">"user"</span>: {
+    <span class="hl-key">"telegram_id"</span>: <span class="hl-str">"123456789"</span>,
+    <span class="hl-key">"username"</span>: <span class="hl-str">"johndoe"</span>
+  },
+  <span class="hl-key">"subscription"</span>: {
+    <span class="hl-key">"package"</span>: <span class="hl-str">"Standard"</span>,
+    <span class="hl-key">"days_remaining"</span>: <span class="hl-num">28</span>
+  },
+  <span class="hl-key">"platforms"</span>: [...]
+}</pre></div>
+        </div>
+      </div>
+
+      <div class="endpoint-card">
+        <div class="endpoint-header" onclick="this.parentElement.classList.toggle('open')">
+          <span class="method-badge method-GET">GET</span>
+          <span class="endpoint-path">/api/platforms</span>
+          <span class="endpoint-desc">List platform yang bisa diakses oleh key</span>
+        </div>
+        <div class="endpoint-body">
+          <div class="code-label">Request</div>
+          <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre>curl -H <span class="hl-str">"X-Api-Key: drm_xxxxxxxxxxxx"</span> \
+  <span class="hl-str">"https://api.wmxservices.store/api/platforms?status=active"</span></pre></div>
+          <div class="code-label">Query Parameters</div>
+          <div style="padding:0.5rem 0;color:var(--text-secondary);font-size:0.85rem">
+            <code style="color:var(--accent-cyan)">status</code> — Filter: active, maintenance, coming_soon<br>
+            <code style="color:var(--accent-cyan)">tag</code> — Filter by tag: china, korea, romance, dll
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scraper Docs -->
+    <div class="doc-panel" id="tab-scraper">
+      <div style="background:var(--bg-glass);border:1px solid var(--border-glass);border-radius:var(--radius);padding:1.25rem;margin-bottom:1.5rem;display:flex;gap:12px;align-items:center;">
+        <span style="font-size:1.3rem">⚡</span>
+        <div>
+          <strong>Scraping Engine</strong>
+          <p style="color:var(--text-secondary);font-size:0.85rem;margin-top:2px">Endpoint scraping membutuhkan <code style="background:rgba(139,92,246,0.15);padding:2px 8px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:0.8rem">X-Api-Key</code> — Platform: melolo, dramawave, pinedrama, dramabox</p>
+        </div>
+      </div>
+
+      <div class="endpoint-card">
+        <div class="endpoint-header" onclick="this.parentElement.classList.toggle('open')">
+          <span class="method-badge method-GET">GET</span>
+          <span class="endpoint-path">/scrape/platforms</span>
+          <span class="endpoint-desc">List platform yang mendukung scraping</span>
+        </div>
+        <div class="endpoint-body">
+          <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre>curl -H <span class="hl-str">"X-Api-Key: drm_xxx"</span> \
+  https://api.wmxservices.store/scrape/platforms</pre></div>
+        </div>
+      </div>
+
+      <div class="endpoint-card">
+        <div class="endpoint-header" onclick="this.parentElement.classList.toggle('open')">
+          <span class="method-badge method-GET">GET</span>
+          <span class="endpoint-path">/scrape/latest</span>
+          <span class="endpoint-desc">Drama terbaru dari semua platform</span>
+        </div>
+        <div class="endpoint-body">
+          <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre>curl -H <span class="hl-str">"X-Api-Key: drm_xxx"</span> \
+  <span class="hl-str">"https://api.wmxservices.store/scrape/latest?page=1"</span></pre></div>
+          <div class="code-label">Per-platform</div>
+          <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre>curl -H <span class="hl-str">"X-Api-Key: drm_xxx"</span> \
+  <span class="hl-str">"https://api.wmxservices.store/scrape/latest/dramabox?page=1"</span></pre></div>
+        </div>
+      </div>
+
+      <div class="endpoint-card">
+        <div class="endpoint-header" onclick="this.parentElement.classList.toggle('open')">
+          <span class="method-badge method-GET">GET</span>
+          <span class="endpoint-path">/scrape/search</span>
+          <span class="endpoint-desc">Cari drama di semua atau satu platform</span>
+        </div>
+        <div class="endpoint-body">
+          <div class="code-label">Cari di semua platform</div>
+          <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre>curl -H <span class="hl-str">"X-Api-Key: drm_xxx"</span> \
+  <span class="hl-str">"https://api.wmxservices.store/scrape/search?q=cinta&page=1"</span></pre></div>
+          <div class="code-label">Cari di satu platform</div>
+          <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre>curl -H <span class="hl-str">"X-Api-Key: drm_xxx"</span> \
+  <span class="hl-str">"https://api.wmxservices.store/scrape/search/melolo?q=cinta"</span></pre></div>
+          <div class="code-label">Response</div>
+          <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre>{
+  <span class="hl-key">"success"</span>: <span class="hl-bool">true</span>,
+  <span class="hl-key">"query"</span>: <span class="hl-str">"cinta"</span>,
+  <span class="hl-key">"total"</span>: <span class="hl-num">15</span>,
+  <span class="hl-key">"data"</span>: [
+    {
+      <span class="hl-key">"title"</span>: <span class="hl-str">"Cinta di Balik Senja"</span>,
+      <span class="hl-key">"url"</span>: <span class="hl-str">"https://..."</span>,
+      <span class="hl-key">"cover"</span>: <span class="hl-str">"https://..."</span>,
+      <span class="hl-key">"platform"</span>: <span class="hl-str">"melolo"</span>
+    }
+  ]
+}</pre></div>
+        </div>
+      </div>
+
+      <div class="endpoint-card">
+        <div class="endpoint-header" onclick="this.parentElement.classList.toggle('open')">
+          <span class="method-badge method-GET">GET</span>
+          <span class="endpoint-path">/scrape/detail/:platform</span>
+          <span class="endpoint-desc">Detail drama + daftar episode</span>
+        </div>
+        <div class="endpoint-body">
+          <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre>curl -H <span class="hl-str">"X-Api-Key: drm_xxx"</span> \
+  <span class="hl-str">"https://api.wmxservices.store/scrape/detail/dramabox?url=https://dramabox.com/drama/123"</span></pre></div>
+          <div class="code-label">Response</div>
+          <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre>{
+  <span class="hl-key">"success"</span>: <span class="hl-bool">true</span>,
+  <span class="hl-key">"data"</span>: {
+    <span class="hl-key">"title"</span>: <span class="hl-str">"Drama Title"</span>,
+    <span class="hl-key">"cover"</span>: <span class="hl-str">"https://..."</span>,
+    <span class="hl-key">"genre"</span>: <span class="hl-str">"Romance"</span>,
+    <span class="hl-key">"total_episodes"</span>: <span class="hl-num">80</span>,
+    <span class="hl-key">"episodes"</span>: [
+      { <span class="hl-key">"number"</span>: <span class="hl-num">1</span>, <span class="hl-key">"title"</span>: <span class="hl-str">"EP 1"</span>, <span class="hl-key">"url"</span>: <span class="hl-str">"https://..."</span> }
+    ]
+  }
+}</pre></div>
+        </div>
+      </div>
+
+      <div class="endpoint-card">
+        <div class="endpoint-header" onclick="this.parentElement.classList.toggle('open')">
+          <span class="method-badge method-GET">GET</span>
+          <span class="endpoint-path">/scrape/stream/:platform</span>
+          <span class="endpoint-desc">Ambil URL video/stream episode</span>
+        </div>
+        <div class="endpoint-body">
+          <div style="background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.2);border-radius:8px;padding:12px;margin-bottom:1rem;font-size:0.85rem;color:var(--accent-amber)">
+            ⚠️ Endpoint ini lebih lambat karena menggunakan browser headless. Timeout 60 detik.
+          </div>
+          <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre>curl -H <span class="hl-str">"X-Api-Key: drm_xxx"</span> \
+  <span class="hl-str">"https://api.wmxservices.store/scrape/stream/dramabox?url=https://dramabox.com/ep/1"</span></pre></div>
+          <div class="code-label">Response</div>
+          <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre>{
+  <span class="hl-key">"success"</span>: <span class="hl-bool">true</span>,
+  <span class="hl-key">"data"</span>: {
+    <span class="hl-key">"stream_url"</span>: <span class="hl-str">"https://cdn.example.com/video.m3u8"</span>,
+    <span class="hl-key">"quality"</span>: <span class="hl-str">"720p"</span>,
+    <span class="hl-key">"type"</span>: <span class="hl-str">"hls"</span>
+  }
+}</pre></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- VALIDATOR -->
+  <section id="validator">
+    <div class="section-header fade-up">
+      <h2>Cek <span class="gradient-text">API Key</span></h2>
+      <p>Validasi API key Anda dan lihat informasi lengkapnya</p>
+    </div>
+    <div class="validator-card fade-up">
+      <div style="font-size:3rem;margin-bottom:1rem">🔑</div>
+      <h3>API Key Validator</h3>
+      <p style="color:var(--text-secondary);font-size:0.9rem;margin-top:0.5rem">Masukkan API key untuk melihat status & sisa kuota</p>
+      <div class="validator-input-group">
+        <input type="text" id="apiKeyInput" placeholder="drm_xxxxxxxxxxxx">
+        <button onclick="validateApiKey()">Validasi</button>
+      </div>
+      <div class="validator-result" id="validatorResult"></div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq">
+    <div class="section-header fade-up">
+      <h2>Pertanyaan <span class="gradient-text">Umum</span></h2>
+      <p>Temukan jawaban untuk pertanyaan yang sering ditanyakan</p>
+    </div>
+    <div class="faq-list fade-up">
+      <div class="faq-item">
+        <div class="faq-question" onclick="this.parentElement.classList.toggle('open')">
+          <span>Apa itu Dramoo API?</span>
+          <span class="icon">+</span>
+        </div>
+        <div class="faq-answer">Dramoo API adalah platform aggregator yang menyediakan akses ke 38+ platform drama pendek Asia melalui satu API terpusat. Anda bisa mencari, menonton, dan mengakses konten dari DramaBox, ReelShort, MicroDrama, dan banyak lagi.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question" onclick="this.parentElement.classList.toggle('open')">
+          <span>Bagaimana cara mendapatkan API key?</span>
+          <span class="icon">+</span>
+        </div>
+        <div class="faq-answer">Anda bisa mendapatkan API key melalui Telegram Bot kami di <a href="https://t.me/dramoobot" style="color:var(--accent-purple)">@dramoobot</a>. Pilih paket, bayar, dan API key akan otomatis dikirimkan ke Telegram Anda.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question" onclick="this.parentElement.classList.toggle('open')">
+          <span>Apa perbedaan antar paket?</span>
+          <span class="icon">+</span>
+        </div>
+        <div class="faq-answer">Setiap paket memiliki jumlah platform yang bisa diakses, limit request harian, dan durasi yang berbeda. Paket Starter cocok untuk pemula (12 platform), sedangkan Ultimate memberikan akses ke semua 37+ platform.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question" onclick="this.parentElement.classList.toggle('open')">
+          <span>Apakah ada rate limiting?</span>
+          <span class="icon">+</span>
+        </div>
+        <div class="faq-answer">Ya, setiap paket memiliki limit request harian. Selain itu ada limit global 1000 request per menit per IP/key. Limit harian akan reset otomatis setiap tengah malam (WIB).</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question" onclick="this.parentElement.classList.toggle('open')">
+          <span>Bagaimana cara menggunakan scraper endpoint?</span>
+          <span class="icon">+</span>
+        </div>
+        <div class="faq-answer">Endpoint scraper tersedia di <code style="color:var(--accent-cyan)">/scrape/</code>. Anda bisa mencari drama, melihat detail, dan mendapatkan URL streaming. Semua endpoint scraper membutuhkan API key yang valid. Platform yang didukung: melolo, dramawave, pinedrama, dramabox.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question" onclick="this.parentElement.classList.toggle('open')">
+          <span>API key saya tidak berfungsi?</span>
+          <span class="icon">+</span>
+        </div>
+        <div class="faq-answer">Pastikan API key Anda belum kadaluarsa dan masih aktif. Anda bisa menggunakan fitur "Cek API Key" di atas untuk memeriksa status key Anda. Jika ada masalah, hubungi admin melalui Telegram.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div style="width:36px;height:36px;background:var(--gradient-primary);border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;">D</div>
+            <span style="font-weight:700;font-size:1.2rem;">Dramoo</span>
+          </div>
+          <p>API Aggregator Platform Drama Pendek Asia Terlengkap. Akses 38+ platform dalam satu API.</p>
+        </div>
+        <div>
+          <h4>Produk</h4>
+          <ul>
+            <li><a href="#platforms">Platform</a></li>
+            <li><a href="#pricing">Harga</a></li>
+            <li><a href="#docs">Dokumentasi</a></li>
+            <li><a href="#validator">Cek Key</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Support</h4>
+          <ul>
+            <li><a href="https://t.me/dramoobot" target="_blank">Telegram Bot</a></li>
+            <li><a href="#faq">FAQ</a></li>
+            <li><a href="/admin/">Admin Panel</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>API</h4>
+          <ul>
+            <li><a href="/api/status">Status</a></li>
+            <li><a href="/api/packages">Packages</a></li>
+            <li><a href="/health">Health Check</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        &copy; 2026 Dramoo. All rights reserved. Built with ❤️ for drama lovers.
+      </div>
+    </div>
+  </footer>
+
+  <!-- TOAST -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script>
+    // ─── CONFIG ──────────────────────────────────────
+    const API_BASE = window.location.origin;
+    const COLORS = ['#8b5cf6','#06b6d4','#3b82f6','#10b981','#f59e0b','#ef4444','#ec4899','#14b8a6','#f97316','#6366f1'];
+
+    // ─── TOAST ───────────────────────────────────────
+    function showToast(msg, type = 'info') {
+      const c = document.getElementById('toastContainer');
+      const t = document.createElement('div');
+      t.className = `toast ${type}`;
+      t.textContent = msg;
+      c.appendChild(t);
+      setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translateX(100px)'; setTimeout(() => t.remove(), 400); }, 3500);
+    }
+
+    // ─── COPY CODE ───────────────────────────────────
+    function copyCode(btn) {
+      const pre = btn.parentElement.querySelector('pre');
+      navigator.clipboard.writeText(pre.textContent).then(() => {
+        btn.textContent = 'Copied!';
+        setTimeout(() => btn.textContent = 'Copy', 2000);
+      });
+    }
+
+    // ─── NAVBAR SCROLL & MOBILE ────────────────────────
+    window.addEventListener('scroll', () => {
+      document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 50);
+    });
+    document.querySelectorAll('.nav-links a').forEach(link => {
+      link.addEventListener('click', () => {
+        document.getElementById('navLinks').classList.remove('active');
+      });
+    });
+
+    // ─── PARTICLES ───────────────────────────────────
+    function createParticles() {
+      const c = document.getElementById('particles');
+      for (let i = 0; i < 20; i++) {
+        const p = document.createElement('div');
+        p.className = 'particle';
+        const size = Math.random() * 6 + 2;
+        p.style.cssText = `
+          width: ${size}px; height: ${size}px;
+          left: ${Math.random() * 100}%;
+          background: ${COLORS[Math.floor(Math.random() * COLORS.length)]};
+          animation-duration: ${Math.random() * 15 + 10}s;
+          animation-delay: ${Math.random() * 10}s;
+        `;
+        c.appendChild(p);
+      }
+    }
+    createParticles();
+
+    // ─── INTERSECTION OBSERVER ───────────────────────
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+    // ─── ANIMATED COUNTER ────────────────────────────
+    function animateCounter(el, target) {
+      let current = 0;
+      const step = Math.ceil(target / 40);
+      const timer = setInterval(() => {
+        current += step;
+        if (current >= target) { current = target; clearInterval(timer); }
+        el.textContent = current.toLocaleString('id-ID');
+      }, 30);
+    }
+
+    // ─── GET PLATFORM COLOR ──────────────────────────
+    function getPlatformColor(name) {
+      let hash = 0;
+      for (let i = 0; i < name.length; i++) hash = name.charCodeAt(i) + ((hash << 5) - hash);
+      return COLORS[Math.abs(hash) % COLORS.length];
+    }
+
+    // ─── LOAD PLATFORMS ──────────────────────────────
+    let allPlatforms = [];
+    async function loadPlatforms() {
+      try {
+        const res = await fetch(`${API_BASE}/api/status`);
+        const data = await res.json();
+        if (!data.success) throw new Error('Failed');
+        allPlatforms = data.platforms;
+
+        // Stats
+        const stats = document.getElementById('platformStats');
+        const cards = stats.querySelectorAll('.stat-card');
+        const counts = [data.summary.total, data.summary.active, data.summary.maintenance, data.summary.coming_soon];
+        cards.forEach((card, i) => animateCounter(card.querySelector('.number'), counts[i]));
+
+        renderPlatforms(allPlatforms);
+      } catch (err) {
+        document.getElementById('platformsGrid').innerHTML = '<p style="text-align:center;color:var(--text-muted);grid-column:1/-1">Tidak dapat memuat data platform. Pastikan server berjalan.</p>';
+      }
+    }
+
+    function renderPlatforms(platforms) {
+      const grid = document.getElementById('platformsGrid');
+      if (platforms.length === 0) {
+        grid.innerHTML = '<p style="text-align:center;color:var(--text-muted);grid-column:1/-1">Tidak ada platform ditemukan</p>';
+        return;
+      }
+      grid.innerHTML = platforms.map(p => `
+        <div class="platform-card">
+          <div class="platform-icon" style="background:${getPlatformColor(p.name)}">
+            ${p.logo ? `<img src="${p.logo}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover;border-radius:12px">` : p.name.substring(0,2)}
+          </div>
+          <div class="platform-info">
+            <h4>${p.name}</h4>
+            <div class="meta">
+              <span class="badge badge-${p.status}">${p.status === 'coming_soon' ? 'Segera' : p.status === 'maintenance' ? 'Maintenance' : 'Aktif'}</span>
+              ${p.tags && p.tags.length ? p.tags.slice(0,2).map(t => `<span class="badge badge-tier">${t}</span>`).join('') : ''}
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // ─── FILTER PLATFORMS ────────────────────────────
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        filterPlatforms();
+      });
+    });
+
+    document.getElementById('platformSearch').addEventListener('input', filterPlatforms);
+
+    function filterPlatforms() {
+      const filter = document.querySelector('.filter-btn.active').dataset.filter;
+      const search = document.getElementById('platformSearch').value.toLowerCase();
+      let filtered = allPlatforms;
+      if (filter !== 'all') filtered = filtered.filter(p => p.status === filter);
+      if (search) filtered = filtered.filter(p => p.name.toLowerCase().includes(search) || (p.tags || []).join(',').toLowerCase().includes(search));
+      renderPlatforms(filtered);
+    }
+
+    // ─── LOAD PRICING ────────────────────────────────
+    async function loadPricing() {
+      try {
+        const res = await fetch(`${API_BASE}/api/packages`);
+        const data = await res.json();
+        if (!data.success) throw new Error('Failed');
+        const grid = document.getElementById('pricingGrid');
+        grid.innerHTML = data.packages.map(pkg => `
+          <div class="pricing-card${pkg.is_popular ? ' popular' : ''}">
+            ${pkg.is_popular ? '<div class="popular-badge">Populer</div>' : ''}
+            <h3>${pkg.name}</h3>
+            <div class="pricing-price">${pkg.price_formatted}</div>
+            <div class="pricing-period">${pkg.duration_days} hari</div>
+            <ul class="pricing-features">
+              <li>${pkg.platform_count} platform</li>
+              <li>${(pkg.daily_limit / 1000).toLocaleString('id-ID')}K request/hari</li>
+              <li>Durasi ${pkg.duration_days} hari</li>
+              <li>${pkg.description || 'Akses API lengkap'}</li>
+            </ul>
+            <a href="https://t.me/dramoobot" target="_blank" class="pricing-btn">Beli Sekarang</a>
+          </div>
+        `).join('');
+      } catch (err) {
+        document.getElementById('pricingGrid').innerHTML = '<p style="text-align:center;color:var(--text-muted);grid-column:1/-1">Tidak dapat memuat data harga</p>';
+      }
+    }
+
+    // ─── DOCS TABS ───────────────────────────────────
+    document.querySelectorAll('.doc-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.doc-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.doc-panel').forEach(p => p.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById(`tab-${tab.dataset.tab}`).classList.add('active');
+      });
+    });
+
+    // ─── VALIDATE API KEY ────────────────────────────
+    async function validateApiKey() {
+      const key = document.getElementById('apiKeyInput').value.trim();
+      if (!key) { showToast('Masukkan API key', 'error'); return; }
+
+      const resultDiv = document.getElementById('validatorResult');
+      resultDiv.className = 'validator-result show';
+      resultDiv.innerHTML = '<div class="spinner"></div>';
+
+      try {
+        const res = await fetch(`${API_BASE}/api/validate`, { headers: { 'X-Api-Key': key } });
+        const data = await res.json();
+        if (!data.success) throw new Error(data.error || 'Key tidak valid');
+
+        const k = data.key_info;
+        resultDiv.innerHTML = `
+          <div style="text-align:center;margin-bottom:1rem">
+            <span style="font-size:2rem">✅</span>
+            <h4 style="margin-top:0.5rem;color:var(--accent-green)">API Key Valid!</h4>
+          </div>
+          <div class="info-row"><span class="label">Paket</span><span class="value">${k.package}</span></div>
+          <div class="info-row"><span class="label">Status</span><span class="value"><span class="badge badge-active">${k.status}</span></span></div>
+          <div class="info-row"><span class="label">Sisa Hari</span><span class="value">${k.days_remaining} hari</span></div>
+          <div class="info-row"><span class="label">Limit Harian</span><span class="value">${k.daily_limit.toLocaleString('id-ID')}</span></div>
+          <div class="info-row"><span class="label">Digunakan Hari Ini</span><span class="value">${k.daily_used.toLocaleString('id-ID')}</span></div>
+          <div class="info-row"><span class="label">Sisa Kuota</span><span class="value">${k.daily_remaining.toLocaleString('id-ID')}</span></div>
+          <div class="info-row" style="border:none"><span class="label">Total Request</span><span class="value">${k.total_requests.toLocaleString('id-ID')}</span></div>
+        `;
+        showToast('API Key valid!', 'success');
+      } catch (err) {
+        resultDiv.innerHTML = `
+          <div style="text-align:center">
+            <span style="font-size:2rem">❌</span>
+            <h4 style="margin-top:0.5rem;color:var(--accent-red)">Key Tidak Valid</h4>
+            <p style="color:var(--text-secondary);font-size:0.9rem;margin-top:0.5rem">${err.message}</p>
+          </div>
+        `;
+        showToast(err.message, 'error');
+      }
+    }
+
+    // Enter key
+    document.getElementById('apiKeyInput').addEventListener('keydown', e => { if (e.key === 'Enter') validateApiKey(); });
+
+    // ─── INIT ────────────────────────────────────────
+    loadPlatforms();
+    loadPricing();
+  </script>
+</body>
+</html>

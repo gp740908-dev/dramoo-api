@@ -8,7 +8,7 @@ const BaseScraper = require('./BaseScraper');
 
 class PineDramaScraper extends BaseScraper {
   constructor(options = {}) {
-    super('pinedrama', 'https://pinedrama.com', options);
+    super('pinedrama', 'https://pinedrama.com/id', options);
 
     this.http = axios.create({
       baseURL: this.baseUrl,
@@ -36,11 +36,11 @@ class PineDramaScraper extends BaseScraper {
     // PineDrama: .film-poster > a > img + .film-detail
     const anchor    = $el.is('a') ? $el : $el.find('a').first();
     const img       = $el.find('img').first();
-    const titleEl   = $el.find('.film-name, .title, h3, h2').first();
-    const epEl      = $el.find('.fdi-item, .episode, .eps').first();
-    const ratingEl  = $el.find('.film-rate, .rating').first();
+    const titleEl   = $el.find('[class*="title"], [class*="text-Title"]').first();
+    const epEl      = $el.find('[class*="episode"]').first();
+    const ratingEl  = $el.find('[class*="rating"]').first();
 
-    const title     = this.cleanText(titleEl.text() || img.attr('alt') || anchor.attr('title') || '');
+    const title     = this.cleanText(titleEl.text() || img.attr('alt') || anchor.attr('title') || anchor.text() || '');
     const url       = this.toAbsoluteUrl(anchor.attr('href'));
     const thumbnail = this.toAbsoluteUrl(
       img.attr('data-src') || img.attr('data-lazy-src') || img.attr('src')
@@ -55,14 +55,14 @@ class PineDramaScraper extends BaseScraper {
 
   async getLatest(page = 1) {
     return this.withRetry(async () => {
-      // PineDrama biasanya: /drama/ atau /recently-added/?page=N
-      const paths = [`/recently-added/page/${page}/`, `/drama/page/${page}/`, `/recently-added/?page=${page}`];
+      // PineDrama usually uses /dramas or root for latest.
+      const paths = [`/`, `/recently-added/page/${page}/`, `/drama/page/${page}/`];
       let $;
 
       for (const p of paths) {
         try {
           $ = await this._fetchHtml(p);
-          const count = $('.film-poster, .flw-item, .item, article').length;
+          const count = $('a[href*="/dramas/"]').length;
           if (count > 0) break;
         } catch { /* coba path lain */ }
       }
@@ -70,64 +70,46 @@ class PineDramaScraper extends BaseScraper {
       if (!$) throw new Error('Semua path gagal untuk getLatest');
 
       const items = [];
-      $('.film-poster, .flw-item, .item, article, [class*="drama-item"]').each((_, el) => {
+      $('a[href*="/dramas/"]').each((_, el) => {
         const d = this._parseDramaItem($, el);
-        if (d.title && d.url) items.push(this.formatDrama(d));
+        if (d.title && d.url && d.url.includes('/dramas/')) items.push(this.formatDrama(d));
       });
 
-      // Ambil total dari pagination
-      const lastPage = parseInt(
-        $('.page-link:last, .pagination a:last, .wp-pagenavi a:last').attr('href')?.match(/page\/(\d+)/)?.[1]
-      ) || null;
+      // Hapus duplikat berdasarkan URL
+      const uniqueItems = Array.from(new Map(items.map(item => [item.url, item])).values());
 
       return {
         success:    true,
         platform:   this.platformId,
         page,
-        last_page:  lastPage,
-        data:       items,
+        data:       uniqueItems,
       };
     }, 'getLatest');
   }
 
   async search(query, page = 1) {
     return this.withRetry(async () => {
-      const $ = await this._fetchHtml(`/?s=${encodeURIComponent(query)}&page=${page}`);
+      const $ = await this._fetchHtml(`/id/search?q=${encodeURIComponent(query)}`);
 
       const items = [];
-      $('.film-poster, .flw-item, .item, article, .search-result').each((_, el) => {
+      $('a[href*="/dramas/"]').each((_, el) => {
         const d = this._parseDramaItem($, el);
-        if (d.title && d.url) items.push(this.formatDrama(d));
+        if (d.title && d.url && d.url.includes('/dramas/')) items.push(this.formatDrama(d));
       });
 
-      // Coba juga hasil dalam format list
-      if (items.length === 0) {
-        $('a[href*="/drama/"], a[href*="/series/"]').each((_, el) => {
-          const $el = $(el);
-          const img = $el.find('img');
-          if (!img.length) return;
-          items.push(this.formatDrama({
-            title:     this.cleanText($el.text() || img.attr('alt') || ''),
-            url:       this.toAbsoluteUrl($el.attr('href')),
-            thumbnail: this.toAbsoluteUrl(img.attr('data-src') || img.attr('src')),
-          }));
-        });
-      }
-
-      return { success: true, platform: this.platformId, query, page, data: items };
-    }, 'search');
+      const uniqueItems = Array.from(new Map(items.map(item => [item.url, item])).values());
+      return { success: true, page, platform: this.platformId, data: uniqueItems };
+    });
   }
 
   async getDetail(dramaUrl) {
     return this.withRetry(async () => {
-      const path = dramaUrl.startsWith('http')
-        ? new URL(dramaUrl).pathname
-        : dramaUrl;
-
-      const $ = await this._fetchHtml(path);
+      // Selalu gunakan dramaUrl lengkap untuk menghindari isu baseURL axios
+      const urlToFetch = dramaUrl.startsWith('http') ? dramaUrl : this.baseUrl + dramaUrl;
+      const $ = await this._fetchHtml(urlToFetch);
 
       // Meta
-      const title       = this.cleanText($('h1.heading-name, h1, .film-name').first().text());
+      const title       = this.cleanText($('h1, h2, [class*="title"]').first().text());
       const thumbnail   = this.toAbsoluteUrl(
         $('meta[property="og:image"]').attr('content') ||
         $('img.film-poster-img, .dp-i-c-poster img, .poster img').first().attr('src')
@@ -155,15 +137,18 @@ class PineDramaScraper extends BaseScraper {
 
       // Daftar episode — PineDrama punya div#episodes-content yang di-load via AJAX
       // Coba ambil dari HTML statis dulu
-      const episodes  = [];
+      // Episode list
+      const episodes = [];
       const seasonsId = $('[data-id]').first().attr('data-id') || '';
-
-      // Static episode links
-      $('.episodes-ul a, .episode-list a, .ss-list a').each((_, el) => {
+      $('a[href*="/ep"], div:contains("EP")').each((idx, el) => {
         const $el   = $(el);
-        const epUrl = this.toAbsoluteUrl($el.attr('href'));
-        const epNum = parseInt($el.text().replace(/\D/g, '')) || episodes.length + 1;
-        if (epUrl) episodes.push({ episode: epNum, url: epUrl, title: this.cleanText($el.text()) });
+        const text  = $el.text();
+        // Cek kalau ini adalah item episode yang valid
+        if (/EP\s*\d+/i.test(text) || $el.attr('href')?.includes('/ep')) {
+            const epUrl = $el.is('a') ? this.toAbsoluteUrl($el.attr('href')) : null;
+            const epNum = text.replace(/\D/g, '') || String(idx + 1);
+            episodes.push({ episode: parseInt(epNum), url: epUrl, title: this.cleanText($el.text()) });
+        }
       });
 
       // Jika episode tidak ada di HTML statis, ambil via API internal PineDrama
@@ -223,8 +208,8 @@ class PineDramaScraper extends BaseScraper {
         });
 
         const videoSrc = await page.evaluate(() => {
-          const v = document.querySelector('video');
-          return v ? (v.src || v.querySelector('source')?.src || null) : null;
+          const v = document.querySelector('video source, video, .videourl');
+          return v ? (v.src || v.getAttribute('src') || v.getAttribute('data-src') || v.href) : null;
         });
 
         const sources = [...new Set([videoSrc, iframeSrc, ...streamUrls].filter(Boolean))];
@@ -240,6 +225,76 @@ class PineDramaScraper extends BaseScraper {
         await page.close();
       }
     }, 'getStreamUrl');
+  }
+
+  // ─── Fitur Tambahan (Category, Trending, Languages) ─────────────────────
+
+  async getCategory(categoryId, page = 1, lang = 'id') {
+    return this.withRetry(async () => {
+      // Jika categoryId kosong, kembalikan daftar genre
+      if (!categoryId) {
+        const paths = [`/${lang}/genres`, `/genres`, `/`];
+        let $;
+        for (const p of paths) {
+          try { $ = await this._fetchHtml(p); break; } catch (e) {}
+        }
+        if (!$) throw new Error('Gagal memuat kategori PineDrama');
+
+        const categories = [];
+        $('a[href*="/genres/"]').each((_, el) => {
+          const name = this.cleanText($(el).text());
+          const url = $(el).attr('href');
+          const id = url.split('/').pop();
+          if (name && id) categories.push({ id, name, url: this.toAbsoluteUrl(url) });
+        });
+        
+        const uniqueCat = Array.from(new Map(categories.map(item => [item.id, item])).values());
+        return { success: true, platform: this.platformId, categories: uniqueCat };
+      }
+
+      // Jika ada categoryId, scrape halaman kategori tersebut
+      const path = `/${lang}/genres/${categoryId}?page=${page}`;
+      const $ = await this._fetchHtml(path).catch(() => null);
+      if (!$) return { success: true, page, platform: this.platformId, data: [] };
+
+      const items = [];
+      $('a[href*="/dramas/"]').each((_, el) => {
+        const d = this._parseDramaItem($, el);
+        if (d.title && d.url && d.url.includes('/dramas/')) items.push(this.formatDrama(d));
+      });
+      return { success: true, page, platform: this.platformId, data: items };
+    });
+  }
+
+  async getTrending(page = 1, cursor = null, lang = 'id') {
+    return this.withRetry(async () => {
+      const $ = await this._fetchHtml(`/${lang}`);
+      const items = [];
+      
+      // Coba cari bagian Tren / Trending di homepage
+      const trendingTitle = $('h3').filter((_, el) => /tren|trending/i.test($(el).text()));
+      const container = trendingTitle.length ? trendingTitle.parent().parent() : $.root();
+
+      container.find('a[href*="/dramas/"]').each((_, el) => {
+        const d = this._parseDramaItem($, el);
+        if (d.title && d.url && d.url.includes('/dramas/')) items.push(this.formatDrama(d));
+      });
+
+      // Hapus duplikat
+      const uniqueItems = Array.from(new Map(items.map(item => [item.url, item])).values());
+      return { success: true, page, platform: this.platformId, data: uniqueItems };
+    });
+  }
+
+  async getLanguages() {
+    return {
+      success: true,
+      platform: this.platformId,
+      languages: [
+        { code: 'id', name: 'Bahasa Indonesia' },
+        { code: 'en', name: 'English' }
+      ]
+    };
   }
 }
 

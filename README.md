@@ -117,7 +117,7 @@ sudo ln -s /etc/nginx/sites-available/dramoo /etc/nginx/sites-enabled/
 sudo nginx -t && sudo systemctl reload nginx
 
 # SSL
-sudo certbot --nginx -d api.dramoo.id
+sudo certbot --nginx -d api.wmxservices.store
 ```
 
 ---
@@ -127,7 +127,7 @@ sudo certbot --nginx -d api.dramoo.id
 ```env
 NODE_ENV=production
 PORT=3000
-APP_URL=https://api.dramoo.id
+APP_URL=https://api.wmxservices.store
 
 MASTER_KEY=random_string_panjang_untuk_admin
 JWT_SECRET=random_string_untuk_jwt
@@ -184,24 +184,24 @@ RATE_LIMIT_MAX=1000
 
 ### Cek Status Platform
 ```bash
-curl https://api.dramoo.id/api/status
+curl https://api.wmxservices.store/api/status
 ```
 
 ### Validasi API Key
 ```bash
 curl -H "X-Api-Key: drm_xxxxxxxxxxxx" \
-  https://api.dramoo.id/api/validate
+  https://api.wmxservices.store/api/validate
 ```
 
 ### Lihat Platform yang Bisa Diakses
 ```bash
 curl -H "X-Api-Key: drm_xxxxxxxxxxxx" \
-  "https://api.dramoo.id/api/platforms?status=active"
+  "https://api.wmxservices.store/api/platforms?status=active"
 ```
 
 ### Buat API Key (Admin)
 ```bash
-curl -X POST https://api.dramoo.id/admin/keys \
+curl -X POST https://api.wmxservices.store/admin/keys \
   -H "X-Master-Key: MASTER_KEY_KAMU" \
   -H "Content-Type: application/json" \
   -d '{

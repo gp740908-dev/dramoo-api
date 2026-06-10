@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dramoo Admin Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-primary: #0f0f23;
+      --bg-secondary: #161633;
+      --bg-card: rgba(22, 22, 51, 0.7);
+      --bg-glass: rgba(255, 255, 255, 0.03);
+      --border-glass: rgba(255, 255, 255, 0.08);
+      --text-primary: #e8e8f0;
+      --text-secondary: #8888a8;
+      --text-muted: #5a5a7a;
+      --accent-purple: #8b5cf6;
+      --accent-blue: #3b82f6;
+      --accent-cyan: #06b6d4;
+      --accent-green: #10b981;
+      --accent-red: #ef4444;
+      --accent-amber: #f59e0b;
+      --gradient-primary: linear-gradient(135deg, #8b5cf6, #3b82f6);
+      --radius: 16px;
+      --radius-sm: 8px;
+      --transition: all 0.3s ease;
+      --sidebar-width: 260px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      font-size: 14px;
+      overflow-x: hidden;
+    }
+
+    /* SCROLLBAR */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg-primary); }
+    ::-webkit-scrollbar-thumb { background: var(--accent-purple); border-radius: 3px; }
+
+    /* UTILITIES */
+    .flex { display: flex; }
+    .flex-col { display: flex; flex-direction: column; }
+    .items-center { align-items: center; }
+    .justify-between { justify-content: space-between; }
+    .gap-2 { gap: 0.5rem; }
+    .gap-4 { gap: 1rem; }
+    .mt-4 { margin-top: 1rem; }
+    .mb-4 { margin-bottom: 1rem; }
+    .grid { display: grid; }
+    .hidden { display: none !important; }
+
+    /* BUTTONS & INPUTS */
+    button { font-family: inherit; cursor: pointer; transition: var(--transition); outline: none; border: none; }
+    .btn { padding: 8px 16px; border-radius: 8px; font-weight: 500; font-size: 0.9rem; }
+    .btn-primary { background: var(--gradient-primary); color: #fff; }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(139,92,246,0.3); }
+    .btn-outline { background: transparent; border: 1px solid var(--border-glass); color: var(--text-primary); }
+    .btn-outline:hover { background: var(--bg-glass); border-color: var(--accent-purple); }
+    .btn-danger { background: rgba(239,68,68,0.1); color: var(--accent-red); border: 1px solid rgba(239,68,68,0.3); }
+    .btn-danger:hover { background: rgba(239,68,68,0.2); }
+    
+    input, select, textarea {
+      width: 100%; padding: 10px 14px; background: rgba(0,0,0,0.2);
+      border: 1px solid var(--border-glass); border-radius: 8px;
+      color: var(--text-primary); font-family: inherit; font-size: 0.9rem;
+      transition: var(--transition);
+    }
+    input:focus, select:focus, textarea:focus { border-color: var(--accent-purple); outline: none; }
+    option { background: var(--bg-secondary); color: var(--text-primary); }
+
+    /* BADGES */
+    .badge { padding: 4px 10px; border-radius: 50px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; display: inline-flex; align-items: center; justify-content: center; }
+    .badge-active { background: rgba(16,185,129,0.15); color: var(--accent-green); border: 1px solid rgba(16,185,129,0.3); }
+    .badge-expired { background: rgba(239,68,68,0.15); color: var(--accent-red); border: 1px solid rgba(239,68,68,0.3); }
+    .badge-revoked { background: rgba(245,158,11,0.15); color: var(--accent-amber); border: 1px solid rgba(245,158,11,0.3); }
+    .badge-suspended { background: rgba(245,158,11,0.15); color: var(--accent-amber); border: 1px solid rgba(245,158,11,0.3); }
+    .badge-maintenance { background: rgba(245,158,11,0.15); color: var(--accent-amber); border: 1px solid rgba(245,158,11,0.3); }
+    .badge-coming_soon { background: rgba(59,130,246,0.15); color: var(--accent-blue); border: 1px solid rgba(59,130,246,0.3); }
+    .badge-tier { background: rgba(139,92,246,0.15); color: var(--accent-purple); border: 1px solid rgba(139,92,246,0.3); }
+
+    /* LOGIN SCREEN */
+    .login-screen { position: fixed; inset: 0; background: var(--bg-primary); display: flex; align-items: center; justify-content: center; z-index: 9999; }
+    .login-card { background: var(--bg-glass); border: 1px solid var(--border-glass); border-radius: var(--radius); padding: 3rem; width: 100%; max-width: 400px; text-align: center; backdrop-filter: blur(20px); }
+    .login-logo { width: 60px; height: 60px; background: var(--gradient-primary); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: 800; margin: 0 auto 1.5rem; }
+    .login-card h2 { margin-bottom: 0.5rem; font-size: 1.5rem; }
+    .login-card p { color: var(--text-secondary); margin-bottom: 2rem; font-size: 0.9rem; }
+    .login-card input { margin-bottom: 1rem; text-align: center; font-size: 1rem; }
+    .login-card button { width: 100%; padding: 12px; border-radius: 8px; font-weight: 600; font-size: 1rem; }
+
+    /* LAYOUT */
+    .app-layout { display: flex; height: 100vh; overflow: hidden; }
+    
+    /* SIDEBAR */
+    .sidebar { width: var(--sidebar-width); background: rgba(15,15,35,0.95); border-right: 1px solid var(--border-glass); display: flex; flex-direction: column; transition: transform 0.3s ease; z-index: 100; backdrop-filter: blur(20px); }
+    .sidebar-header { padding: 20px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--border-glass); }
+    .sidebar-header .logo { width: 32px; height: 32px; background: var(--gradient-primary); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; }
+    .sidebar-header span { font-weight: 700; font-size: 1.1rem; }
+    .close-sidebar { display: none; cursor: pointer; font-size: 1.2rem; margin-left: auto; color: var(--text-secondary); }
+    
+    .sidebar-nav { flex: 1; overflow-y: auto; padding: 20px 12px; display: flex; flex-direction: column; gap: 4px; }
+    .nav-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 8px; color: var(--text-secondary); text-decoration: none; font-weight: 500; transition: var(--transition); }
+    .nav-item:hover { background: rgba(255,255,255,0.05); color: var(--text-primary); }
+    .nav-item.active { background: rgba(139,92,246,0.15); color: var(--accent-purple); border-left: 3px solid var(--accent-purple); }
+    
+    .sidebar-footer { padding: 20px; border-top: 1px solid var(--border-glass); }
+    .logout-btn { width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; background: rgba(255,255,255,0.05); color: var(--text-primary); padding: 10px; border-radius: 8px; border: 1px solid var(--border-glass); }
+    .logout-btn:hover { background: rgba(239,68,68,0.1); color: var(--accent-red); border-color: rgba(239,68,68,0.3); }
+
+    /* MAIN CONTENT */
+    .main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: radial-gradient(circle at top right, rgba(139,92,246,0.05), transparent 40%); }
+    .topbar { height: 70px; border-bottom: 1px solid var(--border-glass); display: flex; align-items: center; justify-content: space-between; padding: 0 24px; background: rgba(15,15,35,0.5); backdrop-filter: blur(10px); }
+    .hamburger { display: none; cursor: pointer; font-size: 1.5rem; margin-right: 16px; }
+    .topbar-title { font-size: 1.25rem; font-weight: 600; }
+    .server-status { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--text-secondary); background: var(--bg-glass); padding: 6px 12px; border-radius: 50px; border: 1px solid var(--border-glass); }
+    .pulse-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent-green); animation: pulse 2s infinite; }
+    @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(16,185,129,0.4); } 70% { box-shadow: 0 0 0 6px rgba(16,185,129,0); } 100% { box-shadow: 0 0 0 0 rgba(16,185,129,0); } }
+
+    .content-wrapper { flex: 1; overflow-y: auto; padding: 24px; }
+    .page { display: none; animation: fadeIn 0.3s ease; }
+    .page.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* CARDS */
+    .card { background: var(--bg-glass); border: 1px solid var(--border-glass); border-radius: var(--radius); padding: 20px; backdrop-filter: blur(10px); }
+    .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--border-glass); }
+    .card-title { font-size: 1.1rem; font-weight: 600; }
+
+    /* SUMMARY CARDS */
+    .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px; }
+    .summary-card { background: var(--bg-glass); border: 1px solid var(--border-glass); border-radius: var(--radius-sm); padding: 20px; display: flex; flex-direction: column; gap: 8px; position: relative; overflow: hidden; }
+    .summary-card::before { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; }
+    .summary-card.purple::before { background: var(--accent-purple); }
+    .summary-card.green::before { background: var(--accent-green); }
+    .summary-card.red::before { background: var(--accent-red); }
+    .summary-card.blue::before { background: var(--accent-blue); }
+    .summary-value { font-size: 2rem; font-weight: 800; }
+    .summary-label { color: var(--text-secondary); font-size: 0.85rem; font-weight: 500; }
+
+    /* TABLES */
+    .table-responsive { overflow-x: auto; margin-top: 16px; }
+    table { width: 100%; border-collapse: collapse; text-align: left; }
+    th { padding: 12px 16px; background: rgba(255,255,255,0.02); color: var(--text-secondary); font-weight: 600; font-size: 0.85rem; border-bottom: 1px solid var(--border-glass); text-transform: uppercase; letter-spacing: 0.5px; }
+    td { padding: 14px 16px; border-bottom: 1px solid var(--border-glass); font-size: 0.9rem; color: var(--text-primary); }
+    tbody tr { transition: var(--transition); }
+    tbody tr:hover { background: rgba(255,255,255,0.02); }
+    .code-text { font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; background: rgba(0,0,0,0.3); padding: 4px 8px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.05); }
+    .action-btns { display: flex; gap: 6px; }
+    .action-btn { padding: 6px; background: rgba(255,255,255,0.05); border: 1px solid var(--border-glass); border-radius: 6px; color: var(--text-secondary); font-size: 1rem; line-height: 1; }
+    .action-btn:hover { background: var(--accent-purple); color: #fff; border-color: var(--accent-purple); }
+
+    /* PAGINATION */
+    .pagination { display: flex; justify-content: space-between; align-items: center; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border-glass); }
+    .page-info { color: var(--text-secondary); font-size: 0.85rem; }
+    .page-controls { display: flex; gap: 8px; }
+    .page-btn { padding: 6px 12px; background: var(--bg-glass); border: 1px solid var(--border-glass); border-radius: 6px; color: var(--text-primary); font-size: 0.85rem; }
+    .page-btn:hover:not(:disabled) { background: var(--accent-purple); border-color: var(--accent-purple); }
+    .page-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* MODAL */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(5px); display: flex; align-items: center; justify-content: center; z-index: 1000; opacity: 0; pointer-events: none; transition: var(--transition); }
+    .modal-overlay.active { opacity: 1; pointer-events: all; }
+    .modal { background: var(--bg-secondary); border: 1px solid var(--border-glass); border-radius: var(--radius); width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto; transform: translateY(20px); transition: var(--transition); box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+    .modal-overlay.active .modal { transform: translateY(0); }
+    .modal-header { padding: 20px 24px; border-bottom: 1px solid var(--border-glass); display: flex; justify-content: space-between; align-items: center; }
+    .modal-header h3 { font-size: 1.2rem; font-weight: 600; }
+    .modal-close { cursor: pointer; font-size: 1.2rem; color: var(--text-secondary); }
+    .modal-close:hover { color: var(--text-primary); }
+    .modal-body { padding: 24px; display: flex; flex-direction: column; gap: 16px; }
+    .modal-footer { padding: 16px 24px; border-top: 1px solid var(--border-glass); display: flex; justify-content: flex-end; gap: 12px; background: rgba(0,0,0,0.2); }
+    
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-group label { font-size: 0.85rem; color: var(--text-secondary); font-weight: 500; }
+
+    /* CHART (CSS Based) */
+    .bar-chart { display: flex; align-items: flex-end; height: 200px; gap: 16px; padding-top: 20px; }
+    .bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px; height: 100%; justify-content: flex-end; }
+    .bar { width: 100%; max-width: 40px; background: var(--gradient-primary); border-radius: 4px 4px 0 0; transition: height 1s ease; min-height: 2px; }
+    .bar-label { font-size: 0.75rem; color: var(--text-secondary); text-align: center; }
+    .bar-value { font-size: 0.8rem; font-weight: 600; }
+
+    /* PLATFORMS GRID */
+    .platforms-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 16px; }
+    .platform-card { background: var(--bg-glass); border: 1px solid var(--border-glass); border-radius: var(--radius-sm); padding: 16px; display: flex; align-items: center; gap: 16px; cursor: pointer; transition: var(--transition); }
+    .platform-card:hover { border-color: var(--accent-purple); background: rgba(255,255,255,0.05); }
+    .p-logo { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 700; color: #fff; font-size: 1.2rem; background: var(--bg-secondary); }
+    .p-info { flex: 1; }
+    .p-name { font-weight: 600; margin-bottom: 4px; }
+    .p-meta { display: flex; gap: 6px; }
+
+    /* HEALTH */
+    .health-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; }
+    .health-stat { background: rgba(0,0,0,0.2); padding: 16px; border-radius: 8px; border: 1px solid var(--border-glass); }
+    .health-stat .label { color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 4px; }
+    .health-stat .val { font-size: 1.5rem; font-family: 'JetBrains Mono', monospace; }
+
+    /* TOAST */
+    .toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 10000; display: flex; flex-direction: column; gap: 8px; }
+    .toast { padding: 14px 20px; border-radius: 8px; font-size: 0.9rem; font-weight: 500; backdrop-filter: blur(10px); box-shadow: 0 8px 30px rgba(0,0,0,0.3); animation: slideIn 0.3s ease; display: flex; align-items: center; gap: 10px; min-width: 300px; border: 1px solid rgba(255,255,255,0.1); }
+    .toast.success { background: rgba(16,185,129,0.2); color: var(--accent-green); border-color: rgba(16,185,129,0.3); }
+    .toast.error { background: rgba(239,68,68,0.2); color: var(--accent-red); border-color: rgba(239,68,68,0.3); }
+    @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+    /* SPINNER */
+    .spinner { width: 30px; height: 30px; border: 3px solid rgba(255,255,255,0.1); border-top-color: var(--accent-purple); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 20px auto; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .center-spinner { display: flex; justify-content: center; padding: 40px; }
+
+    @media (max-width: 768px) {
+      .sidebar { position: fixed; left: -100%; top: 0; bottom: 0; transition: left 0.3s ease; }
+      .sidebar.open { left: 0; }
+      .hamburger { display: block; }
+      .close-sidebar { display: block; }
+      .summary-grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- LOGIN SCREEN -->
+  <div id="loginScreen" class="login-screen">
+    <div class="login-card">
+      <div class="login-logo">D</div>
+      <h2>Admin Login</h2>
+      <p>Masukkan Master Key untuk mengakses dashboard</p>
+      <input type="password" id="masterKeyInput" placeholder="Master Key" autocomplete="off" onkeydown="if(event.key==='Enter') login()">
+      <button class="btn btn-primary" onclick="login()" id="loginBtn">Masuk Dashboard</button>
+    </div>
+  </div>
+
+  <!-- MAIN APP -->
+  <div id="app" class="app-layout" style="display: none;">
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">D</div>
+        <span>Dramoo Admin</span>
+        <div class="close-sidebar" onclick="toggleSidebar()">✕</div>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="#" class="nav-item active" data-page="dashboard" onclick="switchPage('dashboard')">📊 Dashboard</a>
+        <a href="#" class="nav-item" data-page="keys" onclick="switchPage('keys')">🔑 API Keys</a>
+        <a href="#" class="nav-item" data-page="users" onclick="switchPage('users')">👥 Users</a>
+        <a href="#" class="nav-item" data-page="platforms" onclick="switchPage('platforms')">📺 Platforms</a>
+        <a href="#" class="nav-item" data-page="transactions" onclick="switchPage('transactions')">💰 Transactions</a>
+        <a href="#" class="nav-item" data-page="health" onclick="switchPage('health')">💓 System Health</a>
+        <a href="#" class="nav-item" data-page="cache" onclick="switchPage('cache')">⚡ Cache</a>
+        <a href="#" class="nav-item" data-page="docs" onclick="switchPage('docs')">📖 Docs</a>
+        <a href="#" class="nav-item" data-page="settings" onclick="switchPage('settings')">⚙️ Settings</a>
+      </nav>
+      <div class="sidebar-footer">
+        <button onclick="logout()" class="logout-btn">🚪 Logout</button>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+      <header class="topbar">
+        <div class="flex items-center">
+          <div class="hamburger" onclick="toggleSidebar()">☰</div>
+          <div class="topbar-title" id="pageTitle">Dashboard</div>
+        </div>
+        <div class="topbar-actions">
+          <div class="server-status"><span class="pulse-dot"></span> <span id="headerUptime">Checking...</span></div>
+        </div>
+      </header>
+
+      <div class="content-wrapper">
+        
+        <!-- DASHBOARD PAGE -->
+        <div id="page-dashboard" class="page active">
+          <div class="summary-grid">
+            <div class="summary-card purple"><div class="summary-label">Total Users</div><div class="summary-value" id="dashUsers">-</div></div>
+            <div class="summary-card green"><div class="summary-label">Active Keys</div><div class="summary-value" id="dashActiveKeys">-</div></div>
+            <div class="summary-card red"><div class="summary-label">Expired Keys</div><div class="summary-value" id="dashExpiredKeys">-</div></div>
+            <div class="summary-card blue"><div class="summary-label">Today Requests</div><div class="summary-value" id="dashTodayReq">-</div></div>
+          </div>
+
+          <div class="grid gap-4" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));">
+            <div class="card">
+              <div class="card-header"><div class="card-title">Package Distribution</div></div>
+              <div id="packageChart" class="bar-chart">
+                <div class="center-spinner"><div class="spinner"></div></div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-header"><div class="card-title">Recent API Keys</div></div>
+              <div class="table-responsive">
+                <table id="recentKeysTable">
+                  <thead><tr><th>User</th><th>Package</th><th>Status</th><th>Created</th></tr></thead>
+                  <tbody><tr><td colspan="4" style="text-align:center"><div class="spinner"></div></td></tr></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- API KEYS PAGE -->
+        <div id="page-keys" class="page">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">API Keys Management</div>
+              <button class="btn btn-primary" onclick="openModal('createKeyModal')">+ New Key</button>
+            </div>
+            <div class="flex gap-2 mb-4" style="flex-wrap: wrap;">
+              <select id="keysStatusFilter" style="width:150px" onchange="loadKeys(1)">
+                <option value="">All Status</option>
+                <option value="active">Active</option>
+                <option value="expired">Expired</option>
+                <option value="suspended">Suspended</option>
+                <option value="revoked">Revoked</option>
+              </select>
+            </div>
+            <div class="table-responsive">
+              <table id="keysTable">
+                <thead><tr><th>API Key</th><th>User</th><th>Package</th><th>Status</th><th>Usage</th><th>Expires</th><th>Actions</th></tr></thead>
+                <tbody><tr><td colspan="7" style="text-align:center"><div class="spinner"></div></td></tr></tbody>
+              </table>
+            </div>
+            <div class="pagination">
+              <div class="page-info" id="keysPageInfo">Showing -</div>
+              <div class="page-controls">
+                <button class="page-btn" id="keysPrevBtn" onclick="loadKeys(currentPage.keys - 1)">Prev</button>
+                <button class="page-btn" id="keysNextBtn" onclick="loadKeys(currentPage.keys + 1)">Next</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- USERS PAGE -->
+        <div id="page-users" class="page">
+          <div class="card">
+            <div class="card-header"><div class="card-title">Users List</div></div>
+            <div class="table-responsive">
+              <table id="usersTable">
+                <thead><tr><th>ID / Telegram</th><th>Name / Username</th><th>Total Keys</th><th>Active Keys</th><th>Joined</th></tr></thead>
+                <tbody><tr><td colspan="5" style="text-align:center"><div class="spinner"></div></td></tr></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- PLATFORMS PAGE -->
+        <div id="page-platforms" class="page">
+          <div class="card">
+            <div class="card-header"><div class="card-title">Streaming Platforms</div></div>
+            <div class="platforms-grid" id="platformsGrid">
+              <div class="center-spinner" style="grid-column: 1/-1"><div class="spinner"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TRANSACTIONS PAGE -->
+        <div id="page-transactions" class="page">
+          <div class="card">
+            <div class="card-header"><div class="card-title">Recent Transactions</div></div>
+            <div class="table-responsive">
+              <table id="transactionsTable">
+                <thead><tr><th>Date</th><th>User</th><th>Package</th><th>Amount</th><th>Status</th><th>Method</th></tr></thead>
+                <tbody><tr><td colspan="6" style="text-align:center"><div class="spinner"></div></td></tr></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- HEALTH PAGE -->
+        <div id="page-health" class="page">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">System Health & Metrics</div>
+              <button class="btn btn-outline" onclick="loadHealth()">Refresh Now</button>
+            </div>
+            <div class="health-grid" id="healthGrid">
+              <div class="center-spinner" style="grid-column:1/-1"><div class="spinner"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CACHE PAGE -->
+        <div id="page-cache" class="page">
+          <div class="card" style="max-width: 500px;">
+            <div class="card-header"><div class="card-title">Cache Management</div></div>
+            <div class="mb-4">
+              <p style="color:var(--text-secondary);margin-bottom:1rem">Cache digunakan untuk mempercepat response scraping.</p>
+              <div class="health-stat mb-4">
+                <div class="label">Cache Entries (Active)</div>
+                <div class="val" id="cacheSize">-</div>
+              </div>
+            </div>
+            <button class="btn btn-danger" onclick="clearCache()">Clear Scraper Cache</button>
+          </div>
+        </div>
+
+        <!-- DOCS PAGE -->
+        <div id="page-docs" class="page">
+          <div class="card">
+            <div class="card-header"><div class="card-title">Admin API Documentation</div></div>
+            <div class="mb-4">
+              <p style="color:var(--text-secondary);margin-bottom:1rem">Gunakan endpoint ini untuk mengatur API secara terprogram (via sistem lain). Semua request wajib menyertakan header <code>X-Master-Key</code>.</p>
+              
+              <div style="background:rgba(0,0,0,0.2);padding:16px;border-radius:8px;border:1px solid var(--border-glass);margin-bottom:16px">
+                <div class="flex items-center gap-2 mb-2">
+                  <span class="badge badge-active">GET</span>
+                  <code style="font-family:monospace;color:var(--text-primary)">/admin/stats</code>
+                </div>
+                <p style="font-size:0.85rem;color:var(--text-secondary)">Mendapatkan data analitik, statistik pengguna, statistik API key, dan performa paket.</p>
+              </div>
+
+              <div style="background:rgba(0,0,0,0.2);padding:16px;border-radius:8px;border:1px solid var(--border-glass);margin-bottom:16px">
+                <div class="flex items-center gap-2 mb-2">
+                  <span class="badge badge-coming_soon" style="background:rgba(59,130,246,0.15);color:var(--accent-blue)">POST</span>
+                  <code style="font-family:monospace;color:var(--text-primary)">/admin/keys</code>
+                </div>
+                <p style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:8px">Membuat API key baru secara manual.</p>
+                <code style="font-size:0.8rem;color:var(--accent-purple)">Body: { "telegram_id": "123", "username": "...", "full_name": "...", "package_id": "standard", "note": "..." }</code>
+              </div>
+
+              <div style="background:rgba(0,0,0,0.2);padding:16px;border-radius:8px;border:1px solid var(--border-glass);margin-bottom:16px">
+                <div class="flex items-center gap-2 mb-2">
+                  <span class="badge badge-maintenance">PATCH</span>
+                  <code style="font-family:monospace;color:var(--text-primary)">/admin/keys/:id/status</code>
+                </div>
+                <p style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:8px">Mengubah status API key.</p>
+                <code style="font-size:0.8rem;color:var(--accent-purple)">Body: { "status": "active" | "suspended" | "revoked" }</code>
+              </div>
+
+              <div style="background:rgba(0,0,0,0.2);padding:16px;border-radius:8px;border:1px solid var(--border-glass);margin-bottom:16px">
+                <div class="flex items-center gap-2 mb-2">
+                  <span class="badge badge-expired">DELETE</span>
+                  <code style="font-family:monospace;color:var(--text-primary)">/admin/keys/:id</code>
+                </div>
+                <p style="font-size:0.85rem;color:var(--text-secondary)">Menghapus API key secara permanen dari database.</p>
+              </div>
+
+              <div style="background:rgba(0,0,0,0.2);padding:16px;border-radius:8px;border:1px solid var(--border-glass);margin-bottom:16px">
+                <div class="flex items-center gap-2 mb-2">
+                  <span class="badge badge-maintenance">PATCH</span>
+                  <code style="font-family:monospace;color:var(--text-primary)">/admin/platforms/:id</code>
+                </div>
+                <p style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:8px">Memperbarui status platform atau URL API-nya.</p>
+                <code style="font-size:0.8rem;color:var(--accent-purple)">Body: { "status": "active" | "maintenance" | "coming_soon", "api_url": "..." }</code>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <!-- SETTINGS PAGE -->
+        <div id="page-settings" class="page">
+          <div class="card" style="max-width: 600px;">
+            <div class="card-header"><div class="card-title">Settings</div></div>
+            <div class="mb-4">
+              <h4 style="margin-bottom: 12px; color: var(--text-primary)">Ubah Master Key</h4>
+              <p style="color:var(--text-secondary);font-size:0.85rem;margin-bottom:12px">Update Master Key yang tersimpan di browser (tidak mengubah key di server).</p>
+              <div class="form-group mb-4">
+                <input type="password" id="updateMasterKeyInput" placeholder="Masukkan Master Key baru">
+              </div>
+              <button class="btn btn-primary" onclick="updateLocalMasterKey()">Simpan Master Key</button>
+            </div>
+            <hr style="border:0;border-top:1px solid var(--border-glass);margin:24px 0">
+            <div>
+              <h4 style="margin-bottom: 12px; color: var(--text-primary)">Export Data</h4>
+              <p style="color:var(--text-secondary);font-size:0.85rem;margin-bottom:12px">Download data dari API (memerlukan Master Key yang valid).</p>
+              <div class="flex gap-2">
+                <button class="btn btn-outline" onclick="exportData('users')">⬇️ Export Users</button>
+                <button class="btn btn-outline" onclick="exportData('keys')">⬇️ Export Keys</button>
+                <button class="btn btn-outline" onclick="exportData('transactions')">⬇️ Export Transactions</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- MODALS -->
+  
+  <!-- Create Key Modal -->
+  <div class="modal-overlay" id="createKeyModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Create New API Key</h3>
+        <span class="modal-close" onclick="closeModal('createKeyModal')">✕</span>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Telegram ID (required)</label>
+          <input type="text" id="ckTgId" placeholder="e.g. 123456789">
+        </div>
+        <div class="grid" style="grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div class="form-group">
+            <label>Username</label>
+            <input type="text" id="ckUsername" placeholder="@username">
+          </div>
+          <div class="form-group">
+            <label>Full Name</label>
+            <input type="text" id="ckFullName" placeholder="John Doe">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Package</label>
+          <select id="ckPackage">
+            <option value="">Loading...</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Note / Reference</label>
+          <input type="text" id="ckNote" placeholder="e.g. Manual payment via BCA">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal('createKeyModal')">Cancel</button>
+        <button class="btn btn-primary" onclick="createKey()">Create Key</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- View Key Modal -->
+  <div class="modal-overlay" id="viewKeyModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>API Key Details</h3>
+        <span class="modal-close" onclick="closeModal('viewKeyModal')">✕</span>
+      </div>
+      <div class="modal-body" id="viewKeyBody">
+        <div class="center-spinner"><div class="spinner"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Platform Modal -->
+  <div class="modal-overlay" id="editPlatformModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Edit Platform</h3>
+        <span class="modal-close" onclick="closeModal('editPlatformModal')">✕</span>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="epId">
+        <div class="form-group">
+          <label>Platform Name</label>
+          <input type="text" id="epName" disabled>
+        </div>
+        <div class="form-group">
+          <label>Status</label>
+          <select id="epStatus">
+            <option value="active">Active</option>
+            <option value="maintenance">Maintenance</option>
+            <option value="coming_soon">Coming Soon</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>API URL / Target URL</label>
+          <input type="text" id="epUrl" placeholder="https://...">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal('editPlatformModal')">Cancel</button>
+        <button class="btn btn-primary" onclick="updatePlatform()">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toastContainer" class="toast-container"></div>
+
+  <script>
+    // --- STATE & CONFIG ---
+    const API_BASE = window.location.origin;
+    let masterKey = localStorage.getItem('dramoo_master_key') || '';
+    let currentPage = { keys: 1, limit: 20 };
+    let healthInterval;
+    const COLORS = ['#8b5cf6','#06b6d4','#3b82f6','#10b981','#f59e0b','#ef4444'];
+
+    // --- INIT ---
+    window.onload = () => {
+      if (masterKey) {
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('app').style.display = 'flex';
+        initApp();
+      }
+    };
+
+    // --- UI UTILS ---
+    function showToast(msg, type = 'info') {
+      const c = document.getElementById('toastContainer');
+      const t = document.createElement('div');
+      t.className = `toast ${type}`;
+      t.innerHTML = `${type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️'} ${msg}`;
+      c.appendChild(t);
+      setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translateX(100%)'; setTimeout(() => t.remove(), 300); }, 3000);
+    }
+
+    function formatNumber(num) { return new Intl.NumberFormat('id-ID').format(num || 0); }
+    function formatCurrency(num) { return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(num || 0); }
+    function formatDate(iso) { 
+      if (!iso) return '-';
+      return new Date(iso).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }); 
+    }
+    
+    function copyText(txt) {
+      navigator.clipboard.writeText(txt).then(() => showToast('Copied to clipboard', 'success'));
+    }
+
+    function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
+
+    function switchPage(pageId) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      document.getElementById(`page-${pageId}`).classList.add('active');
+      document.querySelector(`.nav-item[data-page="${pageId}"]`).classList.add('active');
+      document.getElementById('pageTitle').innerText = document.querySelector(`.nav-item[data-page="${pageId}"]`).innerText.replace(/[^\w\s]/gi, '').trim();
+      
+      if (window.innerWidth <= 768) toggleSidebar();
+      
+      // Load data based on page
+      if (pageId === 'dashboard') loadDashboard();
+      if (pageId === 'keys') loadKeys(1);
+      if (pageId === 'users') loadUsers();
+      if (pageId === 'platforms') loadPlatforms();
+      if (pageId === 'transactions') loadTransactions();
+      if (pageId === 'health') loadHealth();
+      if (pageId === 'cache') loadCache();
+      // docs and settings don't need initial fetch
+    }
+
+    function openModal(id) { document.getElementById(id).classList.add('active'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+
+    // --- API FETCH WRAPPER ---
+    async function apiFetch(endpoint, options = {}) {
+      if (!options.headers) options.headers = {};
+      options.headers['X-Master-Key'] = masterKey;
+      options.headers['Content-Type'] = 'application/json';
+      
+      try {
+        const res = await fetch(`${API_BASE}${endpoint}`, options);
+        const data = await res.json();
+        
+        if (res.status === 401 || res.status === 403) {
+          if (data.error === 'Akses ditolak') {
+            logout();
+            showToast('Master Key tidak valid', 'error');
+            throw new Error('Invalid Master Key');
+          }
+        }
+        
+        if (!data.success && data.error) throw new Error(data.error);
+        return data;
+      } catch (err) {
+        if (err.message !== 'Invalid Master Key') showToast(err.message, 'error');
+        throw err;
+      }
+    }
+
+    // --- AUTH ---
+    async function login() {
+      const key = document.getElementById('masterKeyInput').value.trim();
+      if (!key) return showToast('Masukkan Master Key', 'error');
+      
+      masterKey = key;
+      try {
+        // Test key with stats endpoint
+        document.getElementById('loginBtn').innerText = 'Checking...';
+        await apiFetch('/admin/stats');
+        localStorage.setItem('dramoo_master_key', masterKey);
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('app').style.display = 'flex';
+        initApp();
+      } catch (err) {
+        masterKey = '';
+        document.getElementById('loginBtn').innerText = 'Masuk Dashboard';
+      }
+    }
+
+    function logout() {
+      localStorage.removeItem('dramoo_master_key');
+      masterKey = '';
+      document.getElementById('masterKeyInput').value = '';
+      document.getElementById('app').style.display = 'none';
+      document.getElementById('loginScreen').style.display = 'flex';
+      clearInterval(healthInterval);
+    }
+
+    // --- INIT APP ---
+    function initApp() {
+      loadDashboard();
+      loadPackagesForSelect();
+      // Auto refresh health in background
+      healthInterval = setInterval(updateHeaderUptime, 30000);
+      updateHeaderUptime();
+    }
+
+    async function loadPackagesForSelect() {
+      try {
+        const data = await fetch(`${API_BASE}/api/packages`).then(r => r.json());
+        const select = document.getElementById('ckPackage');
+        if (data.success && data.packages.length > 0) {
+          select.innerHTML = data.packages.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
+        } else {
+          select.innerHTML = '<option value="">No packages found</option>';
+        }
+      } catch (e) {
+        document.getElementById('ckPackage').innerHTML = '<option value="">Error loading packages</option>';
+      }
+    }
+
+    async function updateHeaderUptime() {
+      try {
+        const data = await fetch(`${API_BASE}/health`).then(r => r.json());
+        const days = Math.floor(data.uptime / 86400);
+        const hrs = Math.floor((data.uptime % 86400) / 3600);
+        document.getElementById('headerUptime').innerText = `Uptime: ${days}d ${hrs}h`;
+        document.querySelector('.pulse-dot').style.background = 'var(--accent-green)';
+      } catch (e) {
+        document.getElementById('headerUptime').innerText = 'Offline';
+        document.querySelector('.pulse-dot').style.background = 'var(--accent-red)';
+      }
+    }
+
+    // --- DASHBOARD ---
+    async function loadDashboard() {
+      try {
+        const data = await apiFetch('/admin/stats');
+        const s = data.stats;
+        
+        document.getElementById('dashUsers').innerText = formatNumber(s.users);
+        document.getElementById('dashActiveKeys').innerText = formatNumber(s.keys.active);
+        document.getElementById('dashExpiredKeys').innerText = formatNumber(s.keys.expired);
+        document.getElementById('dashTodayReq').innerText = formatNumber(s.requests.today);
+
+        // Chart
+        const chart = document.getElementById('packageChart');
+        const maxKeys = Math.max(...data.packages.map(p => p.total_keys), 1);
+        chart.innerHTML = data.packages.map((p, i) => `
+          <div class="bar-col">
+            <div class="bar-value">${p.total_keys}</div>
+            <div class="bar" style="height: ${(p.total_keys / maxKeys) * 100}%; background: ${COLORS[i % COLORS.length]}"></div>
+            <div class="bar-label">${p.name}</div>
+          </div>
+        `).join('');
+
+        // Recent keys
+        const tbody = document.querySelector('#recentKeysTable tbody');
+        if (data.recent_keys.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--text-muted)">Belum ada data</td></tr>';
+        } else {
+          tbody.innerHTML = data.recent_keys.map(k => `
+            <tr>
+              <td>
+                <div style="font-weight:600">${k.full_name || k.username || 'User'}</div>
+                <div style="font-size:0.8rem;color:var(--text-secondary)">${k.api_key.substring(0,10)}...</div>
+              </td>
+              <td><span class="badge badge-tier">${k.package_name}</span></td>
+              <td><span class="badge badge-${k.status}">${k.status}</span></td>
+              <td>${formatDate(k.created_at)}</td>
+            </tr>
+          `).join('');
+        }
+      } catch (err) {}
+    }
+
+    // --- API KEYS ---
+    async function loadKeys(page) {
+      if (page < 1) return;
+      try {
+        const status = document.getElementById('keysStatusFilter').value;
+        const data = await apiFetch(`/admin/keys?page=${page}&limit=${currentPage.limit}${status ? '&status='+status : ''}`);
+        
+        currentPage.keys = data.page;
+        const totalPages = Math.ceil(data.total / data.limit);
+        
+        document.getElementById('keysPageInfo').innerText = `Showing page ${data.page} of ${totalPages || 1} (${data.total} total)`;
+        document.getElementById('keysPrevBtn').disabled = data.page <= 1;
+        document.getElementById('keysNextBtn').disabled = data.page >= totalPages;
+
+        const tbody = document.querySelector('#keysTable tbody');
+        if (data.keys.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--text-muted)">Tidak ada API key ditemukan</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = data.keys.map(k => `
+          <tr>
+            <td>
+              <div class="flex items-center gap-2">
+                <span class="code-text" style="cursor:pointer" onclick="copyText('${k.api_key}')" title="Copy">${k.api_key.substring(0,12)}...</span>
+              </div>
+            </td>
+            <td>
+              <div style="font-weight:600">${k.full_name || '-'}</div>
+              <div style="font-size:0.8rem;color:var(--text-secondary)">@${k.username || k.telegram_id}</div>
+            </td>
+            <td><span class="badge badge-tier">${k.package_name}</span></td>
+            <td><span class="badge badge-${k.status}">${k.status}</span></td>
+            <td>
+              <div style="font-size:0.85rem">${formatNumber(k.daily_used)} / ${formatNumber(k.daily_limit)}</div>
+              <div style="width:100%;height:4px;background:rgba(255,255,255,0.1);border-radius:2px;margin-top:4px">
+                <div style="height:100%;background:var(--accent-blue);border-radius:2px;width:${Math.min(100, (k.daily_used/k.daily_limit)*100)}%"></div>
+              </div>
+            </td>
+            <td style="font-size:0.85rem">${formatDate(k.expires_at)}</td>
+            <td>
+              <div class="action-btns">
+                <button class="action-btn" title="View Details" onclick="viewKey('${k.id}')">👁️</button>
+                ${k.status === 'active' 
+                  ? `<button class="action-btn" title="Suspend" onclick="updateKeyStatus('${k.id}', 'suspended')">⏸️</button>` 
+                  : `<button class="action-btn" title="Activate" onclick="updateKeyStatus('${k.id}', 'active')">▶️</button>`}
+                <button class="action-btn" title="Revoke" onclick="updateKeyStatus('${k.id}', 'revoked')">🚫</button>
+                <button class="action-btn" title="Delete" style="color:var(--accent-red)" onclick="deleteKey('${k.id}')">🗑️</button>
+              </div>
+            </td>
+          </tr>
+        `).join('');
+      } catch (err) {}
+    }
+
+    async function createKey() {
+      const tgId = document.getElementById('ckTgId').value;
+      const pkg = document.getElementById('ckPackage').value;
+      if (!tgId) return showToast('Telegram ID wajib diisi', 'error');
+
+      try {
+        await apiFetch('/admin/keys', {
+          method: 'POST',
+          body: JSON.stringify({
+            telegram_id: tgId,
+            username: document.getElementById('ckUsername').value,
+            full_name: document.getElementById('ckFullName').value,
+            package_id: pkg,
+            note: document.getElementById('ckNote').value
+          })
+        });
+        showToast('API Key berhasil dibuat', 'success');
+        closeModal('createKeyModal');
+        // Reset form
+        ['ckTgId','ckUsername','ckFullName','ckNote'].forEach(id => document.getElementById(id).value = '');
+        loadKeys(1);
+      } catch (err) {}
+    }
+
+    async function updateKeyStatus(id, status) {
+      if (!confirm(`Ubah status key menjadi ${status}?`)) return;
+      try {
+        await apiFetch(`/admin/keys/${id}/status`, {
+          method: 'PATCH',
+          body: JSON.stringify({ status })
+        });
+        showToast(`Status key diupdate ke ${status}`, 'success');
+        loadKeys(currentPage.keys);
+      } catch (err) {}
+    }
+
+    async function deleteKey(id) {
+      if (!confirm('Yakin ingin menghapus key ini permanen? Tindakan ini tidak dapat dibatalkan.')) return;
+      try {
+        await apiFetch(`/admin/keys/${id}`, { method: 'DELETE' });
+        showToast('Key berhasil dihapus', 'success');
+        loadKeys(currentPage.keys);
+      } catch (err) {}
+    }
+
+    async function viewKey(id) {
+      openModal('viewKeyModal');
+      const body = document.getElementById('viewKeyBody');
+      body.innerHTML = '<div class="center-spinner"><div class="spinner"></div></div>';
+      
+      try {
+        const data = await apiFetch(`/admin/keys/${id}`);
+        const k = data.key;
+        
+        let html = `
+          <div style="background:var(--bg-glass);padding:16px;border-radius:8px;border:1px solid var(--border-glass);margin-bottom:16px">
+            <div class="flex justify-between items-center mb-4">
+              <span class="badge badge-${k.status}">${k.status}</span>
+              <span class="badge badge-tier">${k.package_name}</span>
+            </div>
+            <div class="form-group mb-4">
+              <label>API Key</label>
+              <div class="flex gap-2">
+                <input type="text" value="${k.api_key}" readonly style="font-family:monospace">
+                <button class="btn btn-outline" onclick="copyText('${k.api_key}')">Copy</button>
+              </div>
+            </div>
+            <div class="grid gap-4" style="grid-template-columns:1fr 1fr">
+              <div><label style="font-size:0.8rem;color:var(--text-secondary)">User</label><div style="font-weight:600">${k.full_name || k.username}</div></div>
+              <div><label style="font-size:0.8rem;color:var(--text-secondary)">Telegram ID</label><div>${k.telegram_id}</div></div>
+              <div><label style="font-size:0.8rem;color:var(--text-secondary)">Total Requests</label><div style="font-family:monospace">${formatNumber(k.total_used)}</div></div>
+              <div><label style="font-size:0.8rem;color:var(--text-secondary)">Expires At</label><div>${formatDate(k.expires_at)}</div></div>
+            </div>
+          </div>
+          <h4>Recent Logs (Last 10)</h4>
+        `;
+        
+        if (data.recent_logs.length === 0) {
+          html += '<p style="color:var(--text-muted);font-size:0.9rem">Belum ada log request</p>';
+        } else {
+          html += `
+            <div style="max-height:200px;overflow-y:auto;background:rgba(0,0,0,0.2);border-radius:8px;border:1px solid var(--border-glass)">
+              <table style="font-size:0.8rem">
+                <thead><tr><th>Time</th><th>Method</th><th>Endpoint</th><th>Status</th><th>Time (ms)</th></tr></thead>
+                <tbody>
+                  ${data.recent_logs.map(l => `
+                    <tr>
+                      <td>${formatDate(l.created_at).split(' ')[1]}</td>
+                      <td style="color:var(--accent-blue)">${l.method}</td>
+                      <td style="font-family:monospace">${l.endpoint}</td>
+                      <td style="color:${l.status_code >= 400 ? 'var(--accent-red)' : 'var(--accent-green)'}">${l.status_code}</td>
+                      <td>${l.response_ms}ms</td>
+                    </tr>
+                  `).join('')}
+                </tbody>
+              </table>
+            </div>
+          `;
+        }
+        body.innerHTML = html;
+      } catch (err) {
+        body.innerHTML = `<p style="color:var(--accent-red)">Gagal memuat detail key</p>`;
+      }
+    }
+
+    // --- USERS ---
+    async function loadUsers() {
+      try {
+        const data = await apiFetch('/admin/users');
+        const tbody = document.querySelector('#usersTable tbody');
+        
+        if (data.users.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--text-muted)">Belum ada user</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = data.users.map(u => `
+          <tr>
+            <td>
+              <div class="code-text" style="display:inline-block;margin-bottom:4px">${u.id.substring(0,8)}</div>
+              <div style="font-size:0.8rem;color:var(--text-secondary)">TG: ${u.telegram_id}</div>
+            </td>
+            <td>
+              <div style="font-weight:600">${u.full_name || '-'}</div>
+              <div style="font-size:0.8rem;color:var(--text-secondary)">@${u.username || '-'}</div>
+            </td>
+            <td>${u.total_keys}</td>
+            <td><span class="badge ${u.active_keys > 0 ? 'badge-active' : ''}" style="${u.active_keys===0?'background:rgba(255,255,255,0.05)':''}">${u.active_keys} Active</span></td>
+            <td>${formatDate(u.created_at).split(' ')[0]}</td>
+          </tr>
+        `).join('');
+      } catch (err) {}
+    }
+
+    // --- PLATFORMS ---
+    async function loadPlatforms() {
+      try {
+        const data = await apiFetch('/admin/platforms');
+        const grid = document.getElementById('platformsGrid');
+        
+        grid.innerHTML = data.platforms.map((p, i) => `
+          <div class="platform-card" onclick="editPlatform('${p.id}', '${p.name}', '${p.status}', '${p.api_url || ''}')">
+            <div class="p-logo" style="background:${COLORS[i % COLORS.length]}">
+              ${p.logo_url ? `<img src="${p.logo_url}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover;border-radius:12px">` : p.name.substring(0,2)}
+            </div>
+            <div class="p-info">
+              <div class="p-name">${p.name}</div>
+              <div class="p-meta">
+                <span class="badge badge-${p.status}">${p.status.replace('_', ' ')}</span>
+                <span class="badge badge-tier">Tier ${p.tier}</span>
+              </div>
+            </div>
+          </div>
+        `).join('');
+      } catch (err) {}
+    }
+
+    function editPlatform(id, name, status, url) {
+      document.getElementById('epId').value = id;
+      document.getElementById('epName').value = name;
+      document.getElementById('epStatus').value = status;
+      document.getElementById('epUrl').value = url !== 'null' ? url : '';
+      openModal('editPlatformModal');
+    }
+
+    async function updatePlatform() {
+      const id = document.getElementById('epId').value;
+      try {
+        await apiFetch(`/admin/platforms/${id}`, {
+          method: 'PATCH',
+          body: JSON.stringify({
+            status: document.getElementById('epStatus').value,
+            api_url: document.getElementById('epUrl').value
+          })
+        });
+        showToast('Platform diupdate', 'success');
+        closeModal('editPlatformModal');
+        loadPlatforms();
+      } catch (err) {}
+    }
+
+    // --- TRANSACTIONS ---
+    async function loadTransactions() {
+      try {
+        const data = await apiFetch('/admin/transactions');
+        const tbody = document.querySelector('#transactionsTable tbody');
+        
+        if (data.transactions.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--text-muted)">Belum ada transaksi</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = data.transactions.map(t => `
+          <tr>
+            <td style="font-size:0.85rem">${formatDate(t.created_at)}</td>
+            <td>
+              <div style="font-weight:600">@${t.username || t.telegram_id}</div>
+            </td>
+            <td><span class="badge badge-tier">${t.package_name}</span></td>
+            <td style="font-weight:600;color:var(--accent-green)">${formatCurrency(t.amount)}</td>
+            <td><span class="badge" style="background:rgba(16,185,129,0.15);color:var(--accent-green)">${t.status}</span></td>
+            <td style="text-transform:uppercase;font-size:0.8rem;color:var(--text-secondary)">${t.payment_method}</td>
+          </tr>
+        `).join('');
+      } catch (err) {}
+    }
+
+    // --- HEALTH ---
+    async function loadHealth() {
+      try {
+        const data = await fetch(`${API_BASE}/health`).then(r => r.json());
+        const grid = document.getElementById('healthGrid');
+        
+        const days = Math.floor(data.uptime / 86400);
+        const hrs = Math.floor((data.uptime % 86400) / 3600);
+        
+        grid.innerHTML = `
+          <div class="health-stat"><div class="label">API Status</div><div class="val" style="color:var(--accent-green)">${data.status.toUpperCase()}</div></div>
+          <div class="health-stat"><div class="label">Version</div><div class="val">${data.version}</div></div>
+          <div class="health-stat"><div class="label">Uptime</div><div class="val">${days}d ${hrs}h</div></div>
+          <div class="health-stat"><div class="label">Memory Usage</div><div class="val" style="color:var(--accent-blue)">${data.memory}</div></div>
+          <div class="health-stat"><div class="label">Server Time</div><div class="val" style="font-size:1rem">${new Date(data.timestamp).toLocaleString('id-ID')}</div></div>
+        `;
+      } catch (err) {
+        document.getElementById('healthGrid').innerHTML = '<div class="health-stat" style="grid-column:1/-1;border-color:var(--accent-red)"><div class="label">Status</div><div class="val" style="color:var(--accent-red)">OFFLINE</div></div>';
+      }
+    }
+
+    // --- CACHE ---
+    async function loadCache() {
+      try {
+        const data = await apiFetch('/scrape/cache');
+        document.getElementById('cacheSize').innerText = `${data.cache.size} / ${data.cache.max}`;
+      } catch (err) {}
+    }
+
+    async function clearCache() {
+      if (!confirm('Hapus semua cache scraper? Response scraper sementara akan lebih lambat.')) return;
+      try {
+        const data = await apiFetch('/scrape/cache', { method: 'DELETE' });
+        showToast(data.message, 'success');
+        loadCache();
+      } catch (err) {}
+    }
+
+    // --- SETTINGS ---
+    function updateLocalMasterKey() {
+      const newKey = document.getElementById('updateMasterKeyInput').value.trim();
+      if (!newKey) return showToast('Masukkan key baru', 'error');
+      masterKey = newKey;
+      localStorage.setItem('dramoo_master_key', masterKey);
+      document.getElementById('updateMasterKeyInput').value = '';
+      showToast('Master Key berhasil diupdate di browser', 'success');
+      loadDashboard();
+    }
+
+    async function exportData(type) {
+      try {
+        let endpoint = '';
+        if (type === 'users') endpoint = '/admin/users';
+        if (type === 'keys') endpoint = '/admin/keys?limit=1000';
+        if (type === 'transactions') endpoint = '/admin/transactions';
+        
+        const data = await apiFetch(endpoint);
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data, null, 2));
+        const a = document.createElement('a');
+        a.href = dataStr;
+        a.download = `dramoo_export_${type}_${new Date().toISOString().split('T')[0]}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        showToast(`Export ${type} berhasil`, 'success');
+      } catch (err) {
+        showToast(`Gagal export ${type}: ` + err.message, 'error');
+      }
+    }
+  </script>
+</body>
+</html>

@@ -154,6 +154,72 @@ class ScraperManager {
   }
 
   /**
+   * Cari berdasarkan kategori / genre
+   */
+  async getCategory(platformId, categoryId, page = 1, lang = 'id', useCache = true) {
+    const cacheKey = `category:${platformId}:${categoryId || 'all'}:${page}:${lang}`;
+    if (useCache) {
+      const cached = cacheGet(cacheKey);
+      if (cached) return { ...cached, from_cache: true };
+    }
+
+    const scraper = this.getScraper(platformId);
+    let result;
+    try {
+      result = await scraper.getCategory(categoryId, page, lang);
+    } finally {
+      await scraper.closeBrowser?.();
+    }
+
+    if (useCache && result.success) cacheSet(cacheKey, result);
+    return result;
+  }
+
+  /**
+   * Ambil trending drama
+   */
+  async getTrending(platformId, page = 1, cursor = null, lang = 'id', useCache = true) {
+    const cacheKey = `trending:${platformId}:${page}:${cursor || 'start'}:${lang}`;
+    if (useCache) {
+      const cached = cacheGet(cacheKey);
+      if (cached) return { ...cached, from_cache: true };
+    }
+
+    const scraper = this.getScraper(platformId);
+    let result;
+    try {
+      result = await scraper.getTrending(page, cursor, lang);
+    } finally {
+      await scraper.closeBrowser?.();
+    }
+
+    if (useCache && result.success) cacheSet(cacheKey, result);
+    return result;
+  }
+
+  /**
+   * Ambil daftar bahasa yang didukung
+   */
+  async getLanguages(platformId, useCache = true) {
+    const cacheKey = `languages:${platformId}`;
+    if (useCache) {
+      const cached = cacheGet(cacheKey);
+      if (cached) return { ...cached, from_cache: true };
+    }
+
+    const scraper = this.getScraper(platformId);
+    let result;
+    try {
+      result = await scraper.getLanguages();
+    } finally {
+      await scraper.closeBrowser?.();
+    }
+
+    if (useCache && result.success) cacheSet(cacheKey, result);
+    return result;
+  }
+
+  /**
    * Cari dari semua platform secara paralel
    */
   async searchAll(query, page = 1) {

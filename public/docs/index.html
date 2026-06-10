@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dramoo API — Interactive Documentation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg-base: #06060c;
+      --bg-panel: #0d0d16;
+      --bg-glass: rgba(255, 255, 255, 0.03);
+      --bg-glass-hover: rgba(255, 255, 255, 0.06);
+      --border-color: rgba(255, 255, 255, 0.08);
+      --border-highlight: rgba(139, 92, 246, 0.3);
+      
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      --text-dark: #6b7280;
+      
+      --accent-purple: #8b5cf6;
+      --accent-blue: #3b82f6;
+      --accent-cyan: #06b6d4;
+      --accent-green: #10b981;
+      --accent-amber: #f59e0b;
+      --accent-red: #ef4444;
+      
+      --gradient-glow: radial-gradient(circle at 50% -20%, rgba(139, 92, 246, 0.15), transparent 60%);
+      --gradient-primary: linear-gradient(135deg, #8b5cf6, #3b82f6);
+      
+      --radius-lg: 16px;
+      --radius-md: 10px;
+      --radius-sm: 6px;
+      
+      --sidebar-width: 300px;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-base);
+      background-image: var(--gradient-glow);
+      background-attachment: fixed;
+      color: var(--text-main);
+      font-size: 14px;
+      line-height: 1.6;
+      height: 100vh;
+      display: flex;
+      overflow: hidden;
+    }
+
+    /* SCROLLBAR */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--accent-purple); }
+
+    /* LAYOUT */
+    .sidebar {
+      width: var(--sidebar-width);
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      background: rgba(6, 6, 12, 0.6);
+      backdrop-filter: blur(20px);
+      z-index: 10;
+    }
+    
+    .sidebar-header {
+      padding: 24px;
+      border-bottom: 1px solid var(--border-color);
+    }
+    
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: var(--text-main);
+    }
+    .brand-logo {
+      width: 32px; height: 32px;
+      background: var(--gradient-primary);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 16px;
+      box-shadow: 0 0 15px rgba(139, 92, 246, 0.4);
+    }
+    .brand-name { font-size: 1.1rem; font-weight: 700; letter-spacing: -0.5px; }
+
+    .nav-sections {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .nav-group-title {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-dark);
+      font-weight: 700;
+      margin-bottom: 8px;
+      padding-left: 12px;
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      padding: 8px 12px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.2s;
+      border: 1px solid transparent;
+      margin-bottom: 2px;
+    }
+    .nav-item:hover { background: var(--bg-glass-hover); }
+    .nav-item.active {
+      background: rgba(139, 92, 246, 0.1);
+      border-color: rgba(139, 92, 246, 0.2);
+    }
+    .nav-item-name { font-weight: 500; font-size: 0.85rem; color: var(--text-main); margin-bottom: 4px; }
+    .nav-item-path { 
+      font-family: 'JetBrains Mono', monospace; 
+      font-size: 0.7rem; 
+      color: var(--text-muted);
+      display: flex; align-items: center; gap: 6px;
+    }
+    
+    .method-badge {
+      font-size: 0.65rem; font-weight: 700; padding: 2px 6px; border-radius: 4px;
+    }
+    .method-GET { background: rgba(16, 185, 129, 0.15); color: var(--accent-green); }
+    .method-POST { background: rgba(59, 130, 246, 0.15); color: var(--accent-blue); }
+    .method-PATCH { background: rgba(245, 158, 11, 0.15); color: var(--accent-amber); }
+    .method-DELETE { background: rgba(239, 68, 68, 0.15); color: var(--accent-red); }
+
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      overflow-y: auto;
+      position: relative;
+    }
+
+    .top-bar {
+      height: 70px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+      background: rgba(6, 6, 12, 0.8);
+      backdrop-filter: blur(20px);
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+
+    .api-key-setup {
+      display: flex; align-items: center; gap: 12px;
+      background: var(--bg-glass);
+      border: 1px solid var(--border-color);
+      padding: 6px 12px;
+      border-radius: 50px;
+      transition: all 0.3s;
+    }
+    .api-key-setup:focus-within {
+      border-color: var(--border-highlight);
+      box-shadow: 0 0 10px rgba(139, 92, 246, 0.1);
+    }
+    .api-key-setup input {
+      background: transparent; border: none; color: var(--text-main);
+      font-family: 'JetBrains Mono', monospace; font-size: 0.85rem;
+      outline: none; width: 250px;
+    }
+    .api-key-setup input::placeholder { color: var(--text-dark); }
+    
+    .content-grid {
+      display: grid;
+      grid-template-columns: 1fr 450px;
+      gap: 32px;
+      padding: 40px 32px;
+      max-width: 1400px;
+      margin: 0 auto;
+      width: 100%;
+      align-items: start;
+    }
+
+    .doc-section { display: flex; flex-direction: column; gap: 24px; }
+    
+    .endpoint-header h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: 8px; letter-spacing: -0.5px; }
+    .endpoint-header p { color: var(--text-muted); font-size: 0.95rem; }
+    
+    .endpoint-url {
+      display: flex; align-items: center; gap: 12px;
+      background: var(--bg-panel);
+      border: 1px solid var(--border-color);
+      padding: 12px 16px;
+      border-radius: var(--radius-md);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.9rem;
+      word-break: break-all;
+    }
+
+    .auth-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 4px 10px; border-radius: 50px; font-size: 0.75rem; font-weight: 600;
+      background: rgba(139, 92, 246, 0.1); border: 1px solid rgba(139, 92, 246, 0.2);
+      color: var(--accent-purple); width: fit-content;
+    }
+
+    .table-container { width: 100%; overflow-x: auto; margin-top: 8px; }
+    .params-table { width: 100%; border-collapse: collapse; min-width: 400px; }
+    .params-table th { text-align: left; padding: 10px 0; border-bottom: 1px solid var(--border-color); color: var(--text-dark); font-weight: 600; font-size: 0.75rem; text-transform: uppercase; }
+    .params-table td { padding: 14px 10px 14px 0; border-bottom: 1px solid var(--border-color); font-size: 0.9rem; }
+    .params-table td.param-name { font-family: 'JetBrains Mono', monospace; font-weight: 600; color: var(--text-main); }
+    .params-table td .param-req { font-size: 0.7rem; color: var(--accent-red); margin-left: 6px; }
+    .params-table td .param-desc { color: var(--text-muted); font-size: 0.85rem; margin-top: 4px; line-height: 1.4; }
+
+    /* TRY IT OUT PANEL */
+    .interactive-panel {
+      background: var(--bg-panel);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      position: sticky;
+      top: 100px;
+      overflow: hidden;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+    }
+    
+    .panel-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex; justify-content: space-between; align-items: center;
+      background: rgba(255,255,255,0.02);
+    }
+    .panel-header h3 { font-size: 0.9rem; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+    
+    .panel-body { padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+
+    .input-group { display: flex; flex-direction: column; gap: 6px; }
+    .input-group label { font-size: 0.8rem; font-family: 'JetBrains Mono', monospace; color: var(--text-muted); }
+    .input-group input {
+      background: rgba(0,0,0,0.3); border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm); padding: 10px 14px;
+      color: var(--text-main); font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem; transition: all 0.2s;
+    }
+    .input-group input:focus { border-color: var(--accent-purple); outline: none; }
+
+    .btn-send {
+      background: var(--gradient-primary);
+      color: #fff; border: none; border-radius: var(--radius-sm);
+      padding: 12px; font-weight: 600; font-family: inherit;
+      cursor: pointer; transition: all 0.3s;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .btn-send:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(139, 92, 246, 0.3); }
+    .btn-send:active { transform: translateY(0); }
+
+    .response-area {
+      border-top: 1px solid var(--border-color);
+      background: #09090e;
+    }
+    .res-header {
+      padding: 10px 20px; border-bottom: 1px solid rgba(255,255,255,0.05);
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: 0.8rem; color: var(--text-muted);
+    }
+    .status-code { font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+    .status-200 { color: var(--accent-green); }
+    .status-4xx { color: var(--accent-amber); }
+    .status-5xx { color: var(--accent-red); }
+
+    .res-body {
+      padding: 16px 20px;
+      margin: 0;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      color: #a5d6ff;
+      overflow-x: auto;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    /* SYNTAX HIGHLIGHTING (JSON) */
+    .json-key { color: #7ee787; }
+    .json-string { color: #a5d6ff; }
+    .json-number { color: #79c0ff; }
+    .json-boolean { color: #ff7b72; }
+    .json-null { color: #8b949e; }
+
+    /* TOAST */
+    .toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 9999; display: flex; flex-direction: column; gap: 8px; }
+    .toast { padding: 12px 20px; border-radius: 8px; font-size: 0.85rem; font-weight: 500; backdrop-filter: blur(10px); background: rgba(139,92,246,0.2); border: 1px solid rgba(139,92,246,0.3); color: #fff; animation: slideIn 0.3s ease; }
+    @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+    /* SPINNER */
+    .spinner {
+      width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: #fff; border-radius: 50%; animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* MOBILE OVERLAY */
+    .mobile-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(2px);
+      z-index: 40; opacity: 0; pointer-events: none; transition: opacity 0.3s;
+    }
+    .mobile-overlay.open { opacity: 1; pointer-events: all; }
+
+    @media (max-width: 1024px) {
+      .content-grid { grid-template-columns: 1fr; }
+      .interactive-panel { position: static; }
+    }
+    @media (max-width: 768px) {
+      .sidebar { 
+        position: fixed; 
+        left: -100%; top: 0; bottom: 0; 
+        transition: left 0.3s ease; 
+        width: 280px; 
+        background: rgba(6, 6, 12, 0.95); 
+        box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        z-index: 50;
+      }
+      .sidebar.open { left: 0; }
+      .content-grid { padding: 20px 16px; }
+      .top-bar { padding: 0 16px; gap: 8px; }
+      .api-key-setup input { width: 130px; font-size: 0.8rem; }
+      .api-key-setup { padding: 4px 10px; }
+      .doc-section { padding-top: 10px; }
+      .hamburger { display: flex; }
+      .brand-title { display: none; }
+    }
+    @media (max-width: 480px) {
+      .api-key-setup input { width: 100px; }
+      .endpoint-url { flex-direction: column; align-items: flex-start; gap: 8px; font-size: 0.8rem; }
+      .endpoint-header h1 { font-size: 1.4rem; }
+    }
+
+    .hamburger {
+      display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 5px; z-index: 100;
+    }
+    .hamburger span { display: block; width: 24px; height: 2px; background: #fff; transition: 0.3s; }
+  </style>
+</head>
+<body>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <a href="/" class="brand">
+        <div class="brand-logo">D</div>
+        <div class="brand-name">Dramoo Docs</div>
+      </a>
+    </div>
+    <div class="nav-sections" id="navSections">
+      <!-- Populated by JS -->
+    </div>
+  </aside>
+
+  <div class="mobile-overlay" onclick="toggleMobileMenu()"></div>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content">
+    <div class="top-bar">
+      <div style="font-weight: 600; display:flex; align-items:center; gap:12px;">
+        <div class="hamburger" onclick="toggleMobileMenu()">
+          <span></span><span></span><span></span>
+        </div>
+        <div class="brand-title"><span style="color:var(--accent-purple)">●</span> API Playground</div>
+      </div>
+      <div class="api-key-setup">
+        <span style="font-size:1.2rem">🔑</span>
+        <input type="text" id="globalApiKey" placeholder="Paste X-Api-Key here..." oninput="saveApiKey()">
+      </div>
+    </div>
+
+    <div class="content-grid">
+      <!-- DOCUMENTATION SECTION -->
+      <div class="doc-section" id="docSection">
+        <!-- Populated by JS -->
+      </div>
+
+      <!-- INTERACTIVE PANEL -->
+      <div class="interactive-panel" id="interactivePanel" style="display: none;">
+        <div class="panel-header">
+          <h3><span id="panelMethod" class="method-badge"></span> Try it out</h3>
+        </div>
+        <div class="panel-body">
+          <div id="dynamicInputs" style="display:flex;flex-direction:column;gap:12px;"></div>
+          <button class="btn-send" id="btnSend" onclick="executeRequest()">
+            <span>Send Request</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+          </button>
+        </div>
+        <div class="response-area" style="display:none;" id="responseArea">
+          <div class="res-header">
+            <div>Status: <span class="status-code" id="resStatus">-</span></div>
+            <div id="resTime">- ms</div>
+          </div>
+          <pre class="res-body" id="resBody"></pre>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script>
+    // --- API DEFINITIONS ---
+    const API_BASE = window.location.origin;
+    
+    const endpoints = [
+      {
+        category: "Public API",
+        items: [
+          { id: "api-status", method: "GET", path: "/api/status", name: "Status Platform", desc: "Mendapatkan ringkasan dan daftar semua platform beserta statusnya." },
+          { id: "api-status-id", method: "GET", path: "/api/status/{id}", name: "Detail Platform", desc: "Mendapatkan detail spesifik dari satu platform.", pathParams: [{name: "id", required: true, example: "dramabox"}] },
+          { id: "api-packages", method: "GET", path: "/api/packages", name: "Paket Berlangganan", desc: "Mendapatkan daftar paket harga aktif yang tersedia untuk dibeli." },
+          { id: "health", method: "GET", path: "/health", name: "Health Check", desc: "Mengecek status kesehatan server dan uptime API." }
+        ]
+      },
+      {
+        category: "Protected API",
+        items: [
+          { id: "api-validate", method: "GET", path: "/api/validate", name: "Validasi Key", desc: "Mengecek validitas API Key dan informasi sisa kuota/limit harian.", needsAuth: true },
+          { id: "api-me", method: "GET", path: "/api/me", name: "Profil Akun", desc: "Mendapatkan informasi akun pengguna dan daftar platform yang diizinkan oleh paket saat ini.", needsAuth: true },
+          { id: "api-platforms", method: "GET", path: "/api/platforms", name: "Platform Tersedia", desc: "Mendapatkan daftar platform yang bisa diakses oleh API Key ini, dengan opsi filter.", needsAuth: true, queryParams: [{name: "status", example: "active", desc: "Filter status (active, maintenance)"}, {name: "tag", example: "china", desc: "Filter berdasarkan tag konten"}] }
+        ]
+      },
+      {
+        category: "Scraper API",
+        items: [
+          { id: "scrape-platforms", method: "GET", path: "/scrape/platforms", name: "Daftar Scraper", desc: "Menampilkan daftar platform yang mendukung fitur scraping engine.", needsAuth: true },
+          { id: "scrape-latest", method: "GET", path: "/scrape/latest", name: "Drama Terbaru (Global)", desc: "Mengambil daftar drama terbaru dari semua platform scraper.", needsAuth: true, queryParams: [{name: "page", example: "1", desc: "Nomor halaman"}] },
+          { id: "scrape-latest-plat", method: "GET", path: "/scrape/latest/{platform}", name: "Drama Terbaru (Per Platform)", desc: "Mengambil daftar drama terbaru dari satu platform spesifik.", needsAuth: true, pathParams: [{name: "platform", required: true, example: "dramabox"}], queryParams: [{name: "page", example: "1"}] },
+          { id: "scrape-search", method: "GET", path: "/scrape/search", name: "Cari Drama Global", desc: "Mencari judul drama di seluruh platform scraper sekaligus.", needsAuth: true, queryParams: [{name: "q", required: true, example: "cinta", desc: "Kata kunci pencarian"}, {name: "page", example: "1"}] },
+          { id: "scrape-search-plat", method: "GET", path: "/scrape/search/{platform}", name: "Cari Drama (Per Platform)", desc: "Mencari judul drama pada satu platform spesifik.", needsAuth: true, pathParams: [{name: "platform", required: true, example: "melolo"}], queryParams: [{name: "q", required: true, example: "love"}, {name: "page", example: "1"}] },
+          { id: "scrape-detail", method: "GET", path: "/scrape/detail/{platform}", name: "Detail Drama & Episode", desc: "Mendapatkan detail drama dan daftar URL episode.", needsAuth: true, pathParams: [{name: "platform", required: true, example: "dramabox"}], queryParams: [{name: "url", required: true, example: "https://dramabox.com/drama/1", desc: "URL drama dari hasil pencarian/terbaru"}] },
+          { id: "scrape-stream", method: "GET", path: "/scrape/stream/{platform}", name: "Extract Video Stream", desc: "Mengekstrak URL video streaming langsung (mp4/m3u8) dari halaman episode. Membutuhkan waktu proses lebih lama (headless browser).", needsAuth: true, pathParams: [{name: "platform", required: true, example: "dramabox"}], queryParams: [{name: "url", required: true, example: "https://dramabox.com/ep/1", desc: "URL episode"}] }
+        ]
+      }
+    ];
+
+    let currentEndpoint = null;
+
+    // --- INIT ---
+    window.onload = () => {
+      const savedKey = localStorage.getItem('dramoo_api_key');
+      if (savedKey) document.getElementById('globalApiKey').value = savedKey;
+      
+      renderSidebar();
+      // Select first endpoint by default
+      if (endpoints[0].items.length > 0) {
+        selectEndpoint(endpoints[0].items[0]);
+      }
+    };
+
+    function saveApiKey() {
+      const val = document.getElementById('globalApiKey').value;
+      localStorage.setItem('dramoo_api_key', val);
+    }
+
+    function showToast(msg) {
+      const c = document.getElementById('toastContainer');
+      const t = document.createElement('div');
+      t.className = 'toast'; t.textContent = msg;
+      c.appendChild(t);
+      setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.remove(), 300); }, 3000);
+    }
+
+    // --- UI RENDERING ---
+    function renderSidebar() {
+      const container = document.getElementById('navSections');
+      let html = '';
+      
+      endpoints.forEach(section => {
+        html += `<div class="nav-group"><div class="nav-group-title">${section.category}</div>`;
+        section.items.forEach(item => {
+          html += `
+            <div class="nav-item" id="nav-${item.id}" onclick='selectEndpointById("${item.id}")'>
+              <div class="nav-item-name">${item.name}</div>
+              <div class="nav-item-path">
+                <span class="method-badge method-${item.method}">${item.method}</span>
+                <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${item.path}</span>
+              </div>
+            </div>
+          `;
+        });
+        html += `</div>`;
+      });
+      container.innerHTML = html;
+    }
+
+    function selectEndpointById(id) {
+      for (const cat of endpoints) {
+        const found = cat.items.find(i => i.id === id);
+        if (found) { selectEndpoint(found); return; }
+      }
+    }
+
+    function selectEndpoint(item) {
+      currentEndpoint = item;
+      
+      // Update sidebar active state
+      document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+      const activeNav = document.getElementById(`nav-${item.id}`);
+      if (activeNav) activeNav.classList.add('active');
+
+      // Close sidebar on mobile after selection
+      if (window.innerWidth <= 768) {
+        document.querySelector('.sidebar').classList.remove('open');
+        document.querySelector('.mobile-overlay').classList.remove('open');
+      }
+
+      // Render Docs
+      let html = `
+        <div class="endpoint-header">
+          <h1>${item.name}</h1>
+          <p>${item.desc}</p>
+        </div>
+        
+        <div class="endpoint-url">
+          <span class="method-badge method-${item.method}">${item.method}</span>
+          <span style="color:var(--text-main)">${item.path}</span>
+        </div>
+      `;
+
+      if (item.needsAuth) {
+        html += `<div class="auth-badge"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg> Requires X-Api-Key Header</div>`;
+      }
+
+      // Path Params
+      if (item.pathParams && item.pathParams.length > 0) {
+        html += `
+          <div>
+            <h3 style="font-size:1rem;margin-bottom:12px;border-bottom:1px solid var(--border-color);padding-bottom:8px">Path Parameters</h3>
+            <div class="table-container">
+              <table class="params-table">
+                <tbody>
+                  ${item.pathParams.map(p => `
+                    <tr>
+                      <td class="param-name">${p.name}${p.required ? '<span class="param-req">*</span>' : ''}</td>
+                      <td><div class="param-desc">${p.desc || ''}</div></td>
+                    </tr>
+                  `).join('')}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        `;
+      }
+
+      // Query Params
+      if (item.queryParams && item.queryParams.length > 0) {
+        html += `
+          <div>
+            <h3 style="font-size:1rem;margin-bottom:12px;border-bottom:1px solid var(--border-color);padding-bottom:8px">Query Parameters</h3>
+            <div class="table-container">
+              <table class="params-table">
+                <tbody>
+                  ${item.queryParams.map(p => `
+                    <tr>
+                      <td class="param-name">${p.name}${p.required ? '<span class="param-req">*</span>' : ''}</td>
+                      <td><div class="param-desc">${p.desc || ''}</div></td>
+                    </tr>
+                  `).join('')}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        `;
+      }
+
+      document.getElementById('docSection').innerHTML = html;
+
+      // Render Try It Out Panel
+      document.getElementById('interactivePanel').style.display = 'block';
+      document.getElementById('panelMethod').className = `method-badge method-${item.method}`;
+      document.getElementById('panelMethod').textContent = item.method;
+      
+      let inputsHtml = '';
+      if (item.pathParams) {
+        item.pathParams.forEach(p => {
+          inputsHtml += `
+            <div class="input-group">
+              <label>PATH: ${p.name} ${p.required?'<span style="color:var(--accent-red)">*</span>':''}</label>
+              <input type="text" id="input_path_${p.name}" placeholder="${p.example || ''}">
+            </div>
+          `;
+        });
+      }
+      if (item.queryParams) {
+        item.queryParams.forEach(p => {
+          inputsHtml += `
+            <div class="input-group">
+              <label>QUERY: ${p.name} ${p.required?'<span style="color:var(--accent-red)">*</span>':''}</label>
+              <input type="text" id="input_query_${p.name}" placeholder="${p.example || ''}">
+            </div>
+          `;
+        });
+      }
+      
+      if (inputsHtml === '') {
+        inputsHtml = '<div style="color:var(--text-muted);font-size:0.85rem;text-align:center;padding:10px 0;">No parameters required</div>';
+      }
+
+      document.getElementById('dynamicInputs').innerHTML = inputsHtml;
+      document.getElementById('responseArea').style.display = 'none';
+    }
+
+    // --- EXECUTE REQUEST ---
+    async function executeRequest() {
+      if (!currentEndpoint) return;
+      const btn = document.getElementById('btnSend');
+      btn.innerHTML = '<div class="spinner"></div><span>Sending...</span>';
+      btn.disabled = true;
+
+      // Build URL
+      let url = API_BASE + currentEndpoint.path;
+      
+      // Replace Path Params
+      if (currentEndpoint.pathParams) {
+        currentEndpoint.pathParams.forEach(p => {
+          const val = document.getElementById(`input_path_${p.name}`).value.trim();
+          if (p.required && !val) {
+            showToast(`Path parameter ${p.name} is required!`);
+            btn.innerHTML = '<span>Send Request</span>'; btn.disabled = false;
+            throw new Error('Missing param');
+          }
+          url = url.replace(`{${p.name}}`, encodeURIComponent(val));
+        });
+      }
+
+      // Add Query Params
+      if (currentEndpoint.queryParams) {
+        const urlObj = new URL(url);
+        currentEndpoint.queryParams.forEach(p => {
+          const val = document.getElementById(`input_query_${p.name}`).value.trim();
+          if (p.required && !val) {
+            showToast(`Query parameter ${p.name} is required!`);
+            btn.innerHTML = '<span>Send Request</span>'; btn.disabled = false;
+            throw new Error('Missing param');
+          }
+          if (val) urlObj.searchParams.append(p.name, val);
+        });
+        url = urlObj.toString();
+      }
+
+      // Headers
+      const headers = { 'Content-Type': 'application/json' };
+      if (currentEndpoint.needsAuth) {
+        const apiKey = document.getElementById('globalApiKey').value.trim();
+        if (!apiKey) {
+          showToast('X-Api-Key is missing. Please enter it in the top bar.');
+          btn.innerHTML = '<span>Send Request</span>'; btn.disabled = false;
+          return;
+        }
+        headers['X-Api-Key'] = apiKey;
+      }
+
+      const startTime = performance.now();
+      try {
+        const response = await fetch(url, {
+          method: currentEndpoint.method,
+          headers: headers
+        });
+        const endTime = performance.now();
+        
+        // Show response area
+        const resArea = document.getElementById('responseArea');
+        resArea.style.display = 'block';
+        
+        // Status code
+        const statusEl = document.getElementById('resStatus');
+        statusEl.textContent = `${response.status} ${response.statusText}`;
+        statusEl.className = `status-code ${response.ok ? 'status-200' : (response.status >= 500 ? 'status-5xx' : 'status-4xx')}`;
+        
+        // Time
+        document.getElementById('resTime').textContent = `${Math.round(endTime - startTime)} ms`;
+
+        // Body
+        let bodyText = await response.text();
+        try {
+          // Format JSON beautifully
+          const json = JSON.parse(bodyText);
+          const formatted = JSON.stringify(json, null, 2);
+          document.getElementById('resBody').innerHTML = syntaxHighlight(formatted);
+        } catch(e) {
+          // Fallback to text
+          document.getElementById('resBody').textContent = bodyText;
+        }
+      } catch (err) {
+        document.getElementById('responseArea').style.display = 'block';
+        document.getElementById('resStatus').textContent = 'Error';
+        document.getElementById('resStatus').className = 'status-code status-5xx';
+        document.getElementById('resTime').textContent = '- ms';
+        document.getElementById('resBody').textContent = err.message || 'Network Error / CORS Issue';
+      }
+
+      btn.innerHTML = '<span>Send Request</span>';
+      btn.disabled = false;
+    }
+
+    // --- JSON HIGHLIGHTER ---
+    function syntaxHighlight(json) {
+      json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+        var cls = 'json-number';
+        if (/^"/.test(match)) {
+          if (/:$/.test(match)) {
+            cls = 'json-key';
+            // remove quotes from keys for cleaner look
+            match = match.replace(/"/g, '');
+          } else {
+            cls = 'json-string';
+          }
+        } else if (/true|false/.test(match)) {
+          cls = 'json-boolean';
+        } else if (/null/.test(match)) {
+          cls = 'json-null';
+        }
+        return '<span class="' + cls + '">' + match + '</span>';
+      });
+    }
+
+    function toggleMobileMenu() {
+      document.querySelector('.sidebar').classList.toggle('open');
+      document.querySelector('.mobile-overlay').classList.toggle('open');
+    }
+  </script>
+</body>
+</html>

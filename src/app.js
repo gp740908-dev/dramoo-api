@@ -69,7 +69,7 @@ app.get('/health', (req, res) => {
 // ─── ROUTES ──────────────────────────────────────────────────────────────────
 app.use('/api', apiRoutes);
 app.use('/admin', adminRoutes);
-app.use('/scrape', scraperRoutes);
+app.use('/api', scraperRoutes); // Endpoint kini tergabung di dalam /api agar elegan
 
 // ─── ROOT ────────────────────────────────────────────────────────────────────
 app.get('/', (req, res) => {
@@ -77,7 +77,7 @@ app.get('/', (req, res) => {
     name: 'Dramoo API',
     version: '1.0.0',
     description: 'API Aggregator Platform Drama Pendek Asia',
-    docs: `${process.env.APP_URL || 'https://api.dramoo.id'}/api/status`,
+    docs: `${process.env.APP_URL || 'https://api.wmxservices.store'}/api/status`,
     endpoints: {
       status: 'GET /api/status',
       platform_detail: 'GET /api/status/:id',
@@ -86,14 +86,15 @@ app.get('/', (req, res) => {
       me: 'GET /api/me (requires X-Api-Key)',
       platforms: 'GET /api/platforms (requires X-Api-Key)',
     },
-    scraping: {
-      platforms:  'GET /scrape/platforms (requires X-Api-Key)',
-      latest_all: 'GET /scrape/latest?page=1 (requires X-Api-Key)',
-      latest:     'GET /scrape/latest/:platform?page=1 (requires X-Api-Key)',
-      search_all: 'GET /scrape/search?q=judul (requires X-Api-Key)',
-      search:     'GET /scrape/search/:platform?q=judul (requires X-Api-Key)',
-      detail:     'GET /scrape/detail/:platform?url=https://... (requires X-Api-Key)',
-      stream:     'GET /scrape/stream/:platform?url=https://... (requires X-Api-Key)',
+    media_endpoints: {
+      platforms:  'GET /api/platforms (requires X-Api-Key)',
+      latest_all: 'GET /api/latest?page=1 (requires X-Api-Key)',
+      latest:     'GET /api/:platform/latest?page=1 (requires X-Api-Key)',
+      search_all: 'GET /api/search?q=judul (requires X-Api-Key)',
+      search:     'GET /api/:platform/search?q=judul (requires X-Api-Key)',
+      detail:     'GET /api/:platform/detail?url=https://... (requires X-Api-Key)',
+      stream:     'GET /api/:platform/stream?url=https://... (requires X-Api-Key)',
+      proxy:      'GET /api/proxy?url=https://... (streaming video)',
     },
     supported_platforms: ['melolo', 'dramawave', 'pinedrama', 'dramabox'],
     buy: 'https://t.me/dramoobot',

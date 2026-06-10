@@ -1,6 +1,6 @@
 // src/scrapers/MeloloScraper.js
-// Scraper untuk melolo.tv — menggunakan Cheerio (HTML parsing ringan)
-// Melolo punya web player dengan struktur HTML yang cukup statis
+// Scraper untuk melolo.com — menggunakan Puppeteer
+// Melolo punya halaman yang di-render server (SSR) tapi player video dinamis
 
 const axios   = require('axios');
 const cheerio = require('cheerio');
@@ -8,211 +8,215 @@ const BaseScraper = require('./BaseScraper');
 
 class MeloloScraper extends BaseScraper {
   constructor(options = {}) {
-    super('melolo', 'https://melolo.tv', options);
+    super('melolo', 'https://melolo.com/id', options);
 
     this.http = axios.create({
       baseURL: this.baseUrl,
       timeout: this.timeout,
       headers: {
-        'User-Agent': this.userAgent,
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-        'Accept-Language': 'en-US,en;q=0.9,id;q=0.8',
-        'Referer': this.baseUrl,
+        'User-Agent':      this.userAgent,
+        'Accept':          'text/html,application/xhtml+xml,*/*;q=0.8',
+        'Accept-Language': 'en-US,en;q=0.9',
+        'Referer':         this.baseUrl,
       },
+      maxRedirects: 5,
     });
   }
 
-  // ─── Internal helpers ────────────────────────────────────────────────────
+  // ─── Internal ────────────────────────────────────────────────────────────
 
   async _fetchHtml(path) {
     const res = await this.http.get(path);
     return cheerio.load(res.data);
   }
 
-  _parseDramaCard($, el) {
-    const $el    = $(el);
-    const anchor = $el.find('a').first();
-    const img    = $el.find('img').first();
-    const title  = $el.find('.title, h3, h2, .name').first().text();
-    const ep     = $el.find('.episode, .ep, .eps').first().text();
-    const rating = $el.find('.rating, .score').first().text();
+  _parseDramaItem($, el) {
+    const $el = $(el);
 
-    return this.formatDrama({
-      title:     title || img.attr('alt') || '',
-      thumbnail: this.toAbsoluteUrl(img.attr('data-src') || img.attr('src')),
-      url:       this.toAbsoluteUrl(anchor.attr('href')),
-      episodes:  ep ? parseInt(ep.replace(/\D/g, '')) || null : null,
-      rating:    rating ? parseFloat(rating) || null : null,
-    });
+    // Melolo: .film-poster > a > img + .film-detail
+    const anchor    = $el.is('a') ? $el : $el.find('a').first();
+    const img       = $el.find('img').first();
+    const titleEl   = $el.find('[class*="title"], [class*="text-Title"]').first();
+    const epEl      = $el.find('[class*="episode"]').first();
+    const ratingEl  = $el.find('[class*="rating"]').first();
+
+    const title     = this.cleanText(titleEl.text() || img.attr('alt') || anchor.attr('title') || anchor.text() || '');
+    const url       = this.toAbsoluteUrl(anchor.attr('href'));
+    const thumbnail = this.toAbsoluteUrl(
+      img.attr('data-src') || img.attr('data-lazy-src') || img.attr('src')
+    );
+    const episodes  = epEl.length ? parseInt(epEl.text().replace(/\D/g, '')) || null : null;
+    const rating    = ratingEl.length ? parseFloat(ratingEl.text()) || null : null;
+
+    return { title, url, thumbnail, episodes, rating };
   }
 
   // ─── Public API ──────────────────────────────────────────────────────────
 
-  /**
-   * Ambil drama terbaru
-   * @param {number} page - Halaman (1-based)
-   */
   async getLatest(page = 1) {
     return this.withRetry(async () => {
-      const $ = await this._fetchHtml(`/drama?page=${page}`);
+      // Melolo usually uses /dramas or root for latest.
+      const paths = [`/`, `/recently-added/page/${page}/`, `/drama/page/${page}/`];
+      let $;
 
-      const items = [];
-      // Selector umum untuk grid card di Melolo
-      $('article, .drama-card, .item, .movie-item, [class*="card"]').each((_, el) => {
-        const drama = this._parseDramaCard($, el);
-        if (drama.title && drama.url) items.push(drama);
-      });
-
-      // Fallback: coba selector berbeda
-      if (items.length === 0) {
-        $('a[href*="/drama/"], a[href*="/series/"]').each((_, el) => {
-          const $el = $(el);
-          const img = $el.find('img').first();
-          if (!img.length) return;
-          items.push(this.formatDrama({
-            title:     this.cleanText($el.text()) || img.attr('alt') || '',
-            thumbnail: this.toAbsoluteUrl(img.attr('data-src') || img.attr('src')),
-            url:       this.toAbsoluteUrl($el.attr('href')),
-          }));
-        });
+      for (const p of paths) {
+        try {
+          $ = await this._fetchHtml(p);
+          const count = $('a[href*="/dramas/"]').length;
+          if (count > 0) break;
+        } catch { /* coba path lain */ }
       }
 
-      const totalText = $('.pagination .total, .total-drama').first().text();
-      const total     = parseInt(totalText.replace(/\D/g, '')) || null;
+      if (!$) throw new Error('Semua path gagal untuk getLatest');
+
+      const items = [];
+      $('a[href*="/dramas/"]').each((_, el) => {
+        const d = this._parseDramaItem($, el);
+        if (d.title && d.url && d.url.includes('/dramas/')) items.push(this.formatDrama(d));
+      });
+
+      // Hapus duplikat berdasarkan URL
+      const uniqueItems = Array.from(new Map(items.map(item => [item.url, item])).values());
 
       return {
-        success:  true,
-        platform: this.platformId,
+        success:    true,
+        platform:   this.platformId,
         page,
-        total,
-        data: items,
+        data:       uniqueItems,
       };
     }, 'getLatest');
   }
 
-  /**
-   * Cari drama
-   * @param {string} query
-   * @param {number} page
-   */
   async search(query, page = 1) {
     return this.withRetry(async () => {
-      const $ = await this._fetchHtml(`/search?q=${encodeURIComponent(query)}&page=${page}`);
+      const $ = await this._fetchHtml(`/id/search?q=${encodeURIComponent(query)}`);
 
       const items = [];
-      $('article, .drama-card, .item, .search-result-item').each((_, el) => {
-        const drama = this._parseDramaCard($, el);
-        if (drama.title && drama.url) items.push(drama);
+      $('a[href*="/dramas/"]').each((_, el) => {
+        const d = this._parseDramaItem($, el);
+        if (d.title && d.url && d.url.includes('/dramas/')) items.push(this.formatDrama(d));
       });
 
-      return {
-        success:  true,
-        platform: this.platformId,
-        query,
-        page,
-        data: items,
-      };
-    }, 'search');
+      const uniqueItems = Array.from(new Map(items.map(item => [item.url, item])).values());
+      return { success: true, page, platform: this.platformId, data: uniqueItems };
+    });
   }
 
-  /**
-   * Detail drama + daftar episode
-   * @param {string} dramaUrl - URL lengkap atau path
-   */
   async getDetail(dramaUrl) {
     return this.withRetry(async () => {
-      const path = dramaUrl.startsWith('http')
-        ? new URL(dramaUrl).pathname + new URL(dramaUrl).search
-        : dramaUrl;
+      // Selalu gunakan dramaUrl lengkap untuk menghindari isu baseURL axios
+      const urlToFetch = dramaUrl.startsWith('http') ? dramaUrl : this.baseUrl + dramaUrl;
+      const $ = await this._fetchHtml(urlToFetch);
 
-      const $ = await this._fetchHtml(path);
-
-      // Meta info
-      const title       = this.cleanText($('h1, .drama-title, .title').first().text());
+      // Meta
+      const title       = this.cleanText($('h1, h2, [class*="title"]').first().text());
       const thumbnail   = this.toAbsoluteUrl(
         $('meta[property="og:image"]').attr('content') ||
-        $('.poster img, .cover img, .thumb img').first().attr('src')
+        $('img.film-poster-img, .dp-i-c-poster img, .poster img').first().attr('src')
       );
       const description = this.cleanText(
         $('meta[property="og:description"]').attr('content') ||
-        $('.synopsis, .description, .plot').first().text()
+        $('.dp-i-p, .film-description, .description').first().text()
       );
 
       // Genre
       const genre = [];
-      $('.genre a, .genres a, [class*="genre"] a').each((_, el) => {
+      $('.item-list a[href*="genre"], .film-info a[href*="genre"], .genres a').each((_, el) => {
         const g = this.cleanText($(el).text());
         if (g) genre.push(g);
       });
 
+      // Info tambahan (tahun, status)
+      const year   = parseInt($('.item-list:contains("Year"), .film-info:contains("Year")').text().match(/\d{4}/)?.[0]) || null;
+      const statusText = this.cleanText($('.item-list:contains("Status"), [class*="status"]').text());
+      const status = /complet/i.test(statusText) ? 'completed' : /ongoing|air/i.test(statusText) ? 'ongoing' : null;
+
       // Rating
-      const ratingText = $('.rating-value, .score, .imdb-score').first().text();
+      const ratingText = $('.film-rating strong, .film-stats .score').first().text();
       const rating     = parseFloat(ratingText) || null;
 
+      // Daftar episode — Melolo punya div#episodes-content yang di-load via AJAX
+      // Coba ambil dari HTML statis dulu
       // Episode list
       const episodes = [];
-      $('.episode-list a, .ep-list a, [class*="episode"] a').each((idx, el) => {
+      const seasonsId = $('[data-id]').first().attr('data-id') || '';
+      $('a[href*="/ep"], div:contains("EP")').each((idx, el) => {
         const $el   = $(el);
-        const epUrl = this.toAbsoluteUrl($el.attr('href'));
-        const epNum = $el.text().replace(/\D/g, '') || String(idx + 1);
-        if (epUrl) {
-          episodes.push({ episode: parseInt(epNum), url: epUrl });
+        const text  = $el.text();
+        // Cek kalau ini adalah item episode yang valid
+        if (/EP\s*\d+/i.test(text) || $el.attr('href')?.includes('/ep')) {
+            const epUrl = $el.is('a') ? this.toAbsoluteUrl($el.attr('href')) : null;
+            const epNum = text.replace(/\D/g, '') || String(idx + 1);
+            episodes.push({ episode: parseInt(epNum), url: epUrl, title: this.cleanText($el.text()) });
         }
       });
+
+      // Jika episode tidak ada di HTML statis, ambil via API internal Melolo
+      if (episodes.length === 0 && seasonsId) {
+        try {
+          const ajaxRes = await this.http.get(`/ajax/v2/episode/list/${seasonsId}`, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest', 'Referer': this.baseUrl + path },
+          });
+          const $ep = cheerio.load(ajaxRes.data?.html || '');
+          $ep('a').each((idx, el) => {
+            const $el = $ep(el);
+            const u   = this.toAbsoluteUrl($el.attr('href'));
+            if (u) episodes.push({ episode: idx + 1, url: u, title: this.cleanText($el.text()) });
+          });
+        } catch { /* AJAX tidak tersedia */ }
+      }
 
       return {
         success:  true,
         platform: this.platformId,
         drama: this.formatDrama({
-          title, thumbnail, description, genre, rating,
+          title, thumbnail, description, genre, rating, year, status,
           url:      this.toAbsoluteUrl(dramaUrl),
           episodes: episodes.length || null,
-          status:   episodes.length > 0 ? 'ongoing' : null,
         }),
         episode_list: episodes.sort((a, b) => a.episode - b.episode),
       };
     }, 'getDetail');
   }
 
-  /**
-   * Ambil URL stream/embed untuk 1 episode
-   * @param {string} episodeUrl
-   */
   async getStreamUrl(episodeUrl) {
     return this.withRetry(async () => {
       const page = await this.newPage();
       try {
         const streamUrls = [];
-
-        // Tangkap request ke CDN/video
         page.on('request', req => {
           const url = req.url();
-          if (/\.(m3u8|mp4|webm)/.test(url) || /stream|video|cdn|player/i.test(url)) {
+          if (/\.(m3u8|mp4|webm)/.test(url) || /stream|embed|player|cdn/i.test(url)) {
             streamUrls.push(url);
           }
         });
 
         await page.goto(episodeUrl, { waitUntil: 'networkidle2', timeout: this.timeout });
-        await page.waitForSelector('video, iframe[src*="player"], .player', { timeout: 8000 }).catch(() => {});
-        await this._sleep(3000);
 
-        // Coba ambil dari tag <video>
-        const videoSrc = await page.evaluate(() => {
-          const v = document.querySelector('video source, video');
-          return v ? (v.src || v.getAttribute('src')) : null;
+        // Melolo: klik server button jika ada pilihan server
+        await page.evaluate(() => {
+          const btn = document.querySelector('.srv-item, [data-type="server"], .server-item');
+          if (btn) btn.click();
         });
 
-        // Coba ambil dari iframe embed
+        await this._sleep(3000);
+
+        // Coba ambil URL dari iframe
         const iframeSrc = await page.evaluate(() => {
-          const f = document.querySelector('iframe[src*="player"], iframe[src*="embed"], iframe[src*="stream"]');
+          const f = document.querySelector('iframe#iframe-embed, iframe[name="load_episode"], iframe[src*="player"]');
           return f ? f.src : null;
+        });
+
+        const videoSrc = await page.evaluate(() => {
+          const v = document.querySelector('video source, video, .videourl');
+          return v ? (v.src || v.getAttribute('src') || v.getAttribute('data-src') || v.href) : null;
         });
 
         const sources = [...new Set([videoSrc, iframeSrc, ...streamUrls].filter(Boolean))];
 
         return {
-          success:  true,
-          platform: this.platformId,
+          success:     true,
+          platform:    this.platformId,
           episode_url: episodeUrl,
           stream_urls: sources,
           primary:     sources[0] || null,
@@ -221,6 +225,76 @@ class MeloloScraper extends BaseScraper {
         await page.close();
       }
     }, 'getStreamUrl');
+  }
+
+  // ─── Fitur Tambahan (Category, Trending, Languages) ─────────────────────
+
+  async getCategory(categoryId, page = 1, lang = 'id') {
+    return this.withRetry(async () => {
+      // Jika categoryId kosong, kembalikan daftar genre
+      if (!categoryId) {
+        const paths = [`/${lang}/category`, `/category`, `/`];
+        let $;
+        for (const p of paths) {
+          try { $ = await this._fetchHtml(p); break; } catch (e) {}
+        }
+        if (!$) throw new Error('Gagal memuat kategori Melolo');
+
+        const categories = [];
+        $('a[href*="/category/"]').each((_, el) => {
+          const name = this.cleanText($(el).text());
+          const url = $(el).attr('href');
+          const id = url.split('/').pop();
+          if (name && id) categories.push({ id, name, url: this.toAbsoluteUrl(url) });
+        });
+        
+        const uniqueCat = Array.from(new Map(categories.map(item => [item.id, item])).values());
+        return { success: true, platform: this.platformId, categories: uniqueCat };
+      }
+
+      // Jika ada categoryId, scrape halaman kategori tersebut
+      const path = `/${lang}/category/${categoryId}?page=${page}`;
+      const $ = await this._fetchHtml(path).catch(() => null);
+      if (!$) return { success: true, page, platform: this.platformId, data: [] };
+
+      const items = [];
+      $('a[href*="/dramas/"]').each((_, el) => {
+        const d = this._parseDramaItem($, el);
+        if (d.title && d.url && d.url.includes('/dramas/')) items.push(this.formatDrama(d));
+      });
+      return { success: true, page, platform: this.platformId, data: items };
+    });
+  }
+
+  async getTrending(page = 1, cursor = null, lang = 'id') {
+    return this.withRetry(async () => {
+      const $ = await this._fetchHtml(`/${lang}`);
+      const items = [];
+      
+      // Coba cari bagian Tren / Trending di homepage
+      const trendingTitle = $('h3').filter((_, el) => /tren|trending/i.test($(el).text()));
+      const container = trendingTitle.length ? trendingTitle.parent().parent() : $.root();
+
+      container.find('a[href*="/dramas/"]').each((_, el) => {
+        const d = this._parseDramaItem($, el);
+        if (d.title && d.url && d.url.includes('/dramas/')) items.push(this.formatDrama(d));
+      });
+
+      // Hapus duplikat
+      const uniqueItems = Array.from(new Map(items.map(item => [item.url, item])).values());
+      return { success: true, page, platform: this.platformId, data: uniqueItems };
+    });
+  }
+
+  async getLanguages() {
+    return {
+      success: true,
+      platform: this.platformId,
+      languages: [
+        { code: 'id', name: 'Bahasa Indonesia' },
+        { code: 'en', name: 'English' }
+      ]
+    };
   }
 }
 

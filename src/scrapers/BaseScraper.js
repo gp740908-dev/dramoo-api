@@ -122,6 +122,15 @@ class BaseScraper {
 
   /** URL stream / embed video untuk satu episode */
   async getStreamUrl(_episodeUrl) { throw new Error(`${this.platformId}: getStreamUrl() not implemented`); }
+
+  /** Ambil kategori drama */
+  async getCategory(_categoryId, _page = 1, _lang = 'id') { throw new Error(`${this.platformId}: getCategory() not implemented`); }
+
+  /** Ambil trending drama */
+  async getTrending(_page = 1, _cursor = null, _lang = 'id') { throw new Error(`${this.platformId}: getTrending() not implemented`); }
+
+  /** Ambil daftar bahasa */
+  async getLanguages() { throw new Error(`${this.platformId}: getLanguages() not implemented`); }
 }
 
 module.exports = BaseScraper;

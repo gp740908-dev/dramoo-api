@@ -78,7 +78,7 @@ DELETE /scrape/cache          # Bersihkan cache (X-Master-Key)
 ### 1. Ambil drama terbaru dari DramaBox
 ```bash
 curl -H "X-Api-Key: drm_xxxx" \
-  "https://api.dramoo.id/scrape/latest/dramabox?page=1"
+  "https://api.wmxservices.store/scrape/latest/dramabox?page=1"
 ```
 
 Response:
@@ -110,19 +110,19 @@ Response:
 ### 2. Cari drama di semua platform
 ```bash
 curl -H "X-Api-Key: drm_xxxx" \
-  "https://api.dramoo.id/scrape/search?q=CEO+husband"
+  "https://api.wmxservices.store/scrape/search?q=CEO+husband"
 ```
 
 ### 3. Detail drama Melolo
 ```bash
 curl -H "X-Api-Key: drm_xxxx" \
-  "https://api.dramoo.id/scrape/detail/melolo?url=https://melolo.tv/drama/my-ceo-husband"
+  "https://api.wmxservices.store/scrape/detail/melolo?url=https://melolo.tv/drama/my-ceo-husband"
 ```
 
 ### 4. Ambil URL stream episode
 ```bash
 curl -H "X-Api-Key: drm_xxxx" \
-  "https://api.dramoo.id/scrape/stream/pinedrama?url=https://pinedrama.com/watch/my-drama/ep-1"
+  "https://api.wmxservices.store/scrape/stream/pinedrama?url=https://pinedrama.com/watch/my-drama/ep-1"
 ```
 
 Response:

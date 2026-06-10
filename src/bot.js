@@ -266,7 +266,7 @@ async function processApproval(adminChatId, targetChatId, packageId, callbackQue
 *Cara pakai:*
 \`\`\`
 curl -H "X-Api-Key: ${keyData.api_key}" \\
-  https://api.dramoo.id/api/validate
+  https://api.wmxservices.store/api/validate
 \`\`\`
 
 📖 Dokumentasi: https://dramoo.id/#api-docs
@@ -406,7 +406,7 @@ GET /api/platforms    — Platform yang bisa diakses
 *3. Contoh Request*
 \`\`\`bash
 curl -H "X-Api-Key: KODE_KAMU" \\
-  https://api.dramoo.id/api/validate
+  https://api.wmxservices.store/api/validate
 \`\`\`
 
 📚 Dokumentasi lengkap: https://dramoo.id/#api-docs`;
