@@ -10,6 +10,7 @@ const DramaBoxScraper  = require('./DramaBoxScraper');
 const NetShortScraper  = require('./NetShortScraper');
 const KlikFilmScraper  = require('./KlikFilmScraper');
 const ReelShortScraper = require('./ReelShortScraper');
+const ShortMaxScraper  = require('./ShortMaxScraper');
 
 // ─── Registry ────────────────────────────────────────────────────────────────
 
@@ -21,6 +22,7 @@ const SCRAPERS = {
   netshort:  () => new NetShortScraper(),
   klikfilm:  () => new KlikFilmScraper(),
   reelshort: () => new ReelShortScraper(),
+  shortmax:  () => new ShortMaxScraper(),
 };
 
 const PLATFORM_INFO = {
@@ -31,6 +33,7 @@ const PLATFORM_INFO = {
   netshort:  { name: 'NetShort',  url: 'https://netshort.com',     tool: 'puppeteer' },
   klikfilm:  { name: 'KlikFilm',  url: 'https://klikfilm.com',     tool: 'puppeteer' },
   reelshort: { name: 'ReelShort', url: 'https://www.reelshort.com',tool: 'playwright' },
+  shortmax:  { name: 'ShortMax',  url: 'https://www.shorttv.live', tool: 'puppeteer' },
 };
 
 // ─── Cache sederhana in-memory (TTL 10 menit) ────────────────────────────────

@@ -95,7 +95,13 @@ class BaseScraper {
     const url = raw.url || null;
     let id = raw.id;
     if (!id && url) {
-      id = Buffer.from(url).toString('base64url');
+      try {
+        const urlObj = new URL(url);
+        const path = urlObj.pathname + urlObj.search;
+        id = Buffer.from(path).toString('base64url');
+      } catch (e) {
+        id = Buffer.from(url).toString('base64url');
+      }
     }
 
     return {

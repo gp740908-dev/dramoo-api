@@ -175,6 +175,25 @@ class DramaWaveScraper extends BaseScraper {
         await pw.goto(fullUrl, { waitUntil: 'networkidle', timeout: this.timeout });
         await this._sleep(2000);
 
+        await pw.evaluate(async () => {
+          let lastCount = 0;
+          let retries = 0;
+          while (retries < 5) {
+            const btns = Array.from(document.querySelectorAll('button, a'));
+            const moreBtn = btns.find(b => b.innerText && b.innerText.match(/more|lainnya|selengkapnya/i));
+            if (moreBtn) moreBtn.click();
+            window.scrollBy(0, 1000);
+            await new Promise(r => setTimeout(r, 1000));
+            const count = document.querySelectorAll('[class*="episode"] a, [class*="ep-item"] a, .episode-list a').length;
+            if (count === lastCount) {
+              retries++;
+            } else {
+              lastCount = count;
+              retries = 0;
+            }
+          }
+        });
+
         const info = await pw.evaluate(() => {
           const title       = document.querySelector('h1, [class*="title"]')?.textContent?.trim() || '';
           const description = document.querySelector('[class*="synopsis"], [class*="description"], [class*="plot"]')?.textContent?.trim() || '';

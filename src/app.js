@@ -77,6 +77,9 @@ app.get('/health', (req, res) => {
 });
 
 // ─── ROUTES ──────────────────────────────────────────────────────────────────
+const v2Routes = require('./routes/v2');
+app.use('/api/v2', v2Routes);
+
 app.use('/api', apiRoutes);
 app.use('/admin', adminRoutes);
 app.use('/api', scraperRoutes); // Endpoint kini tergabung di dalam /api agar elegan

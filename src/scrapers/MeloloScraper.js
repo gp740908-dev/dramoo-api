@@ -72,7 +72,7 @@ class MeloloScraper extends BaseScraper {
       const items = [];
       $('a[href*="/dramas/"]').each((_, el) => {
         const d = this._parseDramaItem($, el);
-        if (d.title && d.url && d.url.includes('/dramas/')) items.push(this.formatDrama(d));
+        if (d.title && d.url && d.url.includes('/dramas/') && !/\/ep\d+/i.test(d.url) && !/\/episode/i.test(d.url)) items.push(this.formatDrama(d));
       });
 
       // Hapus duplikat berdasarkan URL
@@ -106,7 +106,7 @@ class MeloloScraper extends BaseScraper {
         const url = this.toAbsoluteUrl(nearestLink.attr('href') || link);
         const thumbnail = this.toAbsoluteUrl(src);
         
-        if (alt && url && url.includes('/dramas/')) {
+        if (alt && url && url.includes('/dramas/') && !/\/ep\d+/i.test(url) && !/\/episode/i.test(url)) {
           items.push(this.formatDrama({ title: alt, url, thumbnail, episodes: null, rating: null }));
         }
       });
@@ -118,80 +118,88 @@ class MeloloScraper extends BaseScraper {
 
   async getDetail(dramaUrl) {
     return this.withRetry(async () => {
-      // Selalu gunakan dramaUrl lengkap untuk menghindari isu baseURL axios
       const urlToFetch = dramaUrl.startsWith('http') ? dramaUrl : this.baseUrl + dramaUrl;
-      const $ = await this._fetchHtml(urlToFetch);
+      const page = await this.newPage();
+      try {
+        await page.goto(urlToFetch, { waitUntil: 'networkidle2', timeout: this.timeout });
 
-      // Meta
-      const title       = this.cleanText($('h1, h2, [class*="title"]').first().text());
-      const thumbnail   = this.toAbsoluteUrl(
-        $('meta[property="og:image"]').attr('content') ||
-        $('img.film-poster-img, .dp-i-c-poster img, .poster img').first().attr('src')
-      );
-      const description = this.cleanText(
-        $('meta[property="og:description"]').attr('content') ||
-        $('.dp-i-p, .film-description, .description').first().text()
-      );
-
-      // Genre
-      const genre = [];
-      $('.item-list a[href*="genre"], .film-info a[href*="genre"], .genres a').each((_, el) => {
-        const g = this.cleanText($(el).text());
-        if (g) genre.push(g);
-      });
-
-      // Info tambahan (tahun, status)
-      const year   = parseInt($('.item-list:contains("Year"), .film-info:contains("Year")').text().match(/\d{4}/)?.[0]) || null;
-      const statusText = this.cleanText($('.item-list:contains("Status"), [class*="status"]').text());
-      const status = /complet/i.test(statusText) ? 'completed' : /ongoing|air/i.test(statusText) ? 'ongoing' : null;
-
-      // Rating
-      const ratingText = $('.film-rating strong, .film-stats .score').first().text();
-      const rating     = parseFloat(ratingText) || null;
-
-      // Daftar episode — Melolo punya div#episodes-content yang di-load via AJAX
-      // Coba ambil dari HTML statis dulu
-      // Episode list
-      const episodes = [];
-      const seasonsId = $('[data-id]').first().attr('data-id') || '';
-      $('a[href*="/ep"], div:contains("EP")').each((idx, el) => {
-        const $el   = $(el);
-        const text  = $el.text();
-        // Cek kalau ini adalah item episode yang valid
-        if (/EP\s*\d+/i.test(text) || $el.attr('href')?.includes('/ep')) {
-            const epUrl = $el.is('a') ? this.toAbsoluteUrl($el.attr('href')) : null;
-            const epNum = text.replace(/\D/g, '') || String(idx + 1);
-            episodes.push({ episode: parseInt(epNum), url: epUrl, title: this.cleanText($el.text()) });
-        }
-      });
-
-      // Jika episode tidak ada di HTML statis, ambil via API internal Melolo
-      if (episodes.length === 0 && seasonsId) {
-        try {
-          const ajaxRes = await this.http.get(`/ajax/v2/episode/list/${seasonsId}`, {
-            headers: { 'X-Requested-With': 'XMLHttpRequest', 'Referer': this.baseUrl + path },
+        // Evaluasi data dasar di dalam page
+        const detailData = await page.evaluate(() => {
+          const cleanText = str => (str || '').replace(/\s+/g, ' ').trim();
+          const title = cleanText(document.querySelector('h1, h2, [class*="title"]')?.innerText);
+          const thumbEl = document.querySelector('meta[property="og:image"]') || document.querySelector('img.film-poster-img, .dp-i-c-poster img, .poster img');
+          const thumbnail = thumbEl ? (thumbEl.content || thumbEl.src) : null;
+          const descEl = document.querySelector('meta[property="og:description"]') || document.querySelector('.dp-i-p, .film-description, .description');
+          const description = descEl ? (descEl.content || descEl.innerText) : '';
+          
+          const genres = [];
+          document.querySelectorAll('.item-list a[href*="genre"], .film-info a[href*="genre"], .genres a').forEach(el => genres.push(cleanText(el.innerText)));
+          
+          let year = null, status = 'unknown';
+          document.querySelectorAll('.item-list, .film-info').forEach(el => {
+            if (el.innerText.includes('Year')) year = parseInt(el.innerText.match(/\d{4}/)?.[0]) || null;
+            if (el.innerText.includes('Status') || el.className.includes('status')) {
+               if (/complet/i.test(el.innerText)) status = 'completed';
+               if (/ongoing|air/i.test(el.innerText)) status = 'ongoing';
+            }
           });
-          const $ep = cheerio.load(ajaxRes.data?.html || '');
-          $ep('a').each((idx, el) => {
-            const $el = $ep(el);
-            const u   = this.toAbsoluteUrl($el.attr('href'));
-            if (u) episodes.push({ episode: idx + 1, url: u, title: this.cleanText($el.text()) });
+          
+          const ratingText = document.querySelector('.film-rating strong, .film-stats .score')?.innerText;
+          const rating = parseFloat(ratingText) || null;
+          
+          return { title, thumbnail, description, genre: genres, year, status, rating };
+        });
+
+        // Loop klik tombol "load more" dan scroll sampai habis
+        await page.evaluate(async () => {
+          let lastCount = 0;
+          let retries = 0;
+          while (retries < 5) {
+            const btns = Array.from(document.querySelectorAll('button, a'));
+            const moreBtn = btns.find(b => b.innerText && b.innerText.match(/more|lainnya|selengkapnya/i));
+            if (moreBtn) moreBtn.click();
+            window.scrollBy(0, 1000);
+            await new Promise(r => setTimeout(r, 1000));
+            const count = Array.from(document.querySelectorAll('a, div')).filter(el => (el.href && el.href.includes('/ep')) || (el.innerText && el.innerText.includes('EP'))).length;
+            if (count === lastCount) {
+              retries++;
+            } else {
+              lastCount = count;
+              retries = 0;
+            }
+          }
+        });
+
+        // Ekstrak episode list
+        const rawEps = await page.evaluate(() => {
+          const cleanText = str => (str || '').replace(/\s+/g, ' ').trim();
+          const eps = [];
+          Array.from(document.querySelectorAll('a, div')).filter(el => (el.href && el.href.includes('/ep')) || (el.innerText && /EP\s*\d+/i.test(el.innerText))).forEach((el, idx) => {
+             const text = cleanText(el.innerText);
+             if (/EP\s*\d+/i.test(text) || (el.href && el.href.includes('/ep'))) {
+                 const epUrl = el.href || null;
+                 const epNum = text.replace(/\D/g, '') || String(idx + 1);
+                 eps.push({ episode: parseInt(epNum), url: epUrl, title: text });
+             }
           });
-        } catch { /* AJAX tidak tersedia */ }
+          return eps;
+        });
+
+        return {
+          success:  true,
+          platform: this.platformId,
+          data: {
+            ...this.formatDrama({
+              ...detailData,
+              url: this.toAbsoluteUrl(dramaUrl),
+              episodes: rawEps.length || null,
+            }),
+            episodes: rawEps.sort((a, b) => a.episode - b.episode)
+          }
+        };
+      } finally {
+        await page.close();
       }
-
-      return {
-        success:  true,
-        platform: this.platformId,
-        data: {
-          ...this.formatDrama({
-            title, thumbnail, description, genre, rating, year, status,
-            url:      this.toAbsoluteUrl(dramaUrl),
-            episodes: episodes.length || null,
-          }),
-          episodes: episodes.sort((a, b) => a.episode - b.episode)
-        }
-      };
     }, 'getDetail');
   }
 
@@ -249,7 +257,7 @@ class MeloloScraper extends BaseScraper {
     return this.withRetry(async () => {
       // Jika categoryId kosong, kembalikan daftar genre
       if (!categoryId) {
-        const paths = [`/${lang}/category`, `/category`, `/`];
+        const paths = [`/category`, `/`];
         let $;
         for (const p of paths) {
           try { $ = await this._fetchHtml(p); break; } catch (e) {}
@@ -269,14 +277,14 @@ class MeloloScraper extends BaseScraper {
       }
 
       // Jika ada categoryId, scrape halaman kategori tersebut
-      const path = `/${lang}/category/${categoryId}?page=${page}`;
+      const path = `/category/${categoryId}?page=${page}`;
       const $ = await this._fetchHtml(path).catch(() => null);
       if (!$) return { success: true, page, platform: this.platformId, data: [] };
 
       const items = [];
       $('a[href*="/dramas/"]').each((_, el) => {
         const d = this._parseDramaItem($, el);
-        if (d.title && d.url && d.url.includes('/dramas/')) items.push(this.formatDrama(d));
+        if (d.title && d.url && d.url.includes('/dramas/') && !/\/ep\d+/i.test(d.url) && !/\/episode/i.test(d.url)) items.push(this.formatDrama(d));
       });
       return { success: true, page, platform: this.platformId, data: items };
     });
@@ -284,7 +292,7 @@ class MeloloScraper extends BaseScraper {
 
   async getTrending(page = 1, cursor = null, lang = 'id') {
     return this.withRetry(async () => {
-      const $ = await this._fetchHtml(`/${lang}`);
+      const $ = await this._fetchHtml(`/`);
       const items = [];
       
       // Coba cari bagian Tren / Trending di homepage
@@ -293,7 +301,7 @@ class MeloloScraper extends BaseScraper {
 
       container.find('a[href*="/dramas/"]').each((_, el) => {
         const d = this._parseDramaItem($, el);
-        if (d.title && d.url && d.url.includes('/dramas/')) items.push(this.formatDrama(d));
+        if (d.title && d.url && d.url.includes('/dramas/') && !/\/ep\d+/i.test(d.url) && !/\/episode/i.test(d.url)) items.push(this.formatDrama(d));
       });
 
       // Hapus duplikat

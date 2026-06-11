@@ -103,7 +103,25 @@ class NetShortScraper extends BaseScraper {
       const page = await this.newPage();
       await page.goto(url, { waitUntil: 'networkidle2', timeout: 30000 });
       
-      const episodes = await page.evaluate((currentUrl) => {
+      const episodes = await page.evaluate(async (currentUrl) => {
+         // Loop klik tombol "load more" dan scroll sampai habis
+         let lastCount = 0;
+         let retries = 0;
+         while (retries < 5) {
+           const btns = Array.from(document.querySelectorAll('button, a'));
+           const moreBtn = btns.find(b => b.innerText && b.innerText.match(/more|lainnya|selengkapnya/i));
+           if (moreBtn) moreBtn.click();
+           window.scrollBy(0, 1000);
+           await new Promise(r => setTimeout(r, 1000));
+           const count = document.querySelectorAll('.episode-list-item, [class*="episode"]').length;
+           if (count === lastCount) {
+             retries++;
+           } else {
+             lastCount = count;
+             retries = 0;
+           }
+         }
+
          const eps = [];
          const items = document.querySelectorAll('.episode-list-item, [class*="episode"]');
          items.forEach(el => {
@@ -111,7 +129,7 @@ class NetShortScraper extends BaseScraper {
             if (txt.match(/^\d+$/)) {
                eps.push({
                  num: parseInt(txt),
-                 url: window.location.href // They use react state, so same url but handle click
+                 url: currentUrl // They use react state, so same url but handle click
                });
             }
          });

@@ -1,160 +1,689 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" class="dark">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dramoo API — Platform Drama Pendek Asia Terlengkap</title>
-  <meta name="description" content="Dramoo API Aggregator - Akses 38+ platform drama pendek Asia dalam satu API.">
-  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --primary: #150f23;
-      --ink-deep: #1f1633;
-      --on-primary: #ffffff;
-      --accent-lime: #c2ef4e;
-      --accent-pink: #fa7faa;
-      --surface-night: #150f23;
-      --surface-canvas-light: #ffffff;
-      --surface-canvas-dark: #1f1633;
-      --hairline-violet: #362d59;
-      --hairline-cloud: #e5e7eb;
-      --ink: #1f1633;
-      font-family: "Rubik", -apple-system, system-ui, sans-serif;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dramoo API — Agregator Drama Pendek Asia Paling Gila</title>
+    <meta name="description" content="Bikin app streaming drama pendek ngga pake pusing. 38+ platform dalam satu API JSON yang clean.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #050505;
+            --surface: #111111;
+            --surface-hover: #1a1a1a;
+            --border: #222222;
+            --text-main: #f5f5f5;
+            --text-muted: #888888;
+            --accent: #CCFF00; /* Acid Green */
+            --accent-glow: rgba(204, 255, 0, 0.2);
+            --accent-dark: #99cc00;
+        }
 
-    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
-    body { background: var(--surface-canvas-dark); color: var(--on-primary); line-height: 1.5; overflow-x: hidden; font-family: var(--font-family); }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    .navbar { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; background: var(--surface-canvas-dark); border-bottom: 1px solid var(--hairline-violet); }
-    .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--on-primary); font-weight: 700; font-size: 24px; }
-    .nav-links { display: flex; gap: 24px; list-style: none; }
-    .nav-links a { color: var(--on-primary); text-decoration: none; font-size: 16px; font-weight: 500; }
-    .nav-links a:hover { color: var(--accent-lime); }
-    .nav-cta { padding: 12px 16px; background: var(--on-primary); color: var(--ink-deep); border-radius: 8px; font-weight: 700; font-size: 14px; text-decoration: none; text-transform: uppercase; letter-spacing: 0.2px; }
+        html {
+            scroll-behavior: smooth;
+        }
 
-    .hero { min-height: 100vh; display: flex; align-items: center; justify-content: center; position: relative; padding: 96px 24px; background: var(--surface-canvas-dark); text-align: center; }
-    .hero-content { max-width: 1000px; z-index: 1; }
-    .hero h1 { font-size: 88px; font-weight: 700; line-height: 1.2; margin-bottom: 24px; }
-    .chip-lime-keyword { background: var(--accent-lime); color: var(--ink-deep); padding: 0 12px; border-radius: 4px; display: inline-block; }
-    .hero p { font-size: 16px; line-height: 2.0; color: var(--on-primary); margin-bottom: 32px; max-width: 600px; margin-left: auto; margin-right: auto; }
-    
-    .btn-primary { padding: 12px 16px; background: var(--on-primary); color: var(--ink-deep); border-radius: 8px; font-weight: 700; font-size: 14px; text-decoration: none; text-transform: uppercase; letter-spacing: 0.2px; }
-    .btn-ghost { padding: 8px 16px; background: rgba(255,255,255,0.18); color: var(--on-primary); border-radius: 12px; font-weight: 700; font-size: 14px; text-decoration: none; text-transform: uppercase; letter-spacing: 0.2px; }
-    .hero-buttons { display: flex; gap: 16px; justify-content: center; }
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
 
-    section { padding: 96px 24px; max-width: 1200px; margin: 0 auto; }
-    .section-header { text-align: center; margin-bottom: 48px; }
-    .section-header h2 { font-size: 60px; font-weight: 500; line-height: 1.1; margin-bottom: 16px; }
+        h1, h2, h3, h4, .nav-brand {
+            font-family: 'Space Grotesk', sans-serif;
+        }
 
-    .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; }
-    .pricing-card { background: var(--surface-canvas-light); color: var(--ink-deep); padding: 32px; border-radius: 12px; border: 1px solid var(--hairline-cloud); }
-    .pricing-card-featured { background: var(--surface-night); color: var(--on-primary); padding: 32px; border-radius: 12px; }
-    
-    .price { font-size: 60px; font-weight: 500; margin-bottom: 16px; }
-    .pricing-features { list-style: none; margin-bottom: 32px; line-height: 1.5; font-size: 16px; }
-    .pricing-features li { padding: 8px 0; border-bottom: 1px solid var(--hairline-cloud); }
-    .pricing-card-featured .pricing-features li { border-bottom: 1px solid var(--hairline-violet); }
-    
-    .btn-pricing { width: 100%; padding: 12px 16px; border-radius: 8px; font-weight: 700; font-size: 14px; text-transform: uppercase; letter-spacing: 0.2px; text-align: center; display: block; text-decoration: none; border: none; }
-    .btn-pricing-light { background: var(--primary); color: var(--on-primary); }
-    .btn-pricing-dark { background: var(--on-primary); color: var(--ink-deep); }
+        ::selection {
+            background: var(--accent);
+            color: var(--bg);
+        }
 
-    .footer { background: var(--surface-canvas-light); color: var(--ink-deep); padding: 32px 24px; font-size: 14px; text-align: center; }
-    .footer-squiggle { border-top: 3px solid var(--accent-lime); width: 100%; display: block; margin-bottom: 32px; }
+        /* Ambient Background */
+        .ambient-glow {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: -1;
+            overflow: hidden;
+        }
+        
+        .ambient-glow::before, .ambient-glow::after {
+            content: '';
+            position: absolute;
+            width: 800px;
+            height: 800px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(204,255,0,0.05) 0%, rgba(0,0,0,0) 70%);
+            animation: float 20s infinite ease-in-out alternate;
+        }
+        
+        .ambient-glow::before {
+            top: -400px;
+            left: -400px;
+        }
+        
+        .ambient-glow::after {
+            bottom: -400px;
+            right: -400px;
+            animation-delay: -10s;
+        }
 
-    @media (max-width: 768px) {
-      .hero h1 { font-size: 56px; }
-      .section-header h2 { font-size: 40px; }
-    }
-  </style>
+        @keyframes float {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(100px, 50px); }
+        }
 
-  <style>
-    /* Mobile First Enhancements */
-    .navbar { flex-wrap: wrap; }
-    .navbar-toggle { display: none; cursor: pointer; flex-direction: column; gap: 4px; }
-    .navbar-toggle span { display: block; width: 24px; height: 2px; background: var(--on-primary); transition: 0.3s; }
-    
-    @media (max-width: 768px) {
-      .navbar-toggle { display: flex; }
-      .nav-links { display: none; width: 100%; flex-direction: column; padding-top: 16px; gap: 16px; }
-      .nav-links.active { display: flex; }
-      .nav-cta { display: none; }
-      .nav-cta.active { display: block; width: 100%; text-align: center; margin-top: 16px; }
-      
-      .hero { padding: 120px 16px 64px; }
-      .hero h1 { font-size: 48px; }
-      .hero-buttons { flex-direction: column; width: 100%; }
-      .hero-buttons a { width: 100%; text-align: center; }
-      
-      section { padding: 64px 16px; }
-      .section-header h2 { font-size: 36px; }
-      
-      .pricing-grid { grid-template-columns: 1fr; }
-    }
-    
-    @media (max-width: 480px) {
-      .hero h1 { font-size: 36px; }
-    }
-  </style>
+        /* Navbar */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 24px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            transition: all 0.3s ease;
+        }
+
+        .nav-brand {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-main);
+            text-decoration: none;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-brand span {
+            color: var(--accent);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--text-main);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 14px 28px;
+            border-radius: 100px;
+            font-weight: 600;
+            font-size: 14px;
+            text-decoration: none;
+            transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+            position: relative;
+            overflow: hidden;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-accent {
+            background: var(--accent);
+            color: var(--bg);
+        }
+
+        .btn-accent:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px var(--accent-glow);
+            background: #d4ff33;
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--text-main);
+            border: 1px solid var(--border);
+        }
+
+        .btn-outline:hover {
+            border-color: var(--text-main);
+            background: rgba(255,255,255,0.05);
+        }
+
+        .nav-cta {
+            padding: 10px 24px;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 120px 5% 60px;
+            position: relative;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 6px 16px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 100px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-muted);
+            margin-bottom: 32px;
+            backdrop-filter: blur(4px);
+            animation: fadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .badge span {
+            color: var(--accent);
+            margin-right: 8px;
+        }
+
+        .hero h1 {
+            font-size: clamp(48px, 8vw, 96px);
+            line-height: 1.05;
+            letter-spacing: -0.04em;
+            margin-bottom: 32px;
+            max-width: 1100px;
+            animation: fadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .hero h1 .highlight {
+            color: var(--accent);
+            position: relative;
+            display: inline-block;
+        }
+
+        .hero h1 .highlight::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 8px;
+            width: 100%;
+            height: 30%;
+            background: var(--accent);
+            opacity: 0.2;
+            z-index: -1;
+            transform: skewX(-15deg);
+        }
+
+        .hero p {
+            font-size: clamp(16px, 2vw, 20px);
+            color: var(--text-muted);
+            max-width: 650px;
+            margin-bottom: 48px;
+            line-height: 1.6;
+            animation: fadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .hero-ctas {
+            display: flex;
+            gap: 16px;
+            animation: fadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        /* Code Snippet Showoff */
+        .code-window {
+            margin-top: 80px;
+            width: 100%;
+            max-width: 800px;
+            background: #0a0a0a;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+            text-align: left;
+            box-shadow: 0 24px 80px rgba(0,0,0,0.5);
+            animation: fadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.4s forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .code-header {
+            background: #111;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .code-dots {
+            display: flex;
+            gap: 8px;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .dot-red { background: #ff5f56; }
+        .dot-yellow { background: #ffbd2e; }
+        .dot-green { background: #27c93f; }
+
+        .code-content {
+            padding: 24px;
+            font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+            font-size: 14px;
+            color: #d4d4d4;
+            overflow-x: auto;
+        }
+
+        .token-keyword { color: #569cd6; }
+        .token-string { color: #ce9178; }
+        .token-function { color: #dcdcaa; }
+        .token-comment { color: #6a9955; }
+
+        /* Features Section */
+        .features {
+            padding: 120px 5%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 80px;
+        }
+
+        .section-title h2 {
+            font-size: clamp(32px, 5vw, 56px);
+            letter-spacing: -0.03em;
+            margin-bottom: 16px;
+        }
+
+        .section-title p {
+            color: var(--text-muted);
+            font-size: 18px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 32px;
+        }
+
+        .feature-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 48px 32px;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(204, 255, 0, 0.3);
+            background: var(--surface-hover);
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at top right, rgba(204,255,0,0.1), transparent 50%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            pointer-events: none;
+        }
+
+        .feature-card:hover::before {
+            opacity: 1;
+        }
+
+        .feature-icon {
+            width: 64px;
+            height: 64px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 32px;
+            color: var(--accent);
+        }
+
+        .feature-card h3 {
+            font-size: 24px;
+            margin-bottom: 16px;
+        }
+
+        .feature-card p {
+            color: var(--text-muted);
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        /* Pricing Section */
+        .pricing {
+            padding: 120px 5%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 32px;
+            align-items: center;
+        }
+
+        .pricing-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 32px;
+            padding: 48px;
+            position: relative;
+            transition: all 0.4s ease;
+        }
+
+        .pricing-card.pro {
+            background: linear-gradient(180deg, var(--surface) 0%, #0a0a0a 100%);
+            border-color: var(--accent);
+            box-shadow: 0 20px 40px rgba(204, 255, 0, 0.05);
+            transform: scale(1.02);
+        }
+
+        .pricing-badge {
+            position: absolute;
+            top: -16px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--accent);
+            color: var(--bg);
+            padding: 6px 16px;
+            border-radius: 100px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .plan-name {
+            font-size: 20px;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+        }
+
+        .pro .plan-name {
+            color: var(--accent);
+        }
+
+        .plan-price {
+            font-size: 48px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+        }
+
+        .plan-price span {
+            font-size: 16px;
+            color: var(--text-muted);
+            font-weight: 400;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .plan-desc {
+            color: var(--text-muted);
+            margin-bottom: 32px;
+            padding-bottom: 32px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .plan-features {
+            list-style: none;
+            margin-bottom: 40px;
+        }
+
+        .plan-features li {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+            color: #ccc;
+        }
+
+        .plan-features li svg {
+            color: var(--accent);
+            flex-shrink: 0;
+        }
+
+        .pricing-card .btn {
+            width: 100%;
+            padding: 16px;
+            font-size: 16px;
+        }
+
+        /* Footer */
+        footer {
+            border-top: 1px solid var(--border);
+            padding: 60px 5%;
+            text-align: center;
+            color: var(--text-muted);
+        }
+
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 24px;
+        }
+
+        /* Animations */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            .hero {
+                padding-top: 140px;
+            }
+            .hero-ctas {
+                flex-direction: column;
+                width: 100%;
+                max-width: 300px;
+            }
+            .pricing-card.pro {
+                transform: scale(1);
+            }
+            .pricing-card {
+                padding: 32px;
+            }
+        }
+    </style>
 </head>
 <body>
-  <nav class="navbar">
-    <a href="#" class="nav-brand">Dramoo</a>
-    <div class="navbar-toggle" onclick="document.querySelector('.nav-links').classList.toggle('active'); document.querySelector('.nav-cta').classList.toggle('active');"><span></span><span></span><span></span></div>
-    <ul class="nav-links">
-      <li><a href="#pricing">Pricing</a></li>
-      <li><a href="/docs/">Docs</a></li>
-      <li><a href="/admin/">Admin</a></li>
-    </ul>
-    <a href="https://t.me/dramoobot" class="nav-cta">Get Started</a>
-  </nav>
 
-  <section class="hero">
-    <div class="hero-content">
-      <h1>API for Asian <br><span class="chip-lime-keyword">Short Dramas</span></h1>
-      <p>The developer-first streaming API. 38+ platforms aggregated into one endpoint. Pure JSON, zero friction.</p>
-      <div class="hero-buttons">
-        <a href="#pricing" class="btn-primary">View Pricing</a>
-        <a href="/docs/" class="btn-ghost">Read Docs</a>
-      </div>
-    </div>
-  </section>
+    <div class="ambient-glow"></div>
 
-  <section id="pricing" style="background: var(--surface-canvas-light); color: var(--ink-deep); max-width: 100%; padding: 96px 24px;">
-    <div style="max-width: 1200px; margin: 0 auto;">
-      <div class="section-header">
-        <h2>Pricing</h2>
-        <p style="font-size: 16px; font-weight: 500;">Transparent pricing for developers.</p>
-      </div>
-      <div class="pricing-grid">
-        <div class="pricing-card">
-          <h3 style="font-size: 24px; font-weight: 500; margin-bottom: 8px;">Starter</h3>
-          <div class="price">Rp 40.000</div>
-          <ul class="pricing-features">
-            <li>12 Platforms Access</li>
-            <li>100.000 Req / Month</li>
-            <li>Community Support</li>
-          </ul>
-          <a href="https://t.me/dramoobot" class="btn-pricing btn-pricing-light">Buy Starter</a>
+    <nav>
+        <a href="#" class="nav-brand">Dramoo<span>.</span></a>
+        <ul class="nav-links">
+            <li><a href="#features">Features</a></li>
+            <li><a href="#pricing">Pricing</a></li>
+            <li><a href="/docs/">Docs</a></li>
+            <li><a href="/admin/">Admin</a></li>
+        </ul>
+        <a href="https://t.me/dramoobot" class="btn btn-outline nav-cta">Get Started</a>
+    </nav>
+
+    <section class="hero">
+        <div class="badge">
+            <span>⚡️</span> API v2.0 is now live
         </div>
-        <div class="pricing-card-featured">
-          <h3 style="font-size: 24px; font-weight: 500; margin-bottom: 8px;">Professional</h3>
-          <div class="price">Rp 100.000</div>
-          <ul class="pricing-features">
-            <li>38+ Platforms Access</li>
-            <li>Unlimited Requests</li>
-            <li>Priority Support</li>
-          </ul>
-          <a href="https://t.me/dramoobot" class="btn-pricing btn-pricing-dark">Buy Pro</a>
+        <h1>Satu API. Ribuan <br><span class="highlight">Drama Pendek Asia.</span></h1>
+        <p>Bikin app streaming drama pendek ngga pernah segampang ini. 38+ platform (Dramabox, Reelshort, dll) di-aggregate jadi satu endpoint JSON yang clean dan super ngebut. Lupakan scraping manual.</p>
+        
+        <div class="hero-ctas">
+            <a href="#pricing" class="btn btn-accent">Lihat Harga Spesial</a>
+            <a href="/docs/" class="btn btn-outline">Baca Dokumentasi</a>
         </div>
-      </div>
-    </div>
-  </section>
 
-  <footer class="footer">
-    <div class="footer-squiggle"></div>
-    <p>&copy; 2026 Dramoo API. Built for developers.</p>
-  </footer>
+        <div class="code-window">
+            <div class="code-header">
+                <div class="code-dots">
+                    <div class="dot dot-red"></div>
+                    <div class="dot dot-yellow"></div>
+                    <div class="dot dot-green"></div>
+                </div>
+            </div>
+            <div class="code-content">
+<pre><code><span class="token-comment">// Panggil drama terbaru dengan mudah</span>
+<span class="token-keyword">const</span> response <span class="token-keyword">=</span> <span class="token-keyword">await</span> <span class="token-function">fetch</span>(<span class="token-string">'https://api.dramoo.com/v2/dramas/latest'</span>, {
+  headers: { <span class="token-string">'Authorization'</span>: <span class="token-string">'Bearer YOUR_API_KEY'</span> }
+});
+
+<span class="token-keyword">const</span> data <span class="token-keyword">=</span> <span class="token-keyword">await</span> response.<span class="token-function">json</span>();
+console.<span class="token-function">log</span>(data.episodes);
+<span class="token-comment">// [{ id: 1, title: "CEO Jatuh Cinta", platform: "Reelshort", url: "..." }, ...]</span></code></pre>
+            </div>
+        </div>
+    </section>
+
+    <section id="features" class="features">
+        <div class="section-title">
+            <h2>Gak Cuma Sekadar API.</h2>
+            <p>Infrastruktur kokoh buat nemenin app kamu dari nol sampe jutaan user.</p>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+                </div>
+                <h3>Tanpa Ribet. Tinggal Panggil.</h3>
+                <p>Response JSON terstruktur, siap dipakai di frontend apapun. Pake React, Vue, atau Flutter? Langsung sikat tanpa perlu parsing data aneh-aneh.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                </div>
+                <h3>Uptime Badak.</h3>
+                <p>Infrastruktur server dirancang stabil buat nanganin ribuan request per detik tanpa ngos-ngosan. Kita urus backend-nya, kamu fokus cari cuan.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.59-10.31l5.3 5.3"></path></svg>
+                </div>
+                <h3>Update Otomatis 24/7.</h3>
+                <p>Begitu ada episode baru rilis di platform aslinya, datanya langsung masuk ke API hitungan menit. Selalu update, nggak ada yang terlewat.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="pricing" class="pricing">
+        <div class="section-title">
+            <h2>Harga Masuk Akal Buat Developer</h2>
+            <p>Pilih paket sesuai kebutuhan. Gak ada biaya tersembunyi.</p>
+        </div>
+
+        <div class="pricing-grid">
+            <div class="pricing-card">
+                <div class="plan-name">Starter</div>
+                <div class="plan-price">Rp 40.000<span>/bulan</span></div>
+                <p class="plan-desc">Cuma buat nyoba, testing API, atau project iseng-iseng.</p>
+                
+                <ul class="plan-features">
+                    <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> Akses 12 Platform Basic</li>
+                    <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> 100.000 Request / Bulan</li>
+                    <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> Community Support (Telegram)</li>
+                    <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> Standar Latency</li>
+                </ul>
+                
+                <a href="https://t.me/dramoobot" class="btn btn-outline">Sikat Starter</a>
+            </div>
+
+            <div class="pricing-card pro">
+                <div class="pricing-badge">Paling Laku</div>
+                <div class="plan-name">Professional</div>
+                <div class="plan-price">Rp 100.000<span>/bulan</span></div>
+                <p class="plan-desc">Buat app yang udah siap cuan dan punya traffic brutal.</p>
+                
+                <ul class="plan-features">
+                    <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> Akses Full 38+ Platform</li>
+                    <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> Unlimited Requests (No Limit)</li>
+                    <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> Priority Support via Admin</li>
+                    <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> Premium Low Latency Server</li>
+                </ul>
+                
+                <a href="https://t.me/dramoobot" class="btn btn-accent">Ambil Professional</a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-content">
+            <a href="#" class="nav-brand">Dramoo<span>.</span></a>
+            <p>&copy; 2026 Dramoo API. Dibangun keras oleh Developer untuk Developer.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Simple scroll animation for navbar
+        window.addEventListener('scroll', () => {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 50) {
+                nav.style.padding = '16px 5%';
+                nav.style.background = 'rgba(5, 5, 5, 0.8)';
+            } else {
+                nav.style.padding = '24px 5%';
+                nav.style.background = 'transparent';
+            }
+        });
+    </script>
 </body>
 </html>

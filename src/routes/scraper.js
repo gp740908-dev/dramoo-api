@@ -135,7 +135,13 @@ router.get('/:platform/detail', requireApiKey, trackUsage, validatePlatform, asy
 
   if (id && !url) {
     try {
-      url = Buffer.from(id, 'base64url').toString('utf8');
+      let decoded = Buffer.from(id, 'base64url').toString('utf8');
+      const platformInstance = scraper.getScraper(platform);
+      if (platformInstance) {
+        url = platformInstance.toAbsoluteUrl(decoded);
+      } else {
+        url = decoded;
+      }
     } catch(e) {
       return res.status(400).json({ success: false, error: 'Format id tidak valid' });
     }
@@ -192,7 +198,13 @@ router.get('/:platform/stream', requireApiKey, trackUsage, validatePlatform, asy
 
   if (id && !url) {
     try {
-      url = Buffer.from(id, 'base64url').toString('utf8');
+      let decoded = Buffer.from(id, 'base64url').toString('utf8');
+      const platformInstance = scraper.getScraper(platform);
+      if (platformInstance) {
+        url = platformInstance.toAbsoluteUrl(decoded);
+      } else {
+        url = decoded;
+      }
     } catch(e) {
       return res.status(400).json({ success: false, error: 'Format id tidak valid' });
     }
